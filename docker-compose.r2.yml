@@ -1,0 +1,78 @@
+# MinIO - S3-compatible object storage for local R2 simulation
+# Start: docker compose -f docker-compose.r2.yml up -d
+# Stop: docker compose -f docker-compose.r2.yml down
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+# PRODUCTION R2 CORS CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+# Configure the following CORS rules on your Cloudflare R2 bucket:
+#
+#   AllowedOrigins: ["*"]  (or specific domains like ["https://your-domain.com"])
+#   AllowedMethods: ["GET", "HEAD", "PUT"]
+#   AllowedHeaders: ["*"]
+#   ExposeHeaders:  ["ETag", "Content-Length", "Content-Range", "Accept-Ranges",
+#                    "Content-Disposition", "Content-Type"]
+#   MaxAgeSeconds:  86400
+#
+# These headers are required for:
+# - PDF.js Range requests (Content-Range, Accept-Ranges)
+# - Presigned PUT uploads (ETag)
+# - Direct downloads with proper filenames (Content-Disposition)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: dockosha-minio
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # MinIO Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # Creates the default bucket on first startup
+  minio-init:
+    image: minio/mc:latest
+    container_name: dockosha-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set minio http://minio:9000 minioadmin minioadmin;
+        mc mb --ignore-existing minio/dockosha;
+
+        # Allow direct browser uploads/downloads from the Next.js dev server.
+        # This mirrors the required R2 bucket CORS settings in production.
+        # - ExposeHeaders: needed for PDF viewer Range requests and download Content-Disposition
+        # - MaxAgeSeconds: increased to reduce CORS preflight requests
+        cat > /tmp/cors.json << 'EOF'
+        [
+          {
+            "AllowedOrigins": ["http://localhost:3000", "http://127.0.0.1:3000"],
+            "AllowedMethods": ["PUT", "GET", "HEAD"],
+            "AllowedHeaders": ["*"],
+            "ExposeHeaders": ["ETag", "Content-Length", "Content-Range", "Accept-Ranges", "Content-Disposition", "Content-Type"],
+            "MaxAgeSeconds": 86400
+          }
+        ]
+        EOF
+        mc cors set minio/dockosha /tmp/cors.json;
+
+        mc anonymous set download minio/dockosha;
+        echo 'MinIO bucket dockosha created and configured';
+        exit 0;
+      "
+
+volumes:
+  minio-data:

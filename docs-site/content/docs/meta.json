@@ -1,0 +1,10 @@
+{
+  "title": "DocKosha Documentation",
+  "pages": [
+    "getting-started",
+    "guides",
+    "how-it-works",
+    "self-hosting",
+    "reference"
+  ]
+}

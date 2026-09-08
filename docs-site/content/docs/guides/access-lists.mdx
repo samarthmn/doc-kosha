@@ -1,0 +1,108 @@
+---
+title: "Room, folder, and document access lists"
+description: "Use Advanced Level Control to give each viewer a different slice of the same DocKosha data room — scoped to the whole room, one folder, or a single document."
+---
+
+Advanced Level Control (ALC) lets one data room link serve different content to different people. A bidder sees everything; their lawyer sees only the Legal folder; an auditor sees one spreadsheet. Same room, same link, different slices.
+
+Rules are written per link, and they are evaluated on the server for every resolve, every document open, and every download. There is no client-side filtering you could bypass by editing the page.
+
+## When to use ALC
+
+Reach for ALC when the split is _inside_ one room. If different audiences need entirely different content and different gates, separate links — or separate rooms — are simpler to reason about.
+
+ALC exists only for **data room** links. Document links use the ordinary [allow and blocklists](/docs/guides/gate-allow-and-blocklists).
+
+## Turn on ALC
+
+1. Open the room's **Share** area and create or edit a link.
+2. Find **Advanced Level Control (ALC)** and choose **Enable ALC**.
+3. The rules dialog opens with three tabs: **Room Wide**, **Folders**, and **Documents**.
+4. Add at least one rule (see below), then choose **Apply Rules**.
+5. Save the link.
+
+The link's ALC badge reads **Active** as soon as any rule exists, and **Inactive** when there are none.
+
+## The three rule levels
+
+Each rule names a target and a set of allowed viewers. A viewer is identified by their verified email address — either listed directly on the rule, or a member of a [user group](/docs/guides/user-groups) the rule allows. User groups are lists of email addresses, so both paths resolve to the same thing: the address the viewer proved they control.
+
+| Rule level    | What the viewer gets                                                                                                                     |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Room wide** | The entire room — every folder and every document, including ones added later. This is the broadest additive grant.                      |
+| **Folder**    | That folder, every subfolder beneath it, and every document inside any of them. Folders added under it later are included automatically. |
+| **Document**  | That one document.                                                                                                                       |
+
+For folder and document rules, the folders on the path from the room root down to the granted item stay visible so the viewer can navigate to it.
+
+Rules are **additive across scopes**. If the same viewer matches several rules, DocKosha combines every grant. Folder access includes that folder's descendants, while document access adds only the named document.
+
+> **Parent folder names are visible on the path.** A viewer granted `04 Legal / Employment` can see that `04 Legal` exists, though not its other contents. If folder names themselves are sensitive, rename them.
+
+### Add a folder or document rule
+
+1. In the ALC dialog, open the **Folders** or **Documents** tab.
+2. Choose **Add Rule**.
+3. Pick the target folder or document from the list — targets are shown with their full path.
+4. Add the allowed emails, the allowed groups, or both.
+5. Choose **Create Rule**.
+
+A rule needs at least one email or one group to be created. A rule that grants nobody grants nothing, and the dialog flags it as **No access granted**.
+
+### Review room-wide overlaps
+
+If the same email or group appears in both **Room Wide** and a folder or document rule, **Apply Rules** pauses on a review step. For each overlapping identity, choose one outcome:
+
+- **Keep room-wide** keeps access to the entire room and removes that identity from its narrower folder and document rules.
+- **Limit to selected items** removes the room-wide grant and keeps the listed folder and document grants.
+
+The review defaults to **Keep room-wide** because that preserves the access the viewer already has. DocKosha loads and displays every affected folder and document before enabling the final **Apply Rules** action. If those locations cannot be loaded or identified, the rules are not applied; use **Retry** after the room content is available.
+
+## What ALC changes on the link
+
+Turning ALC on changes three things about how the link behaves. All three are deliberate.
+
+- **Email verification becomes mandatory.** ALC decides access by email address, so the viewer must prove which address they hold. The link forces the [email OTP gate](/docs/guides/gate-email-otp) on, whether or not you switched it on yourself.
+- **The global allowlist is switched off.** While ALC is active, the link's ordinary **Allowed emails** list is disabled and shows an "Advanced Level Control Enabled" notice. ALC is the single source of truth for who is allowed. Clear all ALC rules to get the global allowlist back.
+- **The blocklist still applies, and still wins.** A blocked email is refused before ALC is consulted. If the same address appears in both the blocklist and an ALC rule, the link editor refuses to save until you resolve the overlap.
+
+## What a viewer experiences
+
+1. They open the link and pass the password gate, if there is one.
+2. They enter their email address and verify it with a one-time code.
+3. DocKosha looks up every ALC rule on that link that matches their address or their groups.
+4. If nothing matches, access is denied. If something matches, the room is filtered to exactly what those rules grant, and everything else is invisible — not greyed out, not listed.
+
+The same filter applies to per-file downloads and to the room and folder ZIP downloads. A viewer cannot pull a file out of a ZIP that their rules do not grant them.
+
+> **ALC fails closed.** If DocKosha cannot evaluate the rules for a link — for example because the rule lookup errors — the link is treated as restricted and access is denied. It never falls back to showing the whole room.
+
+## Notify the people you granted access to
+
+Adding someone to an ALC rule does not automatically tell them. When you create the link you can send invite emails to the recipients, and while editing an existing link with ALC active you can choose **Resend invites**. Resending is rate-limited with a cooldown that grows with repeated use.
+
+## Remove ALC
+
+1. Edit the link and find the **Advanced Level Control (ALC)** panel.
+2. Choose **Remove ALC** and confirm.
+3. Save the link.
+
+This clears every room, folder, and document rule on that link. The link falls back to its ordinary gates, and the global allowlist becomes editable again.
+
+You can also clear rules from inside the dialog with **Clear all rules**.
+
+## Honest limits
+
+- **Rules are per link, not per room.** Two links to the same room have completely independent ALC configurations. Granting someone access on one link does nothing on another, and every new link starts with no rules at all.
+- **Grants are additive.** A viewer who matches a room-wide rule and a folder rule gets the room-wide result. There is no "deny" rule inside ALC; use the link blocklist for that.
+- **Group-based rules are ordinary application capabilities.** Per-email and
+  group access rules use the same access-list model. See the [capability
+  matrix](/docs/reference/capability-matrix).
+- **ALC governs access, not copying.** It controls what a viewer can open and download. It cannot stop someone from reading what they were granted and retelling it. Pair it with [watermarking](/docs/guides/watermarking) and an [NDA](/docs/guides/nda-gates) when attribution matters.
+
+## Next steps
+
+- [Invites and member levels](/docs/guides/invites-and-member-levels) — access for your own team, which is a separate system
+- [Allow and blocklists](/docs/guides/gate-allow-and-blocklists)
+- [User groups](/docs/guides/user-groups)
+- [Security model](/docs/how-it-works/security-model)

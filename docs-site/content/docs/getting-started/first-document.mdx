@@ -1,0 +1,82 @@
+---
+title: "Your first document"
+description: "Upload a file to a DocKosha workspace, watch it through the upload queue and conversion, and confirm it previews in the internal viewer."
+---
+
+Upload one file and confirm it opens. This takes a couple of minutes and proves the storage and processing path works before you share anything.
+
+## Upload a file
+
+1. Open **Documents** from the sidebar.
+2. Click **Upload Document**. The dialog tells you which folder the files land in and how much of your plan's storage is already used.
+3. Click **Choose files** (or **Choose folder** to bring across a whole tree, folder structure included).
+4. Click **Start Upload**.
+
+You can also drag files straight onto the documents list — it opens the same dialog with your files staged.
+
+## Watch the upload queue
+
+The upload manager appears in the bottom-right corner and stays there while you navigate the app. Each file moves through the stages:
+
+`Preparing` → `Uploading` (with a percentage) → `Finalizing` → `Indexing` → `Uploaded`
+
+While a file is uploading you can **pause**, **resume**, or **stop** it. The chevron collapses the panel; the **X** cancels remaining queued and in-flight work after a confirmation, and files already committed stay uploaded. A batch counter (`3 / 20 files uploaded`) advances monotonically — it only counts up.
+
+Closing the browser tab mid-upload warns you first, because a full page unload can interrupt an upload. Normal in-app navigation is safe.
+
+## Wait for processing
+
+- **PDFs** are ready immediately.
+- **CSV**, Office, and Markdown files are converted to PDF by the mandatory
+  direct DocYantra `0.0.25` dependency within its validated envelope; work
+  outside it returns typed `unsupported_feature`. The document's
+  **Processing** field reads `Processing` until DocYantra completes a
+  conversion, then `Ready`.
+
+Supported formats:
+
+| Category             | Extensions                                         | What happens                                                                            |
+| -------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Documents and slides | `pdf`, `pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md` | PDF is served as-is; DocYantra converts supported formats within its validated envelope |
+| Images               | `jpg`, `jpeg`, `png`, `webp`                       | Rendered inline                                                                         |
+| Video                | `mp4`, `mov`, `avi`, `mkv`, `webm`                 | Played inline where the browser supports the codec, otherwise download-only             |
+| Audio                | `mp3`, `wav`, `ogg`, `aac`                         | Played inline where the browser supports it, otherwise download-only                    |
+
+<Callout type="warn" title="Conversion fails closed">
+
+Conversion runs inside a validated envelope, including a 50 MiB input cap for the non-PDF document formats. If the file falls outside the envelope, errors, or times out, the document is marked `Failed` and the viewer falls back to **the original file** — never a partial or degraded rendering. Where a re-process action is offered you can retry it. The full envelope is documented in [Conversion envelope](/docs/how-it-works/conversion-envelope).
+
+</Callout>
+
+## Confirm the preview
+
+1. Click the document in the list. It opens on the **Document** tab.
+2. Check the **Document details** card: file type, size, pages, and the processing state.
+3. Scroll the preview. If it renders here, it will render for a viewer.
+
+The tabs across the top are **Document**, **Share**, **Analytics**, and — for the workspace owner — **Audit log**. A **Comments** tab appears once a document has comments. **Redact Document** appears on the Document tab for a PDF or a non-PDF document with completed DocYantra conversion.
+
+## Plan limits that bite on the first upload
+
+| Limit                     | Free                         | Paid plans                                   |
+| ------------------------- | ---------------------------- | -------------------------------------------- |
+| File types                | PDF only                     | All supported formats                        |
+| Included storage          | 250 MB                       | 5 GB (Essential), 30 GB (Plus), 200 GB (Max) |
+| Monthly viewing bandwidth | 2 GB                         | No cap (fair use)                            |
+| Members                   | 1                            | Unlimited                                    |
+| Previous versions kept    | 0 — only the current version | Configurable, 1 to 20                        |
+
+An upload that would push the workspace past its storage limit is refused before it starts. See [Plans and limits](/docs/how-it-works/plans-and-limits).
+
+## If something goes wrong
+
+| Symptom                                                                   | Cause                                                                | Fix                                                                                                                                          |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Free workspaces support PDF uploads only"                                | Free plan, non-PDF file                                              | Upload a PDF or change plan                                                                                                                  |
+| Upload fails at the indexing step                                         | The workspace lacks an active plan record, or your role is read-only | Select a plan in **Settings → Subscription**; ask an owner or editor to upload                                                               |
+| Processing stays in `Processing` for a long time, then the original opens | Conversion failed or timed out                                       | Expected fail-closed behaviour — the original file is still served; retry the conversion if the action is offered                            |
+| A "Review duplicate filenames" dialog appears                             | A file with the same name already exists in that destination         | See [Upload and manage documents](/docs/guides/upload-and-manage-documents) — the default action is **Replace**, which creates a new version |
+
+## Next
+
+[Your first shared link](/docs/getting-started/first-link) — put this document behind a gate and open it as an outsider.

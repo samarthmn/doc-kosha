@@ -1,0 +1,6 @@
+# Keep this worker's install independent from the parent application.
+nodeLinker: hoisted
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

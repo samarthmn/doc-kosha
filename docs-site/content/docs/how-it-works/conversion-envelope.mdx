@@ -1,0 +1,64 @@
+---
+title: "Conversion and supported formats"
+description: "Which document-processing operations the mandatory DocYantra dependency supports, how its envelope fails closed, and how typed failures reach delivery."
+---
+
+DocKosha sends document-processing work through its provider contract. The mandatory direct DocYantra `0.0.25` dependency declares the supported operations and refuses work outside its validated envelope.
+
+## Accepted formats and DocYantra capabilities
+
+| Category  | Extensions                           | DocYantra handling                                   |
+| --------- | ------------------------------------ | ---------------------------------------------------- |
+| Documents | `pdf`                                | Served as-is; page counting and PDF operations apply |
+| Documents | `csv`                                | Converted to PDF within its validated envelope       |
+| Documents | `docx`, `pptx`, `xlsx`, `xlsm`, `md` | Converted within the documented envelope             |
+| Images    | `jpg`, `jpeg`, `png`, `webp`         | Rendered as images                                   |
+| Video     | `mp4`, `mov`, `avi`, `mkv`, `webm`   | Played in the viewer where supported                 |
+| Audio     | `mp3`, `wav`, `ogg`, `aac`           | Played in the viewer where supported                 |
+
+Uploads outside the accepted set are rejected before processing. Plan limits
+can narrow the accepted set; the Free plan accepts PDF files only. See [Plans
+and limits](/docs/how-it-works/plans-and-limits).
+
+## Processing bounds
+
+Processing remains bounded on the mandatory DocYantra path:
+
+| Bound                                             | Value       | Configuration variable                     |
+| ------------------------------------------------- | ----------- | ------------------------------------------ |
+| Maximum processing input                          | 50 MiB      | `DOCUMENT_CONVERSION_MAX_INPUT_BYTES`      |
+| Default processing deadline                       | 150 seconds | `DOCUMENT_CONVERSION_TIMEOUT_MS`           |
+| Aggregate budget for one processing attempt       | 165 seconds | `DOCUMENT_PROCESSING_OPERATION_TIMEOUT_MS` |
+| Pending processing jobs admitted per app instance | 32          | `DOCUMENT_PROCESSING_MAX_PENDING_TASKS`    |
+
+When the admission queue is full, the request returns `queue_busy` instead of
+waiting indefinitely. Every processing failure carries a stable code,
+operation, retryability, and an optional format. The public response removes
+internal details before it reaches a viewer.
+
+## Fail-closed delivery
+
+The rule is **fail closed on the transform, fall back on the delivery**:
+
+1. The processing attempt returns a typed failure and publishes no converted
+   asset.
+2. The document keeps a non-completed `conversion_status`.
+3. The viewer selects a converted asset only when `conversion_status` is
+   `completed`; otherwise it serves the original file where the link permits
+   downloads.
+
+DocKosha never serves a partial PDF or silently drops visible content. A link
+that requires a watermark fails closed when the delivered document has no
+eligible PDF output; it does not release unwatermarked bytes.
+
+For an Office or Markdown document without a completed conversion, the viewer
+shows that the preview is being prepared and offers the original download when
+the link allows downloads. Page-level analytics require a completed PDF;
+original-file delivery records views and downloads but not per-page results.
+
+## Related
+
+- [Upload and manage documents](/docs/guides/upload-and-manage-documents) — the upload path and accepted formats
+- [DocYantra integration](/docs/self-hosting/providers) — the private mandatory `0.0.25` dependency and public contract reference
+- [Troubleshooting](/docs/reference/troubleshooting) — what to do when processing fails
+- [Redaction](/docs/guides/redaction) — the separate PDF operation and its typed refusals

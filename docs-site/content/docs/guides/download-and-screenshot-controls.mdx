@@ -1,0 +1,103 @@
+---
+title: "Download and screenshot controls"
+description: "Turn downloads on or off per DocKosha link, see how watermarked downloads fail closed, and read the honest limits of browser screenshot deterrence."
+---
+
+Two link settings decide what a viewer can take away: **Allow downloads** and **Screenshot protection**. One of them is a real control. The other is a deterrent, and this page says so plainly.
+
+## Allow downloads
+
+Downloads are decided per link, and enforced on the server. New links start with downloads **off**.
+
+1. Create or edit the link.
+2. Turn **Allow downloads** on or off.
+3. Save.
+
+With downloads off, the download controls are absent from the viewer and the download endpoints refuse the request. With downloads on, a viewer can take:
+
+- The document they are currently viewing.
+- In a data room: the **whole room** as a ZIP, or the **folder they are currently in** as a ZIP.
+
+Downloads in a data room respect [access lists](/docs/guides/access-lists). A viewer's ZIP contains only what their rules grant them.
+
+## What a viewer actually receives
+
+| Link configuration                                                    | What is delivered                                                                                                                                                        |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Downloads on, watermark off                                           | The **original uploaded file**, unchanged.                                                                                                                               |
+| Downloads on, watermark on, PDF or document with completed conversion | A **PDF with the watermark burned into its bytes** — the original PDF, or the PDF produced when DocYantra completed conversion. The filename is forced to end in `.pdf`. |
+| Downloads on, watermark on, image / audio / video                     | The **original file**. These formats have no PDF watermark representation, so the watermark setting does not change what is delivered.                                   |
+
+### Watermarked downloads fail closed
+
+When a link requires a watermark, DocKosha will not fall back to unmarked bytes to make a download succeed.
+
+- A **single-file download** whose required watermark cannot be produced returns an error. The viewer does not get the file.
+- A **ZIP download** omits any file whose required watermark failed, and adds a `_MISSING_FILES.txt` entry inside the archive listing what was left out and suggesting the viewer retry or contact the owner.
+
+That is the intended behaviour: a missing file is recoverable, an unmarked leak is not.
+
+See [Watermarking](/docs/guides/watermarking) for how to configure the mark itself.
+
+### Other reasons a download can be refused
+
+- The workspace has exhausted its monthly public download bandwidth cap on the Cloud Free plan.
+- The Cloud subscription lapsed, in which case the link stops resolving entirely.
+- The viewer's [access rules](/docs/guides/access-lists) do not grant that document.
+
+## Screenshot protection
+
+Screenshot protection is a **best-effort deterrent**. Turn it on to discourage casual capture. Do not plan around it as a control.
+
+New links have it **on** by default.
+
+### What it actually does
+
+When enabled, the viewer wraps the document in a shield that blurs the content in two situations:
+
+- **The tab loses focus or is hidden.** Switching windows, minimising, or moving to another tab blurs the document until focus returns. Many capture workflows involve leaving the page, so this catches some of them.
+- **A known screenshot hotkey is pressed.** `PrintScreen`, and `Cmd+Shift+3 / 4 / 5 / S`, trigger a blur for about a second and a half.
+
+While the shield is up, the viewer sees a panel that says screenshot protection is enabled and states the limitation.
+
+### What it cannot do — stated plainly
+
+**Browsers cannot block operating-system screen capture.** No web page can. A browser tab is not a trusted display surface, and web APIs give a page no ability to suppress, intercept, or deny a capture performed by the operating system.
+
+Concretely:
+
+- On **Windows**, the `PrintScreen` key event reaches the page _after_ the operating system has already captured the screen. The blur that follows is theatre with respect to that specific capture — the image already exists.
+- On **macOS**, the screenshot hotkeys are handled by the system; the page can observe the keystroke, not veto the capture.
+- **Dedicated capture tools** — Snipping Tool, Screenshot, `scrot`, and every screen recorder — never touch the page at all.
+- **Phone cameras** are entirely outside the browser.
+- **Virtual machines, remote desktop sessions, and external capture cards** capture the display, not the page.
+- **Browser extensions, developer tools, and print-to-PDF** operate at a level the page cannot police.
+
+Screenshot protection raises the effort required for a casual grab. It does not prevent a determined one, and it should never be described to a counterparty as if it did.
+
+It also only covers the in-browser viewer. Once a file has been downloaded, the shield is irrelevant — the viewer has the bytes. If downloads are on, screenshot protection is close to meaningless for that link.
+
+### What to use instead, or alongside
+
+If the real requirement is "I need to know who leaked this", use controls that survive capture and produce evidence:
+
+- **[Dynamic watermarks](/docs/guides/watermarking)** — carry the viewer's verified email, IP, and timestamp. The lines are burned into the delivered PDF and are also drawn over the pages on screen, so a photograph of the monitor carries the attribution too. This is the most useful control on this page.
+- **[NDA gates](/docs/guides/nda-gates)** — get agreement on the record before access.
+- **[Access lists](/docs/guides/access-lists)** — do not show people what they do not need. Content never delivered cannot be captured.
+- **[Expiry](/docs/guides/gate-expiry) and [one-time open](/docs/guides/gate-one-time-open)** — shrink the window.
+- **[Audit log](/docs/guides/audit-log) and [analytics](/docs/guides/analytics)** — record who opened what, and when.
+
+## Recommended combinations
+
+| Situation                           | Suggested settings                                                         |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| Reviewers must read only            | Downloads off, screenshot protection on, watermark on with the email line. |
+| Counterparty needs their own copy   | Downloads on, watermark on with email and date-time, NDA gate on.          |
+| Broad distribution, low sensitivity | Downloads on, no watermark, expiry set.                                    |
+
+## Next steps
+
+- [Watermarking](/docs/guides/watermarking)
+- [Require an NDA before viewing](/docs/guides/nda-gates)
+- [Security model](/docs/how-it-works/security-model)
+- [Room, folder, and document access lists](/docs/guides/access-lists)

@@ -1,0 +1,100 @@
+---
+title: "Link presets and custom slugs"
+description: "Give a share link a readable URL like /acme/investor-update, and save a set of link settings as a reusable workspace preset."
+---
+
+Two independent conveniences in the link editor: a readable URL for the link, and a saved bundle of settings you can reuse.
+
+## Give a link a custom URL
+
+1. Open the link editor (**Share → New Link**, or **Edit** on an existing link).
+2. On the **Basics** tab, type into **Custom URL (optional)**.
+3. Watch the preview line under the field — it shows the exact share path you will get.
+4. Save.
+
+Without a custom URL the link uses its default path: `/d/{documentId}/{linkId}` for a document, `/r/{dataRoomId}/{linkId}` for a data room. The preview line reads _"Default share path: Auto-generated secure link"_.
+
+With one set, the share path becomes:
+
+```text
+/{workspace-slug}/{your-slug}
+```
+
+The workspace slug is derived from your workspace name. Invite emails and the in-app copy and share actions use the custom path only when a custom URL is configured; otherwise they use the default path.
+
+### How the slug is cleaned up
+
+The field rewrites what you type as you type it:
+
+- upper case becomes lower case
+- accents and other diacritics are stripped
+- anything that is not a letter, digit, hyphen, or underscore becomes a hyphen
+- leading hyphens and underscores are dropped, and runs of them are collapsed to one
+- the result is capped at 64 characters, with any trailing hyphen or underscore trimmed
+
+So `Investor Update — März 2026!` becomes `investor-update-marz-2026`.
+
+### Uniqueness and errors
+
+| Message                          | Meaning                                                                                                  |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| _"Custom URL is already in use"_ | Another link in this workspace already uses that slug, or it collides with a system-generated short code |
+| _"Custom URL is invalid"_        | What you typed cleans up to nothing usable                                                               |
+
+Deleting a link frees its slug for reuse. Clearing the field on an existing link reverts it to the default path — and the old readable URL stops working immediately.
+
+<Callout type="warn" title="A readable URL is not a secret">
+
+Default links carry a random identifier that is hard to guess. A slug like `/acme/board-deck` is guessable by design. Treat a custom URL as public and put a real gate on the link — a password, email verification, or an allowlist — rather than relying on the URL being unknown.
+
+</Callout>
+
+Custom URLs work on the default host. Serving them from your own hostname
+requires custom domains, an ordinary application capability — see [Branding and
+custom domains](/docs/guides/branding-and-custom-domains).
+
+## Save a preset
+
+Presets live in the **Presets** panel on the right of the link editor and are shared across the whole workspace.
+
+1. Configure a link the way you want it.
+2. Under **Save current settings as new preset**, type a name — for example `Board Meeting`.
+3. Click **Save New Preset**.
+
+## Apply a preset
+
+1. Pick a preset from the dropdown. Chips summarise what it contains — `Downloads on`, `Password`, `Screenshot protection`, `Dynamic watermark`, `Q&A`, and so on.
+2. Click **Apply Preset**.
+
+An **Applied** badge marks the preset in use. If you then change any covered setting, an **Edited** badge appears and **Update Preset** becomes available to save your changes back to the preset. **Delete Preset…** removes it from the workspace after a confirmation.
+
+## What a preset does and does not carry
+
+| Carried                                                                             | Not carried                                    |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Password **on or off**                                                              | The password itself — you type it in each time |
+| Downloads, email notifications, screenshot protection                               | The link name                                  |
+| Collect emails for analytics                                                        | The custom URL                                 |
+| Watermark on/off, chosen template, and the dynamic email / IP / date-and-time flags | The expiration date and time                   |
+| Q&A on/off and the curated pairs, feedback, comments                                |                                                |
+| Public viewer language override                                                     |                                                |
+| Allowed and blocked emails, allowed and blocked groups                              |                                                |
+| NDA requirement and template — **only when creating a new link**                    |                                                |
+
+Applying a preset while editing an existing link does not change its NDA settings, because the NDA template is pinned at creation.
+
+Because presets carry access rules, applying one **replaces** the current allow and block lists rather than merging with them. Check the **Access controls** chips in the summary panel before you save.
+
+## Known limits
+
+- A preset saved with a Spanish or German viewer-language override does not restore that override when applied; the link keeps whatever language setting it already had. Set it manually on the **Basics** tab after applying.
+- If the same email ends up both allowed and blocked through group membership, saving or updating a preset is refused with _"Resolve overlapping allow/block group members before saving a preset."_ Fix the overlap first — see [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists).
+- Group-based allow and block rules depend on user groups. A preset that
+  references groups is useful where groups are configured. See [User
+  groups](/docs/guides/user-groups).
+
+## Related
+
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists)
+- [Branding and custom domains](/docs/guides/branding-and-custom-domains)

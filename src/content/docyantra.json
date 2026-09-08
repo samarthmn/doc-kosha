@@ -1,0 +1,107 @@
+{
+  "seo": {
+    "title": "DocYantra | Document processing inside DocKosha Cloud",
+    "description": "DocYantra is the private document-processing engine that powers DocKosha Cloud’s validated Office and PDF workflows.",
+    "keywords": [
+      "DocYantra",
+      "Rust document engine",
+      "high-performance document processing",
+      "high-fidelity document rendering",
+      "validated document conversion",
+      "virtual data room documents",
+      "fail-closed document governance"
+    ],
+    "canonical": "/docyantra"
+  },
+  "hero": {
+    "badge": "DocKosha Cloud document processing",
+    "title": "DocYantra powers DocKosha Cloud",
+    "subtitle": "A private, high-performance document processor for DocKosha Cloud’s supported Office and PDF workflows. Work outside its validated envelope fails closed.",
+    "primaryCta": {
+      "text": "Explore DocKosha Cloud",
+      "href": "/features"
+    },
+    "secondaryCta": {
+      "text": "Explore DocKosha",
+      "href": "/features"
+    }
+  },
+  "highlights": [
+    {
+      "title": "Rust performance for managed processing",
+      "description": "DocYantra provides a high-performance processing path for managed DocKosha Cloud workflows, with supported documents typically ready in seconds. DocKosha uses the mandatory direct DocYantra dependency.",
+      "bullets": [
+        "The DocYantra validated path does not use a headless office suite or browser in the path",
+        "DocYantra uses isolated worker threads with finite deadlines and bounded queues",
+        "DocYantra validates output before it reaches the viewer"
+      ]
+    },
+    {
+      "title": "Multilingual, high-fidelity output",
+      "description": "DocYantra can produce validated PDFs with compact glyph-subset fonts embedded, and resolve fonts on demand for math, symbol, and CJK coverage in supported Office documents.",
+      "bullets": [
+        "DOCX, PPTX, XLSX, and XLSM conversion to PDF, plus CSV and Markdown rendering",
+        "Chinese, Japanese, and Korean text renders through pan-CJK Noto fonts",
+        "PDF merge, watermarking, and redaction through the DocYantra processing path"
+      ]
+    },
+    {
+      "title": "Fail-closed governance",
+      "description": "DocYantra is built for controlled sharing where unvalidated output is not acceptable — anything outside the validated envelope fails closed with typed, stable error codes.",
+      "bullets": [
+        "No silent quality loss and no tofu or placeholder glyphs",
+        "Converted assets are published only after output validation",
+        "The original remains available when preview conversion fails"
+      ]
+    }
+  ],
+  "pillars": [
+    {
+      "title": "Built for controlled sharing",
+      "points": [
+        "Validated, deterministic DocYantra PDF output feeds DocKosha viewing, watermarking, redaction, and analytics.",
+        "DocYantra worker isolation keeps heavy document operations bounded by finite deadlines.",
+        "DocYantra’s compact glyph-subset fonts keep viewer PDFs lean without sacrificing fidelity."
+      ]
+    },
+    {
+      "title": "Clear format boundaries",
+      "points": [
+        "The DocYantra path converts modern DOCX, PPTX, XLSX, and XLSM files to PDF and renders CSV and Markdown.",
+        "Legacy .doc, .ppt, and .xls files and unsupported document features are rejected with typed errors.",
+        "CJK text in supported Office documents is supported; vertical text layout is not and fails closed."
+      ]
+    }
+  ],
+  "process": [
+    {
+      "title": "How DocYantra works",
+      "steps": [
+        {
+          "name": "Validate the file",
+          "summary": "DocKosha checks the format, size, and processing envelope before any document work begins."
+        },
+        {
+          "name": "Convert in an isolated worker",
+          "summary": "The DocYantra worker converts the document within a finite deadline; unsupported work returns a typed failure."
+        },
+        {
+          "name": "Publish validated output",
+          "summary": "Only a validated PDF becomes the viewer asset; failed conversions fail closed and leave the original available."
+        }
+      ]
+    }
+  ],
+  "cta": {
+    "title": "Bring blazing-fast, high-fidelity processing to your next data room",
+    "subtitle": "DocYantra powers supported modern document formats and controlled, PDF-first delivery inside DocKosha Cloud. It is not a standalone product or externally available engine package.",
+    "primaryCta": {
+      "text": "Explore DocKosha Cloud",
+      "href": "/features"
+    },
+    "secondaryCta": {
+      "text": "See pricing",
+      "href": "/pricing"
+    }
+  }
+}

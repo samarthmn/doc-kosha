@@ -1,0 +1,53 @@
+---
+title: "Allow a link to open only once"
+description: "How DocKosha's one-time-open behaviour works — the link is consumed on the first successful open — plus what to use today, because the link editor does not expose a toggle for it."
+---
+
+A one-time-open link is consumed the first time someone successfully opens it. Every later attempt is refused.
+
+<Callout type="warn" title="There is no toggle for this in the link editor today">
+
+The one-time-open flag lives on the link record, is enforced by the server, and appears in the internal audit log as the **Open once** field. The link settings UI does **not** currently offer a control to switch it on, so you cannot enable it from the application. This page documents how it behaves where it is set, and what to use instead today.
+
+</Callout>
+
+## What the behaviour is
+
+When a link is flagged one-time-open, the server revokes it as part of the first successful resolve — that is, once a viewer has passed every gate the link carries (password, email verification, allow rules, NDA) and the content is released.
+
+From then on the link is revoked. Anyone opening it, including the person who just opened it, sees:
+
+> **Link Unavailable** — This document link is invalid or has been revoked.
+
+This is permanent. A consumed link cannot be un-consumed; you create a new link instead.
+
+### Two things worth knowing
+
+- **It is consumed per link, not per person.** The first successful open wins, whoever that is. A link scanner in a mail gateway, a chat client's preview fetcher, or a forwarded copy opened by a colleague can burn the link before your intended recipient ever clicks it. Pair it with a gate that only your recipient can pass — an allowlist, or email verification — so the first successful resolve really is theirs.
+- **It bounds new opens, not the session already granted.** Passing a link's gates issues an access session that lasts up to one hour and streams the document's bytes. The consuming viewer cannot reload the link — the reload is a fresh resolve and fails — but content already on screen stays on screen. As with every gate, once someone has seen a document you cannot un-see it for them.
+
+## What to use today
+
+These combinations get close to single-use behaviour with the controls the link editor does expose:
+
+| Goal                                      | Use instead                                                                                                                 |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| A link that dies quickly                  | A short [expiry](/docs/guides/gate-expiry) — minutes rather than days                                                       |
+| A link only one person can open           | An [allowlist](/docs/guides/gate-allow-and-blocklists) containing exactly one address, which also forces email verification |
+| Cut access the moment it is used          | Turn on **Email notifications** for the link so you are emailed on the first view, then delete the link                     |
+| Confirm it was opened before you close it | Check the **Analytics** tab for the link's first view, then delete the link                                                 |
+
+Deleting the link is the closest manual equivalent to consumption: it revokes the link permanently, produces the same _"invalid or has been revoked"_ message for viewers, and frees any custom slug it used.
+
+## Honest limits
+
+- **Single-use controls reach, not copying.** It stops the URL being reused. It does not stop the one viewer who did open the document from screenshotting, photographing, or — where downloads are enabled — saving it. Screenshot protection is a best-effort deterrent and no browser can block operating-system screen capture. See [Download and screenshot controls](/docs/guides/download-and-screenshot-controls).
+- **Failed attempts do not consume the link.** Only a successful resolve does. Wrong passwords and unverified emails leave the link intact.
+- **There is no "resend" for a consumed link.** Create a new link and send that.
+
+## Related
+
+- [Expire a link](/docs/guides/gate-expiry)
+- [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists)
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Audit log](/docs/guides/audit-log)

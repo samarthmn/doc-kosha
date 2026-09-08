@@ -1,0 +1,19 @@
+{
+  "eyebrow": "Customer Signals",
+  "title": "Trusted by teams running controlled document workflows",
+  "description": "See how teams use DocKosha to keep sensitive document workflows organized, controlled, and easy to share.",
+  "tags": ["Document workflows", "Controlled sharing", "Team visibility"],
+  "items": [
+    {
+      "id": "lucas",
+      "enabled": true,
+      "quote": "I first tried DocSend, and thought it was a very nice way to share my PDFs to my customers. However, once trial ended, I discovered the prices that were wayyyy too high. After some research, I found DocKosha, which meets all my requirements with a very low price (compared to DocSend), and is easier to use.\n\nSupport team has been very helpful. I suggested to be able to pick the language for customer side, and the feature has been added within a few days ! Didn't expect anything that quick !",
+      "name": "Lucas",
+      "role": "Manager",
+      "company": "GL HF SRL",
+      "companyType": "",
+      "avatarInitials": "L",
+      "storyHref": "/customers/gl-hf-docsend-alternative"
+    }
+  ]
+}

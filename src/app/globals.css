@@ -1,0 +1,982 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "video.js/dist/video-js.css";
+
+/* Tailwind v4 source scanning: explicitly include only real source files.
+   This prevents HTML-escaped classnames from Playwright artifacts from generating invalid CSS. */
+@source "../**/*.{js,jsx,ts,tsx,md,mdx}";
+@source not "../../test-results";
+@source not "../../playwright-report";
+@source not "../../.tmp";
+
+@custom-variant dark (&:is([class~="dark"] *));
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Internal document viewer: hide comment highlight overlays outside Comments tab */
+  [data-dk-comments-overlay="off"] .dk-internal-comment-highlight,
+  [data-dk-comments-overlay="off"] .dk-internal-comment-highlight-target {
+    display: none !important;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Loading indicators remain visible as state cues, but their unbounded
+       motion stops for users who request reduced motion. This central guard
+       also covers legacy call sites that predate Tailwind's motion variants. */
+    .animate-spin,
+    .animate-pulse,
+    .animate-bounce,
+    .animate-ping {
+      animation: none !important;
+    }
+
+    /* Video.js animates outside Tailwind's utility classes. Keep its loading
+       state visible while freezing the unbounded motion. */
+    .dk-video-player .vjs-loading-spinner {
+      animation: none !important;
+      visibility: visible !important;
+    }
+
+    .dk-video-player .vjs-loading-spinner::before,
+    .dk-video-player .vjs-loading-spinner::after {
+      animation: none !important;
+    }
+
+    /* Consumers pair this class with opacity-0; keep content visible when the
+       entrance animation is disabled. */
+    .animate-fade-in-up {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* App-UI motion. The `fade-in-up` keyframe above stays as-is: its 0.8s
+   duration and 20px travel are tuned for the marketing hero's staggered
+   reveal, and every one of its call sites is a marketing/blog page.
+
+   Page/tab content enter, folder-tree expand and empty-state entrances used to
+   live here as CSS keyframes. They are now owned by Motion for React via
+   `src/lib/motion.ts`, which can do what CSS could not — animate a branch to
+   its real `height: auto`, and slide one shared tab underline between triggers
+   instead of cross-fading separate bars. What remains below is deliberately
+   CSS: pure state tints and the toast lifecycle, which are cheaper as
+   transitions than as re-renders. */
+@layer utilities {
+  @keyframes dk-dropzone-pulse {
+    0%,
+    100% {
+      border-color: color-mix(in oklab, var(--primary) 45%, transparent);
+    }
+    50% {
+      border-color: color-mix(in oklab, var(--primary) 90%, transparent);
+    }
+  }
+
+  /* Upload dropzone while a drag is in progress. The single sustained loop in
+     the app UI: it is not decorative repetition but a live mirror of a drag the
+     user is still performing, and it stops the instant the pointer leaves or
+     the file is dropped. Border colour only — the zone must not resize under a
+     hovering pointer. */
+  .dk-dropzone-pulse {
+    animation: dk-dropzone-pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes dk-row-flash {
+    from {
+      background-color: color-mix(in oklab, var(--primary) 8%, transparent);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+
+  /* New table row after upload: primary/[0.08] flash fading over 800ms. */
+  .dk-row-flash {
+    animation: dk-row-flash 800ms cubic-bezier(0, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes dk-toast-in {
+    from {
+      opacity: 0;
+      transform: translate3d(16px, 16px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes dk-toast-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Toasts: slide in from the bottom-right, 200ms ease-out; auto-dismiss is a
+     plain 150ms ease-in fade (no slide back out). Referenced by the
+     `cssTransition` wired up in src/lib/toast.ts. */
+  .dk-toast-enter {
+    animation: dk-toast-in 200ms cubic-bezier(0, 0, 0.2, 1) both;
+  }
+
+  .dk-toast-exit {
+    animation: dk-toast-out 150ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dk-row-flash {
+      animation: none;
+      background-color: transparent;
+    }
+
+    /* The drop target must still read as armed without the loop, so the border
+       settles on the pulse's bright end rather than disappearing. */
+    .dk-dropzone-pulse {
+      animation: none;
+      border-color: color-mix(in oklab, var(--primary) 90%, transparent);
+    }
+
+    /* react-toastify's cssTransition helper waits on the node's
+       `animationend` event to start the auto-close timer and to actually
+       remove a dismissed toast from the DOM (unlike Radix's Presence, it has
+       no "no animation configured" fallback). Setting `animation: none` here
+       — as the rest of this file does for decorative motion — would mean
+       that event never fires and toasts would never auto-close or unmount.
+       Collapsing the duration to near-zero keeps that lifecycle intact while
+       staying visually imperceptible. */
+    .dk-toast-enter,
+    .dk-toast-exit {
+      animation-duration: 0.01ms;
+    }
+  }
+}
+
+/* Toast (react-toastify): route the progress track and status icon through
+   Nocturne tokens instead of vendor's hardcoded per-type hues. The bar itself
+   is already forced to `var(--primary)` uniformly via `progressClassName` in
+   src/lib/toast.ts, so the icon follows the same "one accent; shape (not hue)
+   tells success/error/info/warning apart" pattern. This also gives the
+   progress-bar wrapper matching corners of its own: react-toastify only
+   rounds its bottom-left corner and otherwise relies on `.Toastify__toast`'s
+   `overflow: hidden` for the bottom-right, which this app's toast
+   className/toastClassName overrides defeat.
+   react-toastify's stylesheet is a plain (unlayered) import that otherwise
+   outranks Tailwind's layered utilities regardless of source order, so
+   `!important` — not `@layer` placement — is what makes these stick. */
+.Toastify__progress-bar--wrp {
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
+}
+
+.Toastify__progress-bar--bg {
+  background: var(--muted) !important;
+}
+
+.Toastify__toast-icon svg {
+  fill: var(--primary) !important;
+}
+
+/* Nocturne surface primitives.
+   These live in `components`, not `utilities`, on purpose: `@layer theme, base,
+   components, utilities` makes every Tailwind utility outrank them, so a call site
+   can still override the surface with `bg-*`, `border-*` or `shadow-*`. Declaring
+   them in `utilities` made them win on source order and silently voided ~57
+   authored overrides. Longhand properties only — the `background:` shorthand also
+   resets `background-image`, which erases gradient grounds. */
+@layer components {
+  .dk-glass-surface {
+    background-color: var(--dk-surface-overlay);
+    border: 1px solid var(--border);
+    box-shadow: var(--dk-shadow-dialog);
+  }
+
+  .dk-glass-card {
+    background-color: var(--dk-surface-raised);
+    border: 1px solid var(--border);
+    box-shadow: var(--dk-shadow-card);
+    @apply transition-colors duration-200 hover:border-primary/35;
+  }
+
+  .dk-nocturne-surface {
+    background-color: var(--dk-surface-raised);
+    border: 1px solid var(--border);
+    box-shadow: var(--dk-shadow-card);
+  }
+
+  .dk-nocturne-overlay {
+    background-color: var(--dk-surface-overlay);
+    border: 1px solid var(--border);
+    box-shadow: var(--dk-shadow-dialog);
+  }
+
+  .dk-nocturne-rule {
+    border: 0;
+    height: 1px;
+    background-image: var(--dk-rule-fade);
+  }
+
+  .dk-nocturne-kicker {
+    @apply text-[0.6875rem] font-medium tracking-[0.1em] text-primary uppercase;
+  }
+}
+
+/*
+ * Mobile application chrome
+ *
+ * Chrome's edge-to-edge viewport exposes a dynamic safe-area inset while its
+ * bottom controls retract. Keep the tab bar's box size stable with the maximum
+ * inset and move the box with the live inset instead of changing its padding.
+ */
+.dk-authenticated-shell {
+  --dk-safe-area-max-inset-bottom: env(
+    safe-area-max-inset-bottom,
+    env(safe-area-inset-bottom, 0px)
+  );
+  --dk-mobile-app-header-height: calc(3.5rem + env(safe-area-inset-top, 0px));
+  --dk-mobile-app-tabbar-height: calc(
+    4rem + var(--dk-safe-area-max-inset-bottom)
+  );
+  --dk-mobile-app-header-offset: var(--dk-mobile-app-header-height);
+  --dk-mobile-app-tabbar-offset: var(--dk-mobile-app-tabbar-height);
+}
+
+@media (max-width: 63.999rem) {
+  .dk-authenticated-main {
+    padding-top: var(--dk-mobile-app-header-offset);
+    padding-bottom: var(--dk-mobile-app-tabbar-offset);
+  }
+
+  .dk-mobile-header {
+    position: fixed;
+    inset: 0 0 auto;
+  }
+
+  .dk-mobile-bottom-nav {
+    position: fixed;
+    right: 0;
+    left: 0;
+    bottom: calc(
+      env(safe-area-inset-bottom, 0px) - var(--dk-safe-area-max-inset-bottom)
+    );
+    padding-bottom: max(0.375rem, var(--dk-safe-area-max-inset-bottom));
+  }
+}
+
+/*
+ * iOS 26 WebKit can intermittently paint viewport-fixed bottom chrome at the
+ * wrong vertical position after momentum scrolling. On compact WebKit
+ * viewports, keep app chrome in normal flow and scroll only the main pane.
+ * Other engines retain the fixed shell and Chrome's edge-to-edge fast path.
+ */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 63.999rem) {
+    html:has(.dk-authenticated-shell),
+    body:has(.dk-authenticated-shell) {
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .dk-authenticated-shell {
+      --dk-mobile-app-header-offset: 0px;
+      --dk-mobile-app-tabbar-offset: 0px;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .dk-authenticated-frame {
+      display: flex;
+      height: 100%;
+      min-height: 0;
+      flex-direction: column;
+    }
+
+    .dk-authenticated-main {
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      padding-top: 0;
+      padding-bottom: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .dk-mobile-header,
+    .dk-mobile-bottom-nav {
+      position: relative;
+      inset: auto;
+      flex-shrink: 0;
+    }
+
+    body:has(.dk-authenticated-shell) .dk-mobile-floating-chrome {
+      position: absolute;
+    }
+  }
+}
+
+.dk-richtext {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--foreground);
+}
+
+.dk-richtext:focus {
+  outline: none;
+}
+
+.dk-richtext h1,
+.dk-richtext h2,
+.dk-richtext h3,
+.dk-richtext h4 {
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: 1.25em;
+  margin-bottom: 0.4em;
+}
+
+.dk-richtext h1 {
+  font-size: 1.5rem;
+}
+
+.dk-richtext h2 {
+  font-size: 1.3rem;
+}
+
+.dk-richtext h3 {
+  font-size: 1.15rem;
+}
+
+.dk-richtext h4 {
+  font-size: 1.05rem;
+}
+
+.dk-richtext p {
+  margin-bottom: 0.85em;
+}
+
+.dk-richtext ul,
+.dk-richtext ol {
+  margin-bottom: 0.85em;
+  padding-left: 1.5rem;
+}
+
+.dk-richtext ul {
+  list-style-type: disc;
+}
+
+.dk-richtext ol {
+  list-style-type: decimal;
+}
+
+.dk-richtext li {
+  margin-bottom: 0.35em;
+}
+
+.dk-richtext strong {
+  font-weight: 600;
+}
+
+.dk-richtext em {
+  font-style: italic;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root,
+.light {
+  color-scheme: light;
+  --background: #f7f7fa;
+  --foreground: #21222b;
+  --card: #fff;
+  --card-foreground: #21222b;
+  --popover: #fdfdff;
+  --popover-foreground: #21222b;
+  --primary: #5d5294;
+  --primary-foreground: #fff;
+  --secondary: #f0f1f6;
+  --secondary-foreground: #292b35;
+  --muted: #e8e9f0;
+  --muted-foreground: #646676;
+  --accent: #e7e5fe;
+  --accent-foreground: #2b2741;
+  --destructive: #b4233e;
+  --destructive-foreground: #fff;
+  --border: #d7d8e2;
+  --input: #8a8daa;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #796cbf;
+  --chart-1: #5d5294;
+  --chart-2: #2f718c;
+  --chart-3: #a15c46;
+  --chart-4: #6b7e45;
+  --chart-5: #9c6a9d;
+  --radius: 0.5rem;
+  --sidebar: #f1f1f6;
+  --sidebar-foreground: #292b35;
+  --sidebar-primary: #5d5294;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #e4e3ee;
+  --sidebar-accent-foreground: #2b2741;
+  --sidebar-border: #d7d8e2;
+  --sidebar-ring: #796cbf;
+  --dk-surface-raised: var(--card);
+  --dk-surface-overlay: var(--popover);
+  --dk-shadow-card: 0 1px 2px
+    color-mix(in srgb, var(--foreground) 8%, transparent);
+  --dk-shadow-dialog:
+    0 0 0 1px color-mix(in srgb, var(--foreground) 5%, transparent),
+    0 18px 50px color-mix(in srgb, var(--foreground) 18%, transparent);
+  /* Nocturne 48px faded rule. The fade is clamped to 25% per side so short rules
+     (dividers inside cards, "or continue with" splitters) still reach full opacity
+     in the middle instead of fading out to nothing end to end.
+     Consume with `bg-[image:var(--dk-rule-fade)]` — a bare `bg-[var(...)]` resolves
+     to background-color, and a gradient there is invalid, so the rule disappears. */
+  --dk-rule-fade: linear-gradient(
+    90deg,
+    transparent,
+    var(--border) min(48px, 25%),
+    var(--border) calc(100% - min(48px, 25%)),
+    transparent
+  );
+  --dk-rule-fade-vertical: linear-gradient(
+    180deg,
+    transparent,
+    var(--border) min(48px, 25%),
+    var(--border) calc(100% - min(48px, 25%)),
+    transparent
+  );
+  --dk-focus-width: 2px;
+  --dk-focus-offset: 2px;
+  --dk-disabled-opacity: 0.45;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #161826;
+  --foreground: #e9e9ed;
+  --card: #232532;
+  --card-foreground: #e9e9ed;
+  --popover: #292b39;
+  --popover-foreground: #f3f3f6;
+  --primary: #b5abfc;
+  --primary-foreground: #211d36;
+  --secondary: #1d1f2c;
+  --secondary-foreground: #dddde5;
+  --muted: #2e303e;
+  --muted-foreground: #aeb0be;
+  --accent: #3b3658;
+  --accent-foreground: #eeeafe;
+  --destructive: #f26b7e;
+  --destructive-foreground: #2e0d14;
+  --border: #3f424d;
+  --input: #6a6f82;
+  --ring: #b5abfc;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: #b5abfc;
+  --chart-2: #72b8cf;
+  --chart-3: #dc8a70;
+  --chart-4: #a5bd72;
+  --chart-5: #d69bcf;
+  --sidebar: #1d1f2c;
+  --sidebar-foreground: #e9e9ed;
+  --sidebar-primary: #b5abfc;
+  --sidebar-primary-foreground: #211d36;
+  --sidebar-accent: #303242;
+  --sidebar-accent-foreground: #f3f3f6;
+  --sidebar-border: #3f424d;
+  --sidebar-ring: #b5abfc;
+  --dk-shadow-card: 0 0 0 1px
+    color-mix(in srgb, var(--foreground) 7%, transparent);
+  --dk-shadow-dialog:
+    0 0 0 1px color-mix(in srgb, var(--foreground) 11%, transparent),
+    0 18px 50px rgb(0 0 0 / 55%);
+}
+
+.copper,
+.theme-copper {
+  color-scheme: light;
+  --background: #fbf7f3;
+  --foreground: #2c1810;
+  --card: #fffaf6;
+  --card-foreground: #2c1810;
+  --popover: #fffdfb;
+  --popover-foreground: #2c1810;
+  --primary: #904b20;
+  --primary-foreground: #fffaf6;
+  --secondary: #f4ebe4;
+  --secondary-foreground: #2c1810;
+  --muted: #ebddd2;
+  --muted-foreground: #76513e;
+  --accent: #ead3c2;
+  --accent-foreground: #2c1810;
+  --destructive: #b4233e;
+  --destructive-foreground: #fff;
+  --border: #d7c2b2;
+  --input: #b08666;
+  --ring: #995022;
+  --chart-1: #995022;
+  --chart-2: #b57842;
+  --chart-3: #6e7650;
+  --chart-4: #8f596e;
+  --chart-5: #4e7180;
+  --sidebar: #f4ebe4;
+  --sidebar-foreground: #2c1810;
+  --sidebar-primary: #86461e;
+  --sidebar-primary-foreground: #fffaf6;
+  --sidebar-accent: #ead8ca;
+  --sidebar-accent-foreground: #2c1810;
+  --sidebar-border: #d7c2b2;
+  --sidebar-ring: #995022;
+}
+
+.forest,
+.theme-forest {
+  color-scheme: light;
+  --background: #f6f9f5;
+  --foreground: #0f1f0f;
+  --card: #fbfdf9;
+  --card-foreground: #0f1f0f;
+  --popover: #fdfffc;
+  --popover-foreground: #0f1f0f;
+  --primary: #2a6b3a;
+  --primary-foreground: #fbfdf9;
+  --secondary: #eaf1e8;
+  --secondary-foreground: #0f1f0f;
+  --muted: #dfe9dc;
+  --muted-foreground: #516451;
+  --accent: #d2e4d0;
+  --accent-foreground: #0f1f0f;
+  --destructive: #b4233e;
+  --destructive-foreground: #fff;
+  --border: #c4d4c0;
+  --input: #739969;
+  --ring: #2d733e;
+  --chart-1: #2d733e;
+  --chart-2: #6b7e45;
+  --chart-3: #987448;
+  --chart-4: #3b7880;
+  --chart-5: #806383;
+  --sidebar: #eaf1e8;
+  --sidebar-foreground: #0f1f0f;
+  --sidebar-primary: #276536;
+  --sidebar-primary-foreground: #fbfdf9;
+  --sidebar-accent: #d8e6d5;
+  --sidebar-accent-foreground: #0f1f0f;
+  --sidebar-border: #c4d4c0;
+  --sidebar-ring: #2d733e;
+}
+
+.branding-watermark-overlay {
+  pointer-events: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.branding-watermark-overlay__text {
+  pointer-events: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+  transform: rotate(-40deg);
+  transform-origin: center;
+  opacity: 0.82;
+  max-width: 100%;
+  text-align: center;
+}
+
+.branding-watermark-overlay__line {
+  display: block;
+  white-space: nowrap;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.branding-watermark-overlay__line--primary {
+  font-weight: 600;
+  letter-spacing: 0.24em;
+}
+
+.branding-watermark-overlay__line--meta {
+  font-weight: 500;
+  text-transform: none;
+  opacity: 0.88;
+  font-size: 0.65em;
+}
+
+.branding-watermark-empty {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+.branding-watermark-empty__backdrop {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--background) 72%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.branding-watermark-empty__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: center;
+  text-align: center;
+  max-width: 220px;
+  color: color-mix(in srgb, var(--foreground) 52%, transparent);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.branding-watermark-empty__subtitle {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--foreground) 38%, transparent);
+}
+
+.lavender,
+.theme-lavender {
+  color-scheme: light;
+  --background: #f8f6fb;
+  --foreground: #1f1320;
+  --card: #fdfbff;
+  --card-foreground: #1f1320;
+  --popover: #fff;
+  --popover-foreground: #1f1320;
+  --primary: #704f95;
+  --primary-foreground: #fff;
+  --secondary: #efeaf4;
+  --secondary-foreground: #1f1320;
+  --muted: #e6dfed;
+  --muted-foreground: #66596f;
+  --accent: #ddd2ea;
+  --accent-foreground: #1f1320;
+  --destructive: #b4233e;
+  --destructive-foreground: #fff;
+  --border: #d0c4da;
+  --input: #9d84b2;
+  --ring: #73519a;
+  --chart-1: #73519a;
+  --chart-2: #4f758e;
+  --chart-3: #a45f72;
+  --chart-4: #767846;
+  --chart-5: #9b7048;
+  --sidebar: #efeaf4;
+  --sidebar-foreground: #1f1320;
+  --sidebar-primary: #68498b;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #e0d6e9;
+  --sidebar-accent-foreground: #1f1320;
+  --sidebar-border: #d0c4da;
+  --sidebar-ring: #73519a;
+}
+
+.midnight,
+.theme-midnight {
+  color-scheme: dark;
+  --background: #0c0f1a;
+  --foreground: #e4e7f0;
+  --card: #151a28;
+  --card-foreground: #e4e7f0;
+  --popover: #1b2131;
+  --popover-foreground: #e4e7f0;
+  --primary: #a8afff;
+  --primary-foreground: #14172a;
+  --secondary: #121724;
+  --secondary-foreground: #e4e7f0;
+  --muted: #232a3b;
+  --muted-foreground: #a4acbe;
+  --accent: #293253;
+  --accent-foreground: #e4e7f0;
+  --destructive: #f26b7e;
+  --destructive-foreground: #2e0d14;
+  --border: #30384b;
+  --input: #586789;
+  --ring: #a8afff;
+  --chart-1: #a8afff;
+  --chart-2: #6eb8d2;
+  --chart-3: #dd8a85;
+  --chart-4: #a5bd72;
+  --chart-5: #ca95cc;
+  --sidebar: #121724;
+  --sidebar-foreground: #e4e7f0;
+  --sidebar-primary: #a8afff;
+  --sidebar-primary-foreground: #14172a;
+  --sidebar-accent: #252c40;
+  --sidebar-accent-foreground: #e4e7f0;
+  --sidebar-border: #30384b;
+  --sidebar-ring: #a8afff;
+  --dk-shadow-card: 0 0 0 1px
+    color-mix(in srgb, var(--foreground) 7%, transparent);
+  --dk-shadow-dialog:
+    0 0 0 1px color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 18px 50px rgb(0 0 0 / 62%);
+}
+
+.ocean,
+.theme-ocean {
+  color-scheme: light;
+  --background: #f4f9fb;
+  --foreground: #0f1419;
+  --card: #f9fdff;
+  --card-foreground: #0f1419;
+  --popover: #fdfeff;
+  --popover-foreground: #0f1419;
+  --primary: #156586;
+  --primary-foreground: #fff;
+  --secondary: #e7f2f6;
+  --secondary-foreground: #0f1419;
+  --muted: #dcecf1;
+  --muted-foreground: #4f646c;
+  --accent: #cee7f0;
+  --accent-foreground: #0f1419;
+  --destructive: #b4233e;
+  --destructive-foreground: #fff;
+  --border: #bfd5dd;
+  --input: #6097aa;
+  --ring: #176d91;
+  --chart-1: #176d91;
+  --chart-2: #3b7f74;
+  --chart-3: #8e6f45;
+  --chart-4: #665b91;
+  --chart-5: #a65d68;
+  --sidebar: #e7f2f6;
+  --sidebar-foreground: #0f1419;
+  --sidebar-primary: #146080;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #d4e8ee;
+  --sidebar-accent-foreground: #0f1419;
+  --sidebar-border: #bfd5dd;
+  --sidebar-ring: #176d91;
+}
+
+.sunset,
+.theme-sunset {
+  color-scheme: light;
+  --background: #fbf6f3;
+  --foreground: #1f0a0a;
+  --card: #fffaf7;
+  --card-foreground: #1f0a0a;
+  --popover: #fffcfa;
+  --popover-foreground: #1f0a0a;
+  --primary: #9c4029;
+  --primary-foreground: #fff;
+  --secondary: #f5e9e3;
+  --secondary-foreground: #1f0a0a;
+  --muted: #ecdcd4;
+  --muted-foreground: #76534c;
+  --accent: #f0d0bf;
+  --accent-foreground: #1f0a0a;
+  --destructive: #a61f3a;
+  --destructive-foreground: #fff;
+  --border: #ddc2b5;
+  --input: #b98167;
+  --ring: #b2492f;
+  --chart-1: #b2492f;
+  --chart-2: #a36b34;
+  --chart-3: #71804a;
+  --chart-4: #4f7480;
+  --chart-5: #945d85;
+  --sidebar: #f5e9e3;
+  --sidebar-foreground: #1f0a0a;
+  --sidebar-primary: #913b26;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #efd6ca;
+  --sidebar-accent-foreground: #1f0a0a;
+  --sidebar-border: #ddc2b5;
+  --sidebar-ring: #b2492f;
+}
+
+/*
+ * pdf.js sizes `.pdfViewer .page` with `width: calc(var(--scale-factor) * …)`
+ * and a 9px border, assuming the browser default `box-sizing: content-box`.
+ * Tailwind's preflight sets `border-box` on every element, which silently
+ * subtracts the 18px of border from the page's content box — shrinking the
+ * canvas and text layer while our overlay hosts are sized to the full
+ * viewport, so watermarks, comment highlights and redaction boxes drift
+ * further off-target toward the right and bottom of every page.
+ * Restoring pdf.js's own assumption keeps page, canvas, text layer and
+ * overlay in one coordinate space.
+ */
+.pdfViewer .page {
+  box-sizing: content-box;
+}
+
+.dk-document-viewer .dk-pdf-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.dk-document-viewer .dk-pdf-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@media print {
+  /* Soft deterrent only (can be bypassed via devtools). Server-side enforcement
+     is handled in public link endpoints that gate/transform exportable bytes. */
+  .dk-document-viewer[data-export-allowed="false"] {
+    display: none !important;
+  }
+}
+
+.dk-video-player.video-js {
+  font-family:
+    var(--font-sans),
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: var(--foreground);
+  background-color: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.dk-video-player .vjs-big-play-button {
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary) 65%, transparent);
+  background-color: color-mix(in srgb, var(--background) 25%, transparent);
+  color: var(--primary);
+}
+
+.dk-video-player .vjs-control-bar {
+  background-color: color-mix(in srgb, #000 70%, var(--background));
+  border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+}
+
+.dk-video-player .vjs-button > .vjs-icon-placeholder,
+.dk-video-player .vjs-volume-level,
+.dk-video-player .vjs-play-progress {
+  color: var(--foreground);
+  background-color: var(--primary);
+}
+
+.dk-video-player .vjs-progress-control:hover .vjs-play-progress,
+.dk-video-player .vjs-progress-control:focus-within .vjs-play-progress {
+  background-color: color-mix(in srgb, var(--primary) 85%, transparent);
+}
+
+.dk-video-player .vjs-slider {
+  background-color: color-mix(in srgb, var(--muted) 65%, transparent);
+}
+
+.dk-video-player .vjs-volume-level {
+  background-color: color-mix(in srgb, var(--primary) 85%, transparent);
+}
+
+.dk-video-player .vjs-menu-content {
+  background-color: color-mix(in srgb, var(--popover) 90%, #000);
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+  input[type="datetime-local"]::-webkit-datetime-edit {
+    flex: 1;
+  }
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    margin-left: auto;
+  }
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}

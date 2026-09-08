@@ -1,0 +1,115 @@
+---
+title: "Restrict a link to specific viewers"
+description: "Allow or block individual email addresses (and user groups) on a share link, send invites to the people you allowed, and understand why blocked always wins and why exact addresses — not domains — are matched."
+---
+
+Allow and block rules bind a link to named people instead of to whoever holds the URL.
+
+## Allow specific people
+
+1. Open the document or data room and go to the **Share** tab.
+2. Create a **New Link**, or **Edit** an existing one.
+3. Open the **Access** tab.
+4. Under **Allowed emails**, type an address and click **Add email** (or press Enter). Repeat for each person.
+5. Save.
+
+Once the allowlist has at least one entry, **only** those addresses can open the link. Everyone else is refused.
+
+Addresses are normalised to lower case and de-duplicated. Adding one that is already there gives _"Email is already allowed"_; a malformed address gives _"Enter a valid email address"_.
+
+## Block specific people
+
+Under **Blocked emails**, add an address the same way. Blocked entries are denied even if they would otherwise be allowed.
+
+**Blocked always wins.** The field says so, and the server behaves that way in every path.
+
+A link can carry a blocklist without an allowlist. That combination means _everyone except these people_, which is broader than most people intend — use it deliberately.
+
+## Allow or block a whole group
+
+**Allowed groups** and **Blocked groups** list the workspace's user groups with their member counts. Tick a group to grant or deny everyone in it. Group membership is resolved at the moment a viewer tries to open the link, so adding someone to a group grants them access to every link that allows that group.
+
+<Callout type="info" title="Group rules use user groups">
+
+User groups and group-based access rules are ordinary application capabilities.
+Individual allowed and blocked email addresses work wherever the link settings
+permit them. See [User groups](/docs/guides/user-groups).
+
+</Callout>
+
+## Access rules require a verified email
+
+Adding any allow or block entry — email or group — makes the link require email verification, because the rule cannot be evaluated without knowing who the viewer is. An `OTP` chip appears in the summary panel.
+
+The check happens when the viewer **requests** the code, not after verifying it: an address that is blocked, or missing from the allowlist, is refused with _"Email not allowed for this link"_ and never receives a code. See [Gate a link with email verification](/docs/guides/gate-email-otp).
+
+## Send invites
+
+The **Invite emails** section decides whether allowed recipients hear about the link:
+
+- **Send invite emails now** — emails everyone on the allowlist (and members of allowed groups) as soon as the link is saved.
+- **Don't send invite emails** — nothing goes out; you share the URL yourself.
+
+After a link exists, **Resend invites** in the link editor sends again. It has a cooldown between sends, shown on the button as `Resend in 45s`.
+
+If invites fail to send, the link is still created — you get a warning telling you to use **Resend invites**.
+
+## Exact addresses only
+
+<Callout type="warn" title="Domain and wildcard patterns are not supported">
+
+Allow and block entries are matched as **exact email addresses**. There is no `@example.com` domain rule and no wildcard. To cover everyone at a company, add each address, or put them in a user group and allow the group.
+
+</Callout>
+
+## Overlaps between allow and block
+
+- **Direct entries resolve themselves.** Adding an address to the allowlist removes it from the blocklist, and vice versa. The two direct lists can never disagree.
+- **Group membership can disagree.** Someone can be on the allowlist directly while also belonging to a blocked group, or belong to both an allowed and a blocked group. The editor detects this and shows an **Overlapping group members** or **Allowed emails on blocklist** warning listing the affected addresses.
+- The overlap does not change the outcome — blocked still wins, so those people are denied — but it does block saving or updating a **preset** until you resolve it. Fix the group membership or remove the direct entry.
+- On a data-room link with **Advanced Level Control** active, an overlap between the ALC rules and the blocklist **does** block saving the link. The summary panel lists the addresses to fix.
+
+## Data rooms and ALC
+
+Data-room links can use per-room, per-folder, and per-document rules instead of a single flat allowlist. When **Advanced Level Control** is active, it becomes authoritative and the global allowlist is disabled — the panel says so, and it is greyed out. The blocklist still applies as a hard deny on top.
+
+Removing every ALC rule re-enables the global allowlist. See [Access lists](/docs/guides/access-lists).
+
+## What the viewer sees
+
+| Situation                                                   | Message                                                                                          |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Requesting a code from a blocked or non-allowlisted address | _"Email not allowed for this link"_                                                              |
+| Already verified as a different, now-denied address         | **Link Unavailable** — _"We were unable to open this document. The link may be unavailable."_    |
+| Denied by ALC on a data room                                | _"You don't have permission to access this document."_ with an option to try a different account |
+
+The middle case is deliberately vague and can be confusing for a legitimate viewer whose address was removed. Tell them to clear the link's session or open it in a private window and verify with the right address.
+
+## Fail-closed behaviour
+
+If DocKosha cannot read a link's access rules — a database error, for instance — it **denies access** rather than falling back to open. The same principle applies in the editor: if the rules fail to load while you are editing a link, saving is disabled and a **Retry** button appears, so a failed read cannot silently wipe rules that are already in place.
+
+## Honest limits
+
+- **Verification proves mailbox control, not identity.** Anyone who can read that inbox can pass. A shared alias like `deals@` grants everyone behind it.
+- **Rules do not stop copying.** They control who gets in. Downloads are off by default; screenshot protection is a best-effort deterrent that cannot block operating-system screen capture, screen recorders, or a camera.
+- **Removing someone is not instant for an open session.** Access sessions last up to an hour. Delete the link if you need access cut off immediately.
+- **A verified viewer is remembered for 30 days** in their browser, per link. They will not be asked to verify again during that period.
+
+## Troubleshooting
+
+| Symptom                             | Cause                                                                                                | Fix                                                           |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| An allowed viewer is refused        | Their address differs from the one on the list, or they are also blocked directly or through a group | Compare exact addresses; remove the block                     |
+| Nobody can get in                   | An allowlist exists and does not include them                                                        | Add the address, or clear the allowlist to make the link open |
+| Everyone can get in                 | Only a blocklist exists, which means "everyone except"                                               | Add an allowlist                                              |
+| A preset will not save              | Overlapping allow and block group members                                                            | Resolve the overlap listed in the warning                     |
+| Saving a data-room link is disabled | ALC rules and the blocklist overlap                                                                  | Remove the overlapping addresses                              |
+| Invites did not arrive              | SMTP delivery failed                                                                                 | Check SMTP configuration, then **Resend invites**             |
+
+## Related
+
+- [Gate a link with email verification](/docs/guides/gate-email-otp)
+- [User groups](/docs/guides/user-groups)
+- [Access lists](/docs/guides/access-lists)
+- [Invites and member levels](/docs/guides/invites-and-member-levels)

@@ -1,0 +1,108 @@
+{
+  "badge": "Secure Sharing Capabilities",
+  "title": "Virtual Data Room Features For Controlled Document Sharing",
+  "subtitle": "Room capabilities for teams that need high-fidelity viewing, multilingual public links, permissions, watermarking, DocYantra-backed redaction, and privacy-first analytics.",
+  "gridTitle": "Features that keep teams in control after the room goes live",
+  "gridSubtitle": "Use DocKosha for repeat diligence workflows, client-facing deal rooms, and sensitive document sharing with stronger controls than generic file tools, including multilingual public link experiences.",
+  "sections": [
+    {
+      "icon": "Shield",
+      "title": "Security that fits live deal work",
+      "description": "Protect confidential documents with encryption, dynamic watermarking, and room permissions designed for active external review.",
+      "href": "/security"
+    },
+    {
+      "icon": "FileText",
+      "title": "High-fidelity client-facing viewer",
+      "description": "Present CIMs, contracts, models, and diligence files cleanly across desktop and mobile with high-fidelity rendering through DocKosha Cloud’s validated processing path.",
+      "href": "/docyantra"
+    },
+    {
+      "icon": "Globe2",
+      "title": "Multilingual public links",
+      "description": "Set a workspace default language for public links, then override it per link when needed. DocKosha-owned viewer copy, gate screens, and recipient emails stay aligned for international sharing."
+    },
+    {
+      "icon": "Eye",
+      "title": "Engagement signals you can act on",
+      "description": "See what got opened, revisited, and downloaded with privacy-first analytics. Viewer-level identity appears only when your gates require it.",
+      "href": "/security"
+    },
+    {
+      "icon": "MessageCircleMore",
+      "title": "Verified commenting in context",
+      "description": "Keep review cycles moving with threaded comments pinned to highlighted text. Commenting requires verification, so feedback stays tied to real viewers."
+    },
+    {
+      "icon": "Clock",
+      "title": "Versioning without link churn",
+      "description": "Replace files without breaking room links. Keep version history with retention controls, preview, and one-click restore from the internal viewer."
+    },
+    {
+      "icon": "Users",
+      "title": "Virtual data rooms for diligence",
+      "description": "Organize folders for buy-side, sell-side, and diligence workflows, then control access with NDA or email gates, expirations, and granular allow rules down to folders and documents.",
+      "href": "/features/data-room"
+    },
+    {
+      "icon": "BarChart3",
+      "title": "Analytics that answer follow-up questions",
+      "description": "Track views, time per page, downloads, and engagement so teams know what got reviewed. Export viewer insights to CSV when needed."
+    },
+    {
+      "icon": "Lock",
+      "title": "Link-level controls and gating",
+      "description": "Customize each link: require verification, set allowlists or blocklists, apply presets, set expirations, limit downloads, and enforce viewer rules inside data rooms.",
+      "href": "/security"
+    },
+    {
+      "icon": "Link2",
+      "title": "Custom URLs",
+      "description": "Create cleaner room and document links with custom URL paths that make client-facing sharing look intentional.",
+      "href": "/features/custom-url"
+    },
+    {
+      "icon": "Scissors",
+      "title": "Secure PDF redaction",
+      "description": "DocKosha Cloud permanently removes sensitive information from PDFs and converted documents within its validated processing envelope. Save as a new file or replace the current version while preserving links and history.",
+      "href": "/features/redaction"
+    },
+    {
+      "icon": "ScrollText",
+      "title": "Audit trails",
+      "description": "Keep an owner-only audit log of key activity like uploads, deletes, renames, link changes, and access updates across documents and data rooms."
+    }
+  ],
+  "supported": {
+    "title": "Supported File Types for Online Viewing",
+    "subtitle": "DocKosha supports text, images, video, and audio. DocKosha Cloud converts supported modern Office formats — including documents with Chinese, Japanese, and Korean text — into PDFs for consistent viewing, watermarking, and analytics within its validated envelope. Legacy .doc, .ppt, and .xls uploads are not supported.",
+    "items": [
+      "Text: PDF, PPTX, DOCX, XLSX, XLSM, CSV, MD",
+      "Images: JPG/JPEG, PNG, WEBP",
+      "Video: MP4, MOV, AVI, MKV, WEBM",
+      "Audio: MP3, WAV, OGG, AAC"
+    ]
+  },
+  "privacy": {
+    "title": "Privacy-First Document Analytics",
+    "subtitle": "Get useful insights without over-collecting. Analytics are anonymized by default and designed to avoid storing unnecessary PII in external review workflows.",
+    "items": [
+      "Anonymized by default; viewer email is collected only when link settings require it",
+      "No raw IP storage; country is derived transiently",
+      "Email collection occurs only when explicit link settings (like Email Verification, NDA, or Allowlists/Blocklists) require it",
+      "CSV export is available for document viewer insights; broader exports (data rooms/workspace) are coming soon"
+    ]
+  },
+  "cta": {
+    "title": "Ready to run a cleaner data room?",
+    "subtitle": "Start with the room controls your team actually needs, then upgrade as volume, storage, and collaboration grow.",
+    "primaryButton": {
+      "text": "View pricing",
+      "href": "/pricing"
+    },
+    "secondaryButton": {
+      "text": "Book a walkthrough",
+      "href": "/contact"
+    }
+  }
+}

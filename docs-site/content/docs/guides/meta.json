@@ -1,0 +1,29 @@
+{
+  "title": "Guides",
+  "pages": [
+    "index",
+    "upload-and-manage-documents",
+    "document-versioning-and-restore",
+    "create-and-share-links",
+    "gate-password",
+    "gate-email-otp",
+    "gate-expiry",
+    "gate-one-time-open",
+    "gate-allow-and-blocklists",
+    "link-presets-and-custom-slugs",
+    "create-a-data-room",
+    "folders-and-structure",
+    "access-lists",
+    "invites-and-member-levels",
+    "nda-gates",
+    "watermarking",
+    "download-and-screenshot-controls",
+    "analytics",
+    "audit-log",
+    "user-groups",
+    "notifications",
+    "qa-feedback-and-comments",
+    "redaction",
+    "branding-and-custom-domains"
+  ]
+}

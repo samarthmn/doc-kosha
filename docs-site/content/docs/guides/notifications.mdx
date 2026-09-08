@@ -1,0 +1,81 @@
+---
+title: "Notifications"
+description: "Set your account security email preferences, turn on per-link view notifications, and understand which comment and lifecycle emails DocKosha sends."
+---
+
+DocKosha sends three kinds of email: **account security**, **activity on your content**, and **lifecycle and billing** messages. Only some of them are switchable, and this page says plainly which.
+
+Notifications are part of the one normal application edition.
+
+## Account security emails
+
+These preferences belong to your user account, not to a workspace, so they follow you across every workspace you belong to.
+
+1. Go to **Settings → Notifications**.
+2. Toggle **New-device login alerts** — an email when your account signs in from an unknown device.
+3. Toggle **Workspace security updates** — an email when your workspace access changes or is removed.
+4. Click **Save Preferences**.
+
+Both are on by default. Leaving them on is recommended: they are how you find out about access you did not expect.
+
+Two details worth knowing:
+
+- A new-device alert needs a device to compare against, so the first device on a brand-new account does not trigger one. Every later unrecognised device does, once per device.
+- Workspace security emails go to the **affected member** — the person whose access changed or was removed — not to the owner who made the change.
+
+## Get an email when a link is viewed
+
+This is set per link, not per account.
+
+1. Open the link's settings.
+2. Turn on **Email notifications** ("Notify the workspace when this link is viewed").
+3. Save the link.
+
+When the link is opened, DocKosha emails the **person who created the link** and the **workspace owner**. The email names the document and links straight to that document's analytics page.
+
+Honest limits:
+
+- View notifications fire for **document** links. Data room links do not send them.
+- The workspace needs an active entitlement; without one the notification is not sent.
+- There is no digest, threshold or quiet-hours control. Every qualifying view sends a message, so turn it off on high-traffic links and read [analytics](/docs/guides/analytics) instead.
+- Delivery is best effort. A failed send is logged and does not block the viewer.
+
+## Comment emails
+
+Comment notifications are automatic when comments are enabled on a link:
+
+- A **viewer** starts a thread or replies → the workspace owner is emailed, with the page number, the quoted text and the comment, plus a link to the internal comments panel.
+- A **workspace member** replies → the viewer who started the thread is emailed, in the link's public language, with a link back to the viewer.
+
+Nobody is emailed about their own message. There is no per-user toggle for comment emails today; the control you have is the **Allow comments** switch on the link. See [Q&A, feedback and comments](/docs/guides/qa-feedback-and-comments).
+
+## Lifecycle and billing emails
+
+DocKosha Cloud sends a small set of scheduled messages to the **workspace owner**:
+
+- setup reminders shortly after signup, while core setup is unfinished
+- a founder help message during an eligible trial
+- a trial-ending reminder
+- an inactivity nudge when an owner has not signed in for a while
+- billing events: payment failed, subscription cancelled, plan downgraded
+- a note when someone accepts a workspace invite
+
+Two things to know:
+
+- The reminder-style emails (setup, founder help, inactivity) follow the owner's onboarding-reminder preference, which is **on by default and not yet exposed as a toggle in Settings**. Only the two security switches above are user-editable today.
+- They suppress each other. An owner who has recently received a nudge will not also get the inactivity email, and emails stop once the condition no longer applies — for example, the trial reminder is skipped if the workspace already upgraded.
+
+Each lifecycle email is claimed once against a deduplication key before it is sent, so a retry cannot deliver the same message twice.
+
+Maintainer note: billing and plan messages are Cloud plumbing. External self-hosting is not currently available.
+
+## Sender addresses
+
+Product and security messages come from the notification sender address; the founder help message comes from the founder address with a matching reply-to. Authorized maintainers configure these in the internal environment; see [self-hosting](/docs/self-hosting) for reference only.
+
+## Related
+
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Analytics](/docs/guides/analytics)
+- [Q&A, feedback and comments](/docs/guides/qa-feedback-and-comments)
+- [Invites and member levels](/docs/guides/invites-and-member-levels)

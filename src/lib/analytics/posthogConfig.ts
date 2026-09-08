@@ -1,0 +1,26 @@
+export const DEFAULT_POSTHOG_HOST = "https://s.dockosha.com";
+
+export const POSTHOG_SESSION_RECORDING_BLOCK_SELECTOR = [
+  ".dk-document-viewer",
+  ".dk-document-viewer *",
+  ".dk-media-viewer",
+  ".dk-media-viewer *",
+  "input[type='password']",
+  "input[autocomplete='current-password']",
+  "input[autocomplete='new-password']",
+  "input[type='file']",
+  "input[name*='card' i]",
+  "input[id*='card' i]",
+  "input[name*='cvc' i]",
+  "input[id*='cvc' i]",
+  "input[name*='cvv' i]",
+  "input[id*='cvv' i]",
+  "[data-chat-composer]",
+  "[data-chat-composer] *",
+  "[data-composer]",
+  "[data-composer] *",
+  ".ph-no-capture",
+  ".ph-no-capture *",
+  "[data-ph-no-capture]",
+  "[data-ph-no-capture] *",
+].join(", ");

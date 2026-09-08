@@ -1,0 +1,66 @@
+---
+title: "Plans and limits"
+description: "The Cloud plan capacities enforced in code, what happens when each limit is reached, and the one-edition document-processing envelope."
+---
+
+DocKosha has one normal application edition. Cloud plans control hosted
+capacity and billing; they do not describe separate source editions. The repository is licensed under AGPL-3.0-or-later. Enterprise licensing is available only through a separate signed agreement; see [Commercial Licensing](/COMMERCIAL-LICENSING.md).
+
+## Cloud plan capacities
+
+These values come from `src/modules/billing/plans.ts` and are enforced server-side. Sizes are binary units — "250 MB" is 250 MiB, "5 GB" is 5 GiB.
+
+|                              | Free           | Essential             | Plus                  | Max                   |
+| ---------------------------- | -------------- | --------------------- | --------------------- | --------------------- |
+| Included storage             | 250 MB         | 5 GB                  | 30 GB                 | 200 GB                |
+| Bandwidth cap                | 2 GB per cycle | No cap (fair use)     | No cap (fair use)     | No cap (fair use)     |
+| Workspace members            | 1              | Unlimited             | Unlimited             | Unlimited             |
+| Upload formats               | PDF only       | All supported formats | All supported formats | All supported formats |
+| Previous versions kept       | None           | Owner-configurable    | Owner-configurable    | Owner-configurable    |
+| Data rooms                   | Unlimited      | Unlimited             | Unlimited             | Unlimited             |
+| Custom domains               | No             | Yes                   | Yes                   | Yes                   |
+| Remove "Powered by" branding | No             | Yes                   | Yes                   | Yes                   |
+| Trial available              | No             | Yes                   | No                    | No                    |
+
+Version retention is configured by the workspace owner in Subscription and Usage, from 1 to 20 **previous versions**; the current version is not counted. On the Free plan no previous versions are kept at all. See [document versioning and restore](/docs/guides/document-versioning-and-restore).
+
+Pricing is not documented here, because it belongs on the pricing page rather than in a reference that ages badly.
+
+## What happens when a limit is reached
+
+Limits produce specific, checkable responses rather than silent degradation.
+
+| Condition                                          | Result                                                                                                                     |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Upload would exceed included storage               | Upload refused, `403` with code `STORAGE_LIMIT_EXCEEDED`                                                                   |
+| Storage usage cannot be verified                   | Upload refused, `503` with code `USAGE_UNAVAILABLE` — the guard fails closed rather than allowing an unmetered upload      |
+| Non-PDF upload on the Free plan                    | Upload refused, `403` with code `FREE_PLAN_PDF_ONLY`                                                                       |
+| Inviting past the member limit                     | Invite refused by the plan guard                                                                                           |
+| Bandwidth cap reached, or projected to be exceeded | Public link resolution and asset delivery refused, `403` with code `BANDWIDTH_LIMIT_REACHED`                               |
+| Bandwidth usage cannot be verified                 | Also blocked — this evaluation fails closed                                                                                |
+| No active plan or trial on the workspace           | Public links resolve to `404 NOT_FOUND`, and Row Level Security blocks writes to documents, links, folders, and data rooms |
+
+That last row is worth reading twice: an entitlement lapse does not merely hide a billing banner, it takes shared links offline. A workspace that ends a paid plan should move to the Free plan rather than letting the subscription lapse into no plan at all.
+
+Billing, bandwidth metering, and plan enforcement are Cloud plumbing. They ship in the repository; external self-hosting is not currently available. Authorized maintainers can consult [Self-hosting](/docs/self-hosting) for reference.
+
+## Application capabilities
+
+Custom domains, user groups, advanced analytics, and versioning retention are
+ordinary application modules. Links and gates, data rooms, watermarking, NDA,
+redaction, audit trails, analytics, comments, Q&A, and version history are
+ordinary modules as well. Cloud plans may charge for hosted operations or
+limit capacity without moving a feature into a separate source edition.
+
+## Document processing
+
+DocYantra is the mandatory direct `0.0.25` dependency. It provides validated PDF
+and Office conversion, merge, watermark, page count, and redaction. Work
+outside its envelope fails closed; there is no provider-selection variable or
+fallback.
+
+## Related
+
+- [Reference](/docs/reference) — carries the capability matrix synced straight from the repository, plus the FAQ
+- [Self-hosting](/docs/self-hosting) — current availability and maintainer reference
+- [Security model](/docs/how-it-works/security-model) — where the entitlement check sits in the request path

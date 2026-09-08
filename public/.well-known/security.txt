@@ -1,0 +1,5 @@
+Contact: mailto:support@dockosha.com
+Expires: 2027-07-31T00:00:00.000Z
+Policy: https://dockosha.com/security
+Canonical: https://dockosha.com/.well-known/security.txt
+Preferred-Languages: en

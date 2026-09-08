@@ -1,0 +1,76 @@
+---
+title: "Branding and custom domains"
+description: "Verify your own hostname with CNAME and TXT records so share links are served from your domain, then set the company name, website and logo viewers see."
+---
+
+Two things happen on this page, in this order: you prove you own a hostname, and then you decide what viewers see in the header of every shared link.
+
+**Requires:** a configured custom-domain deployment and, on DocKosha Cloud, an
+active subscription on a plan that includes the hosted operation. Custom
+domains and white-label branding are ordinary application capabilities; see
+the [capability matrix](/docs/reference/capability-matrix).
+
+**Who can do this:** workspace owners. Everyone else sees a notice that only owners can manage branding and custom domains.
+
+## Add and verify your domain
+
+1. Go to **Custom domain** in the workspace navigation.
+2. Enter the hostname you want to serve links from, for example `docs.example.com`, and click **Add Domain**. The field validates the hostname before the button enables.
+3. The domain appears with status **Pending Verification** and DocKosha shows you the DNS records to create:
+   - a **CNAME** record whose name is your domain and whose target is the value shown (do not invent it — copy the target from the panel);
+   - a **TXT** record at `_cf-custom-hostname.<your domain>` carrying the ownership token;
+   - sometimes a second **TXT** record for SSL certificate validation. Some DNS providers display this one with a shortened host label; if it appears in your provider's panel, it is required for the certificate to issue.
+4. Create those records with your DNS provider. Each row has a copy button.
+5. Click **Verify Records**.
+
+DocKosha re-checks a few times automatically while records propagate, and tells you when it is still waiting. DNS changes can take up to 24–48 hours, so "still pending" is a normal answer, not a failure — come back and click **Verify Records** again.
+
+When both the hostname and its certificate are active, the status becomes **Verified** and your share links are served from your domain.
+
+### If verification does not pass
+
+The panel names the reason:
+
+- _DNS lookup failed_ — the hostname does not resolve yet; confirm it exists.
+- _Verification record not found yet_ — the TXT record is missing, or has not propagated.
+- _Still pending_ — records are correct but the certificate has not finished issuing. Retry in a few minutes.
+
+## Set what viewers see
+
+The company identity form stays locked until a domain is verified — branding you cannot vouch for is worse than no branding.
+
+1. With the domain verified, scroll to **Company identity** on the same page.
+2. Enter your **Company name**.
+3. The **Website** field is filled from your verified domain and locked to it.
+4. Upload a **logo** — PNG, JPEG, SVG or WebP, up to 2 MB.
+5. Generate the **header preview** to see exactly what a viewer will see.
+6. Save.
+
+Viewers then see your logo, your company name, a _Verified workspace_ marker and your domain in the viewer header, instead of the default DocKosha framing.
+
+### Removing "Powered by DocKosha"
+
+Whether the viewer header carries the _Powered by DocKosha_ line is decided by the workspace's plan. On a plan that allows white-label branding the line is dropped; otherwise it stays, regardless of your other branding settings.
+
+## Remove a domain
+
+1. Click the trash icon on the domain's row.
+2. Confirm.
+
+Removing a **verified** domain disconnects it and **existing links on that domain stop working immediately**. Removing a pending domain just discards the setup. Removal also deprovisions the hostname upstream, so re-adding it starts a fresh verification.
+
+## Limits and operator notes
+
+- A workspace holds **one custom domain at a time**. Remove the current one before adding another; the add form only appears when no domain is configured.
+- Custom domains are provisioned through Cloudflare for SaaS. A future authorized operator deployment would need a Cloudflare API token, zone ID and fallback origin configured. External self-hosting is not currently available.
+- If the domain configuration cannot be loaded, the panel says so and leaves any existing setup untouched rather than reporting "not verified".
+- Watermark branding is configured separately — see [watermarking](/docs/guides/watermarking). Watermarks are burned into the delivered PDF bytes server-side, not drawn over the page in the browser.
+- Notification emails come from the operator's configured sender addresses;
+  email white-labelling is not part of this guide.
+
+## Related
+
+- [Watermarking](/docs/guides/watermarking)
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Link presets and custom slugs](/docs/guides/link-presets-and-custom-slugs)
+- [Plans and limits](/docs/how-it-works/plans-and-limits)

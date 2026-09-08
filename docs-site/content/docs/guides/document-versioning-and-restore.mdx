@@ -1,0 +1,94 @@
+---
+title: "Document versioning and restore"
+description: "Replace a document without breaking its links, browse previous versions, preview and restore an earlier one, and set how many previous versions a workspace keeps."
+---
+
+Replacing a document keeps the same document — same identifier, same share links, same analytics history — and archives the content it replaced as a previous version.
+
+## Replace a document
+
+1. Open **Documents** and go to the folder holding the document.
+2. Upload a file with **the same filename** into that folder.
+3. In the **Review duplicate filenames** dialog, leave the row on **Replace** (the default) and click **Continue upload**.
+
+The new file becomes the current version. Every existing share link now serves it — you do not need to reissue links.
+
+Replacement obeys the same rules as a first upload: the Free plan accepts PDF only, and a replacement that would push the workspace past its storage limit is refused with _"Replacement blocked: storage limit would be exceeded"_ before anything changes.
+
+## Browse version history
+
+Open the document and stay on the **Document** tab. The **Version History** card lists previous versions newest first, by the time they were replaced, with the title, file type, and size of each.
+
+Badges tell you how each version is being kept:
+
+| Badge                     | Meaning                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Free included**         | The newest previous version. Retained and does not count toward storage                                 |
+| **Counts toward storage** | An older retained version whose bytes count against the workspace storage limit                         |
+| **Pruned**                | Metadata only. The file itself has been deleted and this version can no longer be previewed or restored |
+
+**Load more** pages through older entries, twenty at a time.
+
+## Preview a previous version
+
+Click **Preview** on any available version. It opens in a read-only viewer inside a dialog. Downloads are disabled in this preview, and viewing it does not record a view in analytics.
+
+Pruned versions cannot be previewed — the button is disabled.
+
+## Restore a previous version
+
+1. Click **Restore** on the version you want.
+2. Confirm the toast that says _"Version restored"_.
+
+Restoring is non-destructive to history: the content that was current is archived as a new previous version first, and then the selected version becomes current. Restoring never deletes the version you are moving away from — unless doing so pushes the document past the retention limit, in which case the oldest retained version is pruned as normal.
+
+Share links keep working throughout and immediately serve the restored content.
+
+## Set how many versions the workspace keeps
+
+Retention is a workspace-wide setting, not per document.
+
+1. Go to **Settings → Subscription**.
+2. Find **Document Versioning** — _"Configure how many previous versions to retain per document."_
+3. Set **Previous versions to keep (1-20)**.
+4. Save.
+
+Only workspace owners can change it. The newest previous version is always included and does not count toward storage; retained versions beyond that one do. Converted PDFs never count toward storage accounting.
+
+### Lowering the number deletes files
+
+If the new number is lower than the current one, DocKosha first shows a **Decrease impact preview** — how many documents, how many versions, and how many bytes will be pruned. To go ahead you must type `DELETE` into the confirmation field.
+
+Pruning deletes the stored files. Pruned versions become metadata-only rows, cannot be restored, and raising the number again does not bring them back — the new value applies to future replacements only.
+
+## Plan and tier requirements
+
+<Callout type="warn" title="Free workspaces keep only the current version">
+
+On the Free plan the retention limit is zero. Replacing a document overwrites it: no previous version is archived, the **Restore** action is disabled, and the settings panel shows _"Free workspaces keep only the current document version."_ Upgrade to Essential or above to retain and restore.
+
+</Callout>
+
+Version history, archiving on replace, browsing, previewing, restoring, and
+owner-configured retention are ordinary application capabilities. See [Plans
+and limits](/docs/how-it-works/plans-and-limits).
+
+## Analytics are version-aware
+
+View and page-dwell events are attributed to the exact content a viewer opened, not just to the document. When a viewer resolves a link, the server records which stored version they were served, so replacing a document does not retroactively move earlier views onto the new content. See [Analytics](/docs/guides/analytics).
+
+## Troubleshooting
+
+| Symptom                                                                    | Cause                                                         | Fix                                                   |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------- |
+| **Restore** is greyed out                                                  | Free plan, or the version is pruned                           | Upgrade the plan; pruned versions cannot be recovered |
+| "Older versions are currently unavailable"                                 | Retention pruned them                                         | Raise the retention number for future replacements    |
+| Uploading the same filename created a second document instead of a version | It went into a different folder, so the names did not collide | Move it to the right folder and replace there         |
+| Replacement refused on storage                                             | The new file plus retained versions exceed the plan limit     | Free up storage, lower retention, or raise the plan   |
+| A previous version will not preview                                        | It is pruned, or its stored file is missing                   | Pruned versions are metadata only                     |
+
+## Related
+
+- [Upload and manage documents](/docs/guides/upload-and-manage-documents)
+- [Analytics](/docs/guides/analytics)
+- [Audit log](/docs/guides/audit-log)

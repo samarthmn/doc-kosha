@@ -1,0 +1,95 @@
+---
+title: "Q&A, feedback, and comments"
+description: "Turn on text-anchored viewer comments, a one-way feedback button, and curated Q&A on a shared link, then read and reply from the workspace."
+---
+
+Three separate features share one idea — letting a viewer say something back — but they behave very differently. Pick the one that matches what you actually want.
+
+| Feature     | Direction                        | Viewer must verify email | Where you read it                            |
+| ----------- | -------------------------------- | ------------------------ | -------------------------------------------- |
+| Comments    | Two-way threads anchored to text | Yes                      | Document → **Comments**                      |
+| Feedback    | One-way, free text               | No                       | Stored against the link; no in-app inbox yet |
+| Curated Q&A | One-way, you write both sides    | No                       | You author it on the link                    |
+
+All three are part of the one normal application edition.
+
+## Comments
+
+Comments let a viewer highlight text in the PDF viewer and start a thread on that exact passage.
+
+### Turn comments on
+
+1. Open the settings for a **document** link.
+2. Turn on **Allow comments**.
+3. Save.
+
+Comments are available on document links. The panel notes that viewers must verify their email (OTP) before posting.
+
+### What the viewer does
+
+1. Opens the link and passes its gates.
+2. Verifies their email — posting without a verified email is refused.
+3. Selects text in the viewer and writes a comment (up to 1,000 characters).
+4. Replies in the thread, or resolves it.
+
+Only the person who started a thread can resolve or reopen it from the viewer, and a resolved thread stops accepting replies until it is reopened. A viewer can delete their own message; the message stays in the thread as `[deleted]` rather than vanishing.
+
+Viewers see other people's addresses masked, for example `a***@example.com`. They see their own address in full.
+
+### Read and reply from the workspace
+
+1. Open the document and go to **Comments**.
+2. Filter by link if the document has several.
+3. Select a thread to read it in context, with the page and the quoted passage.
+4. Type a reply and send it, or toggle **Resolved**.
+
+Any workspace member can reply and change the resolved state from this panel. A member can also start a thread: select text in the document, choose which share link the thread belongs to, and write the comment. Every thread belongs to a link, which is how viewers on that link see them.
+
+### What gets recorded and sent
+
+- Every thread creation, reply, resolve and reopen is written to the [audit log](/docs/guides/audit-log), with the page number, the quote and a short preview.
+- A viewer comment emails the workspace owner. A member reply emails the viewer who started the thread. See [notifications](/docs/guides/notifications).
+
+### Limits
+
+- Comments are text-anchored in the PDF viewer, so they apply to page-based documents.
+- If the workspace has no active entitlement (an active or trialing subscription record), comment requests are refused as _Link not found_.
+- There is no rich text, attachments or @-mentions.
+
+## Feedback
+
+The feedback button is a one-way channel: the viewer sends you a short note, and nothing is threaded.
+
+1. Open the link's settings.
+2. Turn on **Allow feedback** ("Show feedback button to viewers").
+3. Save.
+
+A **Feedback** button then appears in the viewer header, in the link's public language. The viewer types free text and submits it; the submission is stored against the workspace, the link and the shared resource. If the viewer had already verified an email on that link, the verified address is stored with the message; on an anonymous link the message is all you get.
+
+Honest limit: **there is no in-app feedback inbox today.** Submissions are recorded, but the product does not yet surface them in a dashboard view. If you need a conversation you can read and answer, use comments instead.
+
+## Curated Q&A
+
+Curated Q&A is content you write in advance — the questions you know you will be asked, answered once, shown next to the document.
+
+1. Open the link's settings.
+2. Turn on **Show questions & answers**.
+3. Add a **question** and its **answer**; repeat for each pair.
+4. Save.
+
+Viewers open the Q&A panel from the viewer header and read the pairs. The panel only appears when the toggle is on **and** at least one complete pair exists — an empty Q&A shows nothing rather than an empty box.
+
+Q&A pairs are stored on the link, so different links to the same document can carry different answers, and a [link preset](/docs/guides/link-presets-and-custom-slugs) can carry a standard set.
+
+Honest limits:
+
+- Curated Q&A is **read-only for viewers**. There is no way for a viewer to ask a new question through the viewer.
+- Q&A is available through the product's viewer and workspace surfaces. Any
+  workflow not described in this guide is not promised by this documentation.
+
+## Related
+
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Email OTP gate](/docs/guides/gate-email-otp)
+- [Audit log](/docs/guides/audit-log)
+- [Notifications](/docs/guides/notifications)

@@ -1,0 +1,83 @@
+---
+title: "Folders and structure"
+description: "Build a folder tree inside a DocKosha data room — create, nest, move, rename, and delete folders — and see how structure drives viewer navigation and access."
+---
+
+A data room's folder tree is the same tree your viewers navigate and the same tree your access rules are written against. Getting the structure right early saves rework later.
+
+Folders behave the same way in **My Documents** and inside a data room. This guide describes them in a room, because that is where structure carries the most weight.
+
+## Create a folder
+
+1. Open the room's **Documents** area.
+2. In the folder pane, choose **Create folder**.
+3. Type the folder name and confirm.
+
+The new folder is created inside whichever folder you are currently viewing, so navigate to the parent first if you want it nested.
+
+Folder names must be unique within their parent folder. Creating a second folder with the same name in the same place is rejected — rename one of them instead.
+
+## Nest folders
+
+Folders nest: open a folder, then create another folder inside it. The breadcrumb at the top of the list shows where you are, and the folder pane shows the whole tree.
+
+A structure that reads well to an outsider usually looks like this:
+
+```
+Series B diligence
+├── 01 Corporate
+├── 02 Financials
+│   ├── Historicals
+│   └── Model
+├── 03 Commercial
+└── 04 Legal
+```
+
+Numbering the top level keeps the order predictable and gives you a natural place to talk about "folder 02" on a call.
+
+## Move documents and folders
+
+You can move items two ways:
+
+- **Drag and drop** a document or folder onto a folder in the tree, or onto a folder row in the list.
+- Open the item's actions and choose **Move**, then pick the destination.
+
+Moving a folder takes its subfolders and documents with it.
+
+> **Access rules follow the tree, not the file.** A folder-level access rule grants everything inside that folder, including subfolders added later. Moving a document into a granted folder grants it. Moving it out revokes it. Re-check [access lists](/docs/guides/access-lists) after a large reorganization.
+
+## Rename a folder
+
+1. Open the folder's actions.
+2. Choose **Rename**.
+3. Enter the new name and confirm.
+
+Renaming does not change access rules — the rule is bound to the folder itself, not its name.
+
+## Delete a folder
+
+1. Open the folder's actions and choose **Delete**.
+2. Read the confirmation carefully. It tells you exactly how many documents and subfolders will be removed.
+3. Confirm.
+
+> **Deleting a folder deletes everything inside it** — every subfolder and every document within it. This cannot be undone from the app.
+
+If you only want to hide contents from a particular viewer, do not delete anything. Restrict the link instead with [access lists](/docs/guides/access-lists).
+
+## Upload straight into a folder
+
+Navigate into the folder first, then choose **Upload Document**. Files land where you are standing.
+
+If a file you upload has the same name as an existing file in that folder, DocKosha treats it as a new version of that document rather than creating a duplicate. You get a duplicate-review step where each conflicting file defaults to **Replace** (overwrite and keep the old content as a previous version); you can switch any item to **Keep Existing** to skip it. There is no "keep both" or auto-rename option. See [Document versioning and restore](/docs/guides/document-versioning-and-restore).
+
+## What structure changes for viewers
+
+- **Navigation.** Viewers browse the same folders with the same names and the same breadcrumb path.
+- **Folder downloads.** When downloads are enabled on a link, viewers can download the folder they are currently in as a ZIP, in addition to the whole room. See [Download and screenshot controls](/docs/guides/download-and-screenshot-controls).
+- **Scoped access.** A folder rule grants that folder, everything beneath it, and the documents inside. Parent folders on the path stay visible so the viewer can navigate to what they were granted — which means **parent folder names are visible even when their other contents are not**. Name folders accordingly if the names themselves are sensitive.
+
+## Next steps
+
+- [Room, folder, and document access lists](/docs/guides/access-lists)
+- [Upload and manage documents](/docs/guides/upload-and-manage-documents)
+- [Create a data room](/docs/guides/create-a-data-room)

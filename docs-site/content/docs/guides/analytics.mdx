@@ -1,0 +1,110 @@
+---
+title: "Analytics"
+description: "Read views, unique viewers, revisits, per-page dwell time and country breakdowns for a document, link or data room, and export viewer insights to CSV."
+---
+
+Analytics answer one question: what did people actually do with the thing you shared?
+
+**Availability.** Views, page dwell time, country aggregates, viewer insights,
+and the shipped CSV export are ordinary application capabilities. Cloud plans
+may limit hosted capacity. See the [capability matrix](/docs/reference/capability-matrix).
+
+Events are only recorded for workspaces with an active entitlement. A workspace whose subscription has lapsed stops accumulating new analytics.
+
+## Where analytics live
+
+| Surface                   | What it shows                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Dashboard                 | Workspace totals: views, unique viewers, downloads, most active content, views by country, recent documents and rooms |
+| Document → **Analytics**  | Everything below, scoped to one document and its links                                                                |
+| Data room → **Analytics** | Room-level engagement plus per-document activity for the room's links                                                 |
+
+There is no separate analytics app — you open the document or room you care about and switch to its Analytics tab.
+
+## Filter what you are looking at
+
+Every analytics panel starts with the same filter bar.
+
+1. **Link context** — choose **All links** or a single link. Metrics, page attention, viewer insights, country data and the CSV export all follow this choice.
+2. **Time period** — **All time**, **Last 7 days**, **Last 30 days**, or **Custom range**. A custom range is clamped to the last 365 days, which is as far back as analytics are kept.
+3. **Version** — this selector appears on a document only when that document has previous versions. Pick **Current version**, **All versions**, or a specific earlier version (labelled by when it was replaced). Analytics are recorded against the exact file that was served, so a replaced document keeps the history of the file it replaced.
+
+Use **Refresh** to re-fetch after new activity; recently loaded results are cached briefly.
+
+## What each metric means
+
+- **Total views** — every open of the document or room through the selected links.
+- **Unique viewers** — distinct viewers. A viewer is identified by a per-link, httpOnly cookie; if the link collects verified emails, the verified email is used instead. Honest limit: the same person in a new browser, or after clearing cookies, counts as a new viewer unless their email was verified.
+- **Revisits** — repeat visits from a viewer who had already opened the link.
+- **Downloads** — download events on links that allow downloading.
+- **Total time** and **Avg time / viewer** — accumulated viewing time, and that total divided by unique viewers.
+
+Not every metric appears on every panel — downloads, the version selector and the CSV export are document-level, while a data room panel adds per-document activity for the room. If nothing has happened yet, the panel says so rather than showing zeros dressed up as data.
+
+## Page attention (per-page dwell time)
+
+The **Page attention** chart shows how long viewers spent on each page across the selected links. Hover a bar for the exact duration.
+
+It is shown only for page-based documents — `pdf`, `pptx`, `ppt`, `docx`, `doc`, `xlsx`, `xls`, `xlsm`, `csv` and `md`. Images, audio and video have no page model, so no chart is rendered for them.
+
+Per-page numbers also depend on the document being viewed as a PDF. Conversion fails closed: when a non-PDF cannot be converted, the original file is served rather than a degraded one, and such a view records views and downloads but no per-page breakdown. See [conversion and supported formats](/docs/how-it-works/conversion-envelope).
+
+## Viewer insights
+
+**Viewer insights** breaks engagement down per person: total time, per-document time, and a per-page bar chart for each viewer.
+
+This only works when the link identifies its viewers:
+
+1. Open the link's settings.
+2. Turn on email verification for the link — viewer insights need a verified email, not a typed one.
+3. Turn on **Collect emails for analytics**.
+4. Save.
+
+Until a selected link has **Collect emails for analytics** enabled, the card reads _Viewer tracking disabled_. That is the honest state, not an error: links that verify an email but do not store it stay anonymous in analytics by design.
+
+## Views by country
+
+**Views by country** ranks the countries the selected links were viewed from.
+
+The country is derived server-side during the request: Vercel sends `x-vercel-ip-country` for direct Vercel requests, and the authenticated Cloudflare Worker forwards it for custom domains. **Raw IP addresses are never stored** — only a two-letter country code, and only as aggregated counts, so you cannot drill from a country back to a person.
+
+Treat it as approximate. Edge headers can be wrong, and VPNs and corporate proxies move people around the map.
+
+Maintainer note: a future operator deployment without Vercel or the authenticated Cloudflare Worker would record analytics but leave country rollups empty. External self-hosting is not currently available.
+
+## Export viewer insights to CSV
+
+The export is document-scoped and follows the filters you have set.
+
+1. Open a document's **Analytics** tab.
+2. Set **Link context**, **Time period** and **Version** to the slice you want.
+3. Click **Export CSV**.
+
+The file contains one row per viewer, link and content path, with these columns:
+
+`viewer_email`, `viewer_key`, `views`, `downloads`, `total_time_seconds`, `last_seen_at`, `link_id`, `link_name`, `document_id`, `content_path`.
+
+Every cell is quoted and escaped, and values starting with `=`, `+`, `-` or `@` are prefixed so a spreadsheet does not execute them as formulas.
+
+Honest limits: the export needs at least one link in scope, it covers one document at a time, and there is no room-level or workspace-level export today.
+
+## Privacy
+
+Two different systems are easy to confuse, so be precise about which one you are talking about.
+
+**Viewer analytics** — the numbers on this page — are your workspace's own first-party record of access to your own documents, produced server-side. Raw IP addresses are never stored, no third-party tracking scripts are loaded on the public viewer, and what is collected is controlled by your link settings, most directly by **Collect emails for analytics**. This record is not gated by the visitor cookie banner, and you remain responsible for whatever notice you owe your own recipients.
+
+**DocKosha's own product and marketing analytics** are what the cookie banner controls, and they are consent-gated and regional: in the EU, EEA and UK nothing loads until the visitor opts in; elsewhere it is default-granted with a persistent opt-out; a Global Privacy Control signal always wins. Those vendor scripts are not mounted on public viewer routes at all.
+
+Full detail, including cookies, retention and session-replay exclusions, lives in [privacy and analytics boundaries](/docs/how-it-works/privacy-and-analytics).
+
+## Retention
+
+Analytics are stored as daily rollups and pruned to the most recent **365 days** by a scheduled job. That is also why custom date ranges cannot reach further back than a year. Authorized maintainers can consult the [self-hosting reference](/docs/self-hosting) for future operator details.
+
+## Related
+
+- [Create and share links](/docs/guides/create-and-share-links) — the settings that decide what analytics can see
+- [Email OTP gate](/docs/guides/gate-email-otp) — required for viewer insights
+- [Audit log](/docs/guides/audit-log) — what your own team did, as opposed to what viewers did
+- [Notifications](/docs/guides/notifications) — get an email when a link is opened

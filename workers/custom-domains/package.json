@@ -1,0 +1,19 @@
+{
+  "name": "dockosha-custom-domains-worker",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "description": "Cloudflare Worker for DocKosha custom domain routing and R2 streaming",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260903.1",
+    "typescript": "^5.3.3",
+    "wrangler": "^4.60.0"
+  }
+}

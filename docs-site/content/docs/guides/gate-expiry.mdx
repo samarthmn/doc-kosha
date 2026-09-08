@@ -1,0 +1,77 @@
+---
+title: "Expire a link"
+description: "Set a date and time after which a share link stops working, extend or remove an expiry, and understand exactly when an already-open viewer loses access."
+---
+
+An expiry puts an end date on a link without you having to remember to delete it.
+
+## Set an expiry
+
+1. Open the document or data room and go to the **Share** tab.
+2. Create a **New Link**, or **Edit** an existing one.
+3. On the **Basics** tab, use the **Expiration** field to pick a date and time.
+4. Save.
+
+The field takes a date and a time down to the minute, in your browser's local time zone, and the **Expiration** box in the summary panel shows the resolved value. Leave the field empty to keep the link active indefinitely — the summary then reads `Never`.
+
+You cannot pick a moment in the past: a time at or before now snaps to the current minute.
+
+## Extend or remove an expiry
+
+Reopen the link and edit the same field:
+
+| You want to                    | Do this                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------ |
+| Push the deadline out          | Pick a later date and time, then save                                    |
+| Bring it forward               | Pick an earlier (still future) date and time, then save                  |
+| Remove the expiry              | Clear the field, then save. The summary returns to `Never`               |
+| Revive an already-expired link | Set a future date and time, then save. The same URL starts working again |
+
+Changes take effect on the next resolve — you do not need to reissue the URL.
+
+## What the viewer sees
+
+Once the moment passes, opening the link shows:
+
+> **Link Unavailable** — This document link has expired. If you believe this is a mistake, contact the sender for help.
+
+A data-room link shows _"This data room link has expired."_ No document metadata, file names, or bytes are released.
+
+## When it actually takes effect
+
+The expiry is compared against the current server time each time the link is **resolved** — every fresh open, reload, or return to the link.
+
+<Callout type="warn" title="A viewer already inside keeps a short window">
+
+Passing a link's gates issues a signed access session that lasts up to one hour and is used to stream the document's bytes. Someone who opened the link a minute before it expired can keep reading within that window. The next resolve fails, and no new viewer can get in. If you need access cut off immediately for everyone, delete the link instead — and even then, treat anything already rendered on a viewer's screen as out of your control.
+
+</Callout>
+
+## Expiry, revocation, and deletion
+
+| Action                 | Effect                                                              | Viewer message                                         |
+| ---------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
+| **Expiry passes**      | The link stops resolving. Can be revived by setting a new date      | _"This document link has expired."_                    |
+| **Delete the link**    | Permanent. The URL cannot be reissued, and its custom slug is freed | _"This document link is invalid or has been revoked."_ |
+| **Data room disabled** | The room stops serving on every link pointed at it                  | _"Link Unavailable"_                                   |
+
+## Choosing a date
+
+- **Time zones.** You pick in your local time; the moment is stored as an absolute instant, so a viewer in another region loses access at the same real-world moment, not at their local wall-clock equivalent.
+- **Expiry is not a reminder.** Nothing warns your viewers beforehand. If a deadline matters to them, tell them in the message that carries the link.
+- **Analytics survive expiry.** Views, dwell time, and the viewer log recorded before the link expired stay in reporting. See [Analytics](/docs/guides/analytics).
+
+## Troubleshooting
+
+| Symptom                                                             | Cause                                                                    | Fix                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| The date will not go into the past                                  | Deliberate — past values snap to now                                     | Delete the link to cut access immediately                   |
+| A viewer still has the document open after expiry                   | Their access session has up to an hour left                              | Delete the link; expect on-screen content to remain visible |
+| The viewer sees "invalid or has been revoked" rather than "expired" | The link was deleted, not expired                                        | Create a new link                                           |
+| The link stopped working before its expiry date                     | The workspace lost its active plan record, or the data room was disabled | Check **Settings → Subscription** and the room's status     |
+
+## Related
+
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Allow a link to open only once](/docs/guides/gate-one-time-open)
+- [Security model](/docs/how-it-works/security-model)

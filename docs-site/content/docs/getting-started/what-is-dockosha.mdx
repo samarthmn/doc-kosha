@@ -1,0 +1,91 @@
+---
+title: "What DocKosha is"
+description: "DocKosha shares documents and virtual data rooms behind server-enforced gates — passwords, email OTP, expiry, allow and block rules, and NDAs — with watermarks burned into delivered PDF bytes."
+---
+
+DocKosha is document sharing and virtual data rooms with access gates that are enforced on the server.
+
+You upload a file or build a room, create a share link, and decide what a viewer has to do before the content opens: enter a password, verify an email address, sign an NDA, be on an allowlist — or nothing at all. You then see who opened it, when, and for how long.
+
+## The two things you share
+
+|                      | **A document link**                                           | **A data room link**                                  |
+| -------------------- | ------------------------------------------------------------- | ----------------------------------------------------- |
+| What the viewer gets | One file in the viewer                                        | A browsable set of folders and files                  |
+| Typical use          | Sending a deck, a report, a contract                          | Diligence, fundraising, vendor review                 |
+| Extra controls       | Comments on the document                                      | Per-room, per-folder, and per-document access rules   |
+| Guide                | [Create and share links](/docs/guides/create-and-share-links) | [Create a data room](/docs/guides/create-a-data-room) |
+
+Both link types share the same gate set and the same viewer-side controls.
+
+## Gates are checked on the server
+
+When a viewer opens a share URL, the browser asks the server to resolve the link. The server checks that the link exists, that the workspace is entitled, that the host is allowed, that any required email has been verified, that the email is allowed and not blocked, that an NDA has been signed where one is required, and that the password matches. Only after those checks pass does it hand back document metadata and short-lived signed access.
+
+That means:
+
+- Removing a gate in the browser's developer tools does not open the document. The bytes are never sent in the first place.
+- A revoked or expired link stops resolving for everyone, including people who already have the URL. Someone who resolved it moments earlier holds an access session that runs for up to an hour; new opens fail immediately.
+- Downloads and watermarked files are produced by the server, not assembled in the page.
+
+The mechanics are documented in [Security model](/docs/how-it-works/security-model).
+
+## What DocKosha does not claim
+
+Three claims are worth stating plainly, because it is easy to over-promise them.
+
+<Callout type="warn" title="Screenshot protection is a deterrent, not a control">
+
+The screenshot shield blurs the viewer when focus is lost and reacts to common screenshot hotkeys. Browsers cannot block operating-system screen capture, screen recording software, or a camera pointed at the screen. Treat it as friction that discourages casual copying, not as a guarantee. See [Download and screenshot controls](/docs/guides/download-and-screenshot-controls).
+
+</Callout>
+
+<Callout type="info" title="Watermarks are burned into the delivered bytes">
+
+When a link applies a watermark, the server stamps it into the PDF bytes it hands to the viewer — it is not an overlay drawn by the browser that can be removed with an element inspector. If the watermarking step cannot complete, the request fails with an error instead of returning unmarked bytes. See [Watermark in bytes](/docs/how-it-works/watermark-in-bytes).
+
+</Callout>
+
+<Callout type="info" title="Conversion fails closed">
+
+DocYantra, the mandatory direct `0.0.25` dependency, converts supported non-PDF files to PDF for the viewer. Its documented capability and fidelity envelope is authoritative; work outside it returns a typed failure. If processing falls outside the
+validated envelope, the attempt fails and the viewer falls back to the
+original file. DocKosha never substitutes a partial or degraded rendering for
+the real document. See [Conversion envelope](/docs/how-it-works/conversion-envelope).
+
+</Callout>
+
+## Viewer analytics, honestly
+
+Viewer analytics are consent-gated and regional: in the EU, EEA, and the UK they require opt-in; elsewhere they are granted by default with an opt-out; a Global Privacy Control signal always wins. Raw IP addresses are never stored — country is derived transiently on the server and kept only as an aggregate count.
+
+A viewer's email address appears in analytics only when the link explicitly enables **Collect emails for analytics**, which also forces email verification so the address is one the viewer proved they control. Otherwise reporting uses a pseudonymous viewer key. See [Privacy and analytics](/docs/how-it-works/privacy-and-analytics).
+
+## Who it is for
+
+- Teams that send documents to people outside their organisation and need to know what happened to them.
+- Deal, diligence, and procurement work that needs a room with per-folder access rather than a shared drive folder.
+- Teams evaluating the public source while DocKosha Cloud remains the available service.
+
+## Available paths
+
+| Route             | What it is                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| **Source review** | Read and contribute to the AGPL-3.0-or-later source; external self-hosting is not currently available. |
+| **Use Cloud**     | DocKosha operates the service, upgrades, and managed infrastructure.                                   |
+
+DocKosha has one normal application edition. Its ordinary modules include
+custom domains, user groups, advanced analytics, and versioning retention.
+Cloud plans can charge for hosting or limit capacity without creating a second
+source edition. See [Self-hosting](/docs/self-hosting).
+
+The managed service uses the private mandatory DocYantra `0.0.25` dependency for validated PDF and Office conversion, merge,
+watermark burn-in, page counting, CSV conversion, and redaction. Work outside
+its documented envelope fails closed with a typed reason; there is no provider
+selection variable or fallback converter.
+Gotenberg is a future-only provider path, not an available external fallback.
+There is no external DocYantra package, SDK, API, token, or product-access path.
+
+## Next
+
+[Quickstart](/docs/getting-started/quickstart) — get a workspace you can sign in to.

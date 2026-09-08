@@ -1,0 +1,80 @@
+---
+title: "Redaction"
+description: "Use the redaction studio to remove content from a PDF server-side, then replace the document or save a redacted copy — and know exactly how it fails."
+---
+
+Redaction removes content from the PDF itself. The file DocKosha saves is the
+output of the DocYantra engine, not a black rectangle drawn over the page in
+your browser.
+
+Redaction is an application capability provided by the mandatory direct
+DocYantra `0.0.25` dependency. Work outside its validated envelope returns a
+typed `unsupported_feature` result; nothing is saved and no partially redacted
+file is produced. See [the conversion envelope](/docs/how-it-works/conversion-envelope).
+
+## Before you start
+
+- You need edit rights on the document's scope.
+- The source must be a **PDF**, or a non-PDF document whose DocYantra
+  conversion has **completed** within the validated envelope.
+  Conversion fails closed: a file that failed to convert is served as the
+  original, and redaction is not offered for it. A file still processing
+  returns _"This file is still processing. Redaction is available after PDF
+  conversion is complete."_
+- Images, audio and video cannot be redacted.
+
+## Redact a document
+
+1. Open the document and, on its **Overview**, click **Redact Document**. The button appears for a PDF or a non-PDF document with completed DocYantra conversion.
+2. Select the text or area you want gone. A small **Redact** button appears next to the selection.
+3. Click **Redact** to add a redaction box. Repeat across the pages.
+4. Remove a single box with the cross on it, or start over with **Clear All**.
+5. Click **Apply redaction** and choose:
+   - **Replace current document** — the redacted PDF becomes the document's current version. The previous file is retained as a version, subject to your [versioning and retention rules](/docs/guides/document-versioning-and-restore).
+   - **Save as new document** — name the file and keep the original untouched. The name is suggested for you and always ends in `.pdf`.
+6. Wait for the confirmation, then **open the saved file and check it**.
+
+Step 6 is not a formality. Redaction is a destructive transform on a real document; the only way to be certain about the result is to look at it.
+
+## The over-redaction warning
+
+If DocYantra reports that extra visible objects may have been removed beyond the areas you selected, DocKosha stops and shows **Review redaction result** before anything is saved.
+
+- **Cancel** keeps your selections so you can refine them, and discards the generated PDF.
+- **Confirm** saves the generated PDF as chosen.
+
+Nothing is written to the workspace until you confirm.
+
+## What happens server-side
+
+1. The source PDF is fetched from storage with a hard size bound.
+2. The page count is read, and any redaction that points past the last page is rejected.
+3. DocYantra performs the redaction within an operation deadline and returns new PDF bytes plus any warnings.
+4. Only then is the result uploaded and either registered as a new version or inserted as a new document. If that upload or registration fails, the uploaded object is cleaned up.
+
+Redaction is a server-side operation. The coordinates your browser sends are validated against page bounds before anything runs.
+
+## When it fails, it fails closed
+
+Every failure below returns an error and saves nothing — you never get a partially redacted or downgraded file:
+
+- **Password-protected PDF** — cannot be redacted.
+- **Unsupported PDF structure** — the engine cannot safely rewrite the file.
+- **The PDF could not be read** — malformed container.
+- **Too large** — the input exceeds the processing size bound (100 MB).
+- **Deadline exceeded** — the operation ran past its 90-second budget.
+- **Engine unavailable** — DocYantra could not start or is temporarily down; retry.
+
+## Limits
+
+- Up to **800** redaction boxes per document in one pass; the studio tells you when you hit the cap.
+- Redaction applies to the PDF that DocKosha stores. A copy a viewer already downloaded is beyond recall — see [download and screenshot controls](/docs/guides/download-and-screenshot-controls) for what those controls can and cannot do. Screenshot protection in particular is a best-effort deterrent; browsers cannot block OS-level screen capture.
+- There is no bulk or automated redaction, and no text-pattern detection. You select what goes.
+- Replacing a document with its redacted version does not write its own audit entry; saving a redacted copy shows up as a new document upload. The durable record of what changed is the document's version history.
+
+## Related
+
+- [Upload and manage documents](/docs/guides/upload-and-manage-documents)
+- [Document versioning and restore](/docs/guides/document-versioning-and-restore)
+- [Fail-closed conversion and the format envelope](/docs/how-it-works/conversion-envelope)
+- [Audit log](/docs/guides/audit-log)

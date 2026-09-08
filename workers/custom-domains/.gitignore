@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Wrangler
+.wrangler/
+.dev.vars
+wrangler.toml
+
+# Build output
+dist/
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo

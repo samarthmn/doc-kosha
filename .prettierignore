@@ -1,0 +1,17 @@
+/node_modules
+/dist
+/build
+/.next
+/.next-*
+/docs-site/.next
+/docs-site/.source
+/docs-site/content/docs/**/(synced-content)/**
+/playwright-report
+/test-results
+/tmp
+/complete-website-redesign
+/admin-analytics-console
+/public
+/src/types/generated
+/src/app/**/policy.html
+pnpm-lock.yaml

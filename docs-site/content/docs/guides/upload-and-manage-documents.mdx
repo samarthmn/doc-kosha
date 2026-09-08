@@ -1,0 +1,97 @@
+---
+title: "Upload and manage documents"
+description: "Upload files and folders into a DocKosha workspace, organise them into folders, rename, move, replace, and delete them — including what happens when a conversion or a deletion fails."
+---
+
+Everything you share starts as a document in the workspace. This page covers getting files in and keeping them tidy.
+
+## Upload files
+
+1. Open **Documents**.
+2. Click **Upload Document**.
+3. Click **Choose files**, or **Choose folder** to bring a whole tree across — the folder structure is recreated in DocKosha.
+4. Click **Start Upload**.
+
+Dragging files or folders onto the documents list opens the same dialog with your selection staged.
+
+The dialog names the destination folder and shows how much of the plan's storage is already used. Uploads that would exceed the storage limit are refused before any bytes leave the browser.
+
+### The upload queue
+
+The upload manager sits in the bottom-right corner and survives navigation inside the app. Per file you get a progress bar and the stage: `Preparing`, `Uploading`, `Paused`, `Finalizing`, `Indexing`, `Uploaded`, `Failed`, or `Cancelled`.
+
+- **Pause** and **Resume** work during upload; uploads are multipart, so a paused transfer resumes rather than restarting.
+- **Stop** cancels one file. The **X** in the header cancels everything still queued or in flight after a confirmation — files already committed to the workspace stay.
+- Failures stay visible for review instead of disappearing.
+- Refreshing or closing the tab during an active upload triggers a browser warning, because a full unload can interrupt the transfer.
+
+## Duplicate filenames become new versions
+
+If a file you upload matches the name of an existing document in the same destination, a **Review duplicate filenames** dialog appears before anything is written.
+
+- **Replace** (the default) keeps the same document, its links, and its analytics history, and archives the previous content as a version.
+- **Keep Existing** skips that file. Non-conflicting files in the same batch still upload.
+- **Apply Replace to all** / **Apply Keep Existing to all** set every row at once.
+
+Replacement is how versioning happens — see [Document versioning and restore](/docs/guides/document-versioning-and-restore).
+
+## Organise with folders
+
+- **Create folder** makes a folder in the current location.
+- Folders nest; uploading a folder recreates its structure.
+- Use **Move** on a document or folder to relocate it, choosing the destination in the dialog.
+- Use **Rename** to change a name. Renaming a document edits the name without the file extension; the extension is preserved.
+
+Folders in a data room are structured the same way but carry their own access rules — see [Folders and structure](/docs/guides/folders-and-structure).
+
+## Delete documents and folders
+
+Select one or more rows, or use the row action, and confirm.
+
+Deleting a folder deletes everything inside it, recursively. Deletion covers the current file and its converted PDF, every retained and pruned version, and any signed NDA PDFs attached to it.
+
+<Callout type="warn" title="Deletion is fail-closed and permanent">
+
+The server removes the stored objects before it finalises the database rows. If any required storage delete fails or is uncertain, the operation does not report success, the rows stay, and the row does not disappear from your list — the delete stays retryable rather than leaving orphaned bytes behind. When it does succeed there is no undo and no trash: the document, its versions, and its links are gone.
+
+</Callout>
+
+## Supported formats and the conversion envelope
+
+| Category             | Extensions                                         | Handling                                                                          |
+| -------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Documents and slides | `pdf`, `pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md` | PDF is served directly; mandatory DocYantra `0.0.25` handles validated conversion |
+| Images               | `jpg`, `jpeg`, `png`, `webp`                       | Rendered inline                                                                   |
+| Video                | `mp4`, `mov`, `avi`, `mkv`, `webm`                 | Inline playback where the browser supports the codec, otherwise download-only     |
+| Audio                | `mp3`, `wav`, `ogg`, `aac`                         | Inline playback where the browser supports it, otherwise download-only            |
+
+Legacy `doc`, `ppt`, and `xls` files cannot be uploaded.
+
+Conversion runs inside a validated envelope with a 50 MiB input cap for the non-PDF document formats. Mandatory DocYantra `0.0.25` handles PDF and Office conversion, merge, watermarking, page counting, CSV conversion, and redaction within that envelope. Outside the supported envelope — or on an error or timeout — the document is marked `Failed` and **the original file is served instead**. DocKosha does not substitute a partial or degraded rendering. Watermarking depends on a PDF, so a link that requires a watermark cannot serve a document whose conversion failed. See [Conversion envelope](/docs/how-it-works/conversion-envelope).
+
+## Plan limits
+
+| Limit                     | Free     | Paid plans            |
+| ------------------------- | -------- | --------------------- |
+| File types                | PDF only | All supported formats |
+| Included storage          | 250 MB   | 5 GB / 30 GB / 200 GB |
+| Monthly viewing bandwidth | 2 GB     | No cap (fair use)     |
+| Members                   | 1        | Unlimited             |
+
+Converted PDFs do not count toward storage accounting. See [Plans and limits](/docs/how-it-works/plans-and-limits).
+
+## Troubleshooting
+
+| Symptom                                  | Cause                                                                                            | Fix                                                                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Upload rejected: PDF only                | Free plan                                                                                        | Upload a PDF or change plan                                                                                     |
+| Upload blocked before it starts          | Storage limit would be exceeded                                                                  | Delete unused documents or raise the plan                                                                       |
+| Stage stops at `Indexing`, then `Failed` | The document row could not be written — usually a missing active plan record or a read-only role | Select a plan in **Settings → Subscription**; ask an owner or editor to upload                                  |
+| Processing does not reach `Ready`        | Conversion failed or timed out                                                                   | Expected fail-closed behaviour; the original file still opens. Retry the conversion where the action is offered |
+| A document reappears after you delete it | The deletion was not confirmed as complete                                                       | Retry the delete; the operation is idempotent                                                                   |
+
+## Related
+
+- [Document versioning and restore](/docs/guides/document-versioning-and-restore)
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Redaction](/docs/guides/redaction)

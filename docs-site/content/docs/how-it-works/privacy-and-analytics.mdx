@@ -1,0 +1,81 @@
+---
+title: "Privacy and analytics boundaries"
+description: "Why raw IP addresses are never stored for viewer analytics, how the regional consent model and Global Privacy Control govern DocKosha's own tracking, and which surfaces are excluded from session replay."
+---
+
+Two different analytics systems run in DocKosha, with different rules. Reviewers routinely conflate them, so this page separates them first.
+
+| System                              | What it is                                                                     | Who it is for                      | Governed by                                                       |
+| ----------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------- | ----------------------------------------------------------------- |
+| **Viewer analytics**                | A workspace's first-party record of access to its own documents and data rooms | The workspace that shared the link | Link settings, workspace entitlement, and the storage rules below |
+| **Product and marketing analytics** | DocKosha's own instrumentation of its marketing site and app                   | DocKosha                           | The regional consent model and Global Privacy Control             |
+
+## Viewer analytics
+
+When someone opens a shared link, the workspace that shared it gets a record of that access. Events are recorded server-side by `src/app/api/public/events/route.ts` for entitled workspaces. The event model is deliberately small: `view`, `download`, `page_view`, `section_time`, plus `feedback` and `qa` submissions.
+
+### Raw IP addresses are never stored
+
+Country is derived server-side from Vercel's `x-vercel-ip-country` header for direct Vercel requests or from the authenticated Cloudflare Worker for custom domains. It is stored only as **aggregated counts** per document and per link. A future authorized operator deployment without either provider would record analytics without a country rollup. External self-hosting is not currently available. Raw IP addresses are never written to an analytics row.
+
+The abuse limiter is held to the same rule: `src/server/rateLimit.ts` keys on link ids and hashed email addresses and explicitly refuses to key on IP addresses, hashed or otherwise, because a hashed IP is trivially re-identifiable.
+
+An IP address _can_ appear in one place: the dynamic watermark, when a workspace switches that value on. It is composed into that single delivered PDF and not persisted to analytics. See [Watermarks in the bytes](/docs/how-it-works/watermark-in-bytes).
+
+### Viewer identity
+
+- A viewer's **email address is captured only when the link already requires it** — email verification, an allow list, or an NDA gate.
+- Even then, it is **persisted to analytics only when the link has `collect_email_for_analytics` enabled**. Otherwise the viewer is keyed by an anonymous, per-link identifier.
+- Viewer cookies are `httpOnly` and scoped per link: `dk_acc_*` (access), `dk_ev_*` (verified email), `dk_anon_user_*` (anonymous viewer key). Page scripts cannot read them.
+- DocKosha does not use `localStorage` for viewer tracking. `sessionStorage` is used only for short-lived de-duplication of repeated events.
+
+### Storage and retention
+
+Analytics tables are written **only** by the service role — the row-level policies restrict every insert, update, and delete to it — and are readable by workspace members under Row Level Security, with a few internal tables restricted to the service role even for reads. A scheduled database job prunes viewer analytics at **365 days**.
+
+Configurable retention windows and expanded CSV exports (workspace-wide, data-room scoped, anonymous-only) are roadmap items and have not shipped. What exists today is the baseline viewer-insights CSV export and the 365-day prune.
+
+### No third-party tags on the viewer
+
+The consent-gated vendor scripts described below are mounted only in the marketing shell and the authenticated app layout. **They are not mounted on the public viewer routes**, so a recipient opening a shared link does not load Google Analytics, Google Ads, LinkedIn Insight, Meta Pixel, the Apollo tracker, or PostHog. All of those vendors are additionally disabled outside production deployments; a test-only flag exists so the automated consent tests can exercise the gate against stubbed hosts.
+
+### An honest boundary
+
+Viewer analytics are not gated by the visitor consent banner. They are the sharing workspace's own first-party record of access to its own document, produced server-side without third-party tags, and they never store raw IP addresses. The consent model below governs DocKosha's own tracking, not this record. A workspace controls what its viewer analytics collect through its link settings — most directly through the email-for-analytics setting — and remains responsible for whatever notice it owes its own recipients.
+
+## Product and marketing analytics: the consent model
+
+This is what the cookie banner controls. It applies to DocKosha's own instrumentation: PostHog (product analytics and session replay), Google Analytics, Google Ads, LinkedIn Insight, Meta Pixel, and the Apollo tracker.
+
+### Region is decided server-side
+
+`src/request-middleware.ts` reads the platform's country header, classifies it with `src/lib/analytics/consent-region.ts`, and writes the result to the `dk_analytics_region` cookie. There are three regions: `EU_EEA_UK`, `US`, and `REST`.
+
+**Unknown geography fails safe to EU/EEA/UK behaviour.** If no country header is present or the value is not a valid ISO code, the visitor is treated as if they were in the EU.
+
+### The rules
+
+1. **EU, EEA, and UK visitors get nothing until they opt in.** No analytics vendor loads, and no session replay runs, until the visitor makes an explicit choice in the banner.
+2. **Everywhere else is default-granted with a persistent opt-out.** Analytics load by default, and the visitor can turn them off from the banner or from settings; the choice persists in a cookie.
+3. **Global Privacy Control always wins.** When the browser sets `navigator.globalPrivacyControl`, analytics and session replay are forced off regardless of region and regardless of any stored consent. A stored "granted" state is overwritten with a denied state the next time GPC is seen.
+
+Consent state lives in the `dk_analytics_consent` cookie as a structured record: version, timestamp, region, the analytics and replay decisions, and whether GPC was observed. Replay can never be on while analytics is off. Older `granted` / `denied` cookie values are **not** accepted as explicit consent in the EU, EEA, and UK: such a cookie is deleted and a fresh choice is required.
+
+### Session replay is masked and blocked
+
+Session replay only runs when analytics consent is granted, and it is masked when it does run: all inputs are masked, and sensitive surfaces are blocked from capture entirely. "Blocked" means the DOM nodes are excluded from the captured snapshot, not merely obscured.
+
+Excluded surfaces include document viewers, media players, file upload controls and dialogs, password and payment inputs, and chat and composer panes. The public document viewer carries the no-capture markers directly.
+
+## Known limits, stated plainly
+
+- **Region comes from an edge header.** A VPN, a corporate proxy, or a platform that does not supply the header changes the classification. Unknown geography defaults to the strictest behaviour, which is the safe direction, but it is not identity-grade geolocation.
+- **Consent lives in a cookie.** Clearing cookies re-runs the decision, and on a fresh EU/EEA/UK visit that means the banner appears again with nothing loaded until a choice is made.
+- **Country in viewer analytics is approximate.** It comes from a trusted edge or Worker header, which can be wrong, and it is stored only as an aggregate count — you cannot drill from a country back to a person.
+- **Per-page analytics require a converted PDF.** A document served from its original file records views and downloads but no per-page breakdown. See [Conversion and supported formats](/docs/how-it-works/conversion-envelope).
+
+## Related
+
+- [Analytics guide](/docs/guides/analytics) — reading the numbers in the product
+- [Security model](/docs/how-it-works/security-model) — cookies, gates, and abuse limits
+- [Plans and limits](/docs/how-it-works/plans-and-limits) — which analytics depth belongs to which tier

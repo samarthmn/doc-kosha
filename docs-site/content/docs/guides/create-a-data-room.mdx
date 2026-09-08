@@ -1,0 +1,84 @@
+---
+title: "Create a data room"
+description: "Create a virtual data room in DocKosha, add documents and folders, and share the whole room behind one gated link."
+---
+
+A data room is a folder-structured collection of documents inside your workspace that you share as a single destination. Instead of sending one link per file, you send one link to the room and control what each viewer can reach.
+
+Use a data room for diligence, board packs, vendor reviews, and any process where the set of documents grows while the link stays the same.
+
+## Before you start
+
+- On DocKosha Cloud you need an active subscription or trial. When a workspace is not entitled, its public links stop resolving and return a not-found response — deliberately indistinguishable from an invalid link.
+- On the Cloud Free plan, uploads are PDF-only and the workspace is limited to a single member (the owner). See [Plans and limits](/docs/how-it-works/plans-and-limits).
+
+## Create the room
+
+1. Open **Data Rooms** from the sidebar.
+2. Choose **Create Data Room**.
+3. Give the room a name — something a viewer will recognize, like `Series B diligence`.
+4. Add a description if it helps your team. Viewers do not need it; it is for internal orientation.
+5. Choose **Create**.
+
+The room opens with five areas:
+
+| Area          | What it is for                                                    |
+| ------------- | ----------------------------------------------------------------- |
+| **Documents** | Upload files, build folders, and manage the room's contents.      |
+| **Share**     | Create and manage the public links that expose the room.          |
+| **Access**    | Decide which of your teammates can open the room inside DocKosha. |
+| **Analytics** | See views, viewers, and per-link engagement.                      |
+| **Audit log** | Review the recorded history of activity on the room.              |
+
+## Add documents
+
+1. Go to the room's **Documents** area.
+2. Choose **Upload Document** and pick the files.
+3. Wait for processing to finish before sharing.
+
+A few things happen during upload:
+
+- Non-PDF document formats (`pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md`) are accepted uploads. The mandatory direct DocYantra `0.0.25` dependency converts them within its validated envelope. Page-level analytics and burned-in watermarks depend on a completed PDF.
+- Conversion **fails closed**. If a document falls outside the validated conversion envelope, the conversion attempt fails rather than producing a degraded file, and DocKosha serves the original upload instead. You never receive a silently mangled document. See [The conversion envelope](/docs/how-it-works/conversion-envelope).
+- Images, audio, and video are stored and served as originals — they are not converted to PDF and cannot carry a burned-in PDF watermark.
+- Uploading a file whose name already exists in the same folder triggers the duplicate review flow, which creates a new version instead of a second file. See [Document versioning and restore](/docs/guides/document-versioning-and-restore).
+
+Once you have more than a handful of files, organize them: see [Folders and structure](/docs/guides/folders-and-structure).
+
+## Share the room
+
+1. Go to the room's **Share** area.
+2. Choose to create a link and give it a name. The name is internal — it is how you will tell links apart in analytics and the audit log.
+3. Turn on the gates you need. Every gate is enforced on the server, not in the browser:
+   - [Password](/docs/guides/gate-password)
+   - [Email verification (OTP)](/docs/guides/gate-email-otp)
+   - [Expiry](/docs/guides/gate-expiry)
+   - [One-time open](/docs/guides/gate-one-time-open)
+   - [Allow and blocklists](/docs/guides/gate-allow-and-blocklists)
+   - [NDA](/docs/guides/nda-gates)
+4. Decide what viewers may take away under **Allow downloads** and **Screenshot protection**. Read [Download and screenshot controls](/docs/guides/download-and-screenshot-controls) first — screenshot protection is a deterrent, not a block.
+5. Save the link and copy the share URL.
+
+You can create several links to the same room with different gates — one for a bidder who gets everything, one for an advisor who gets a single folder. Per-viewer scoping inside one room is covered in [Room, folder, and document access lists](/docs/guides/access-lists).
+
+## Give your own team access
+
+The public link controls outside viewers. Your teammates reach the room through workspace membership instead:
+
+- The workspace owner always has access, implicitly.
+- Other members reach it either through workspace-wide **Data rooms access**, or through an explicit grant on this specific room.
+
+Set that on the room's **Access** area, or in workspace settings. See [Invites and member levels](/docs/guides/invites-and-member-levels).
+
+## Limits worth knowing
+
+- **Cloud Free plan:** PDF-only uploads, a storage cap, a monthly public-download bandwidth cap, and a single workspace member. Teammate invites are unavailable until you upgrade.
+- **Entitlement:** if a Cloud subscription lapses, the app sends you to the billing settings to fix it, and the room's public links stop resolving until it is restored.
+- **Conversion:** the format envelope is real and finite. A file that fails conversion is still viewable — it is served as the original upload — but it will not get page-level analytics or a burned-in watermark.
+
+## Next steps
+
+- [Folders and structure](/docs/guides/folders-and-structure)
+- [Room, folder, and document access lists](/docs/guides/access-lists)
+- [Watermarking](/docs/guides/watermarking)
+- [Analytics](/docs/guides/analytics)

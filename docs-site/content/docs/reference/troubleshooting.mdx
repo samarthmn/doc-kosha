@@ -1,0 +1,439 @@
+---
+title: "Troubleshooting"
+description: "Symptom, likely cause, and what to check for DocKosha upload failures, typed conversion reason codes, expired or revoked link access, OTP email delivery, rate-limit lockouts, and custom-domain verification."
+---
+
+Organised by symptom. Each entry names the likely cause and the specific thing to
+check, so you can stop guessing after one or two steps.
+
+Two behaviours explain most confusion on this page:
+
+- **Processing fails closed.** Outside its validated envelope, the document
+  engine refuses the job and returns a stable typed reason code instead of
+  producing a degraded result. A failed conversion falls back to serving the
+  original uploaded file — never a partial or lower-fidelity substitute.
+- **Access failures are deliberately vague to viewers.** Several responses are
+  identical by design so that an attacker cannot use error messages to map what
+  exists or how close a guess was. That is a feature, and it makes some
+  symptoms below look ambiguous from the viewer's side.
+
+## Upload failures
+
+### The file is rejected immediately with "Unsupported file type"
+
+**Likely cause:** the extension is not on the supported list.
+
+**What to check:**
+
+1. Confirm the extension is one of `pdf`, `pptx`, `docx`, `xlsx`, `xlsm`, `csv`,
+   `md`, `jpg`, `jpeg`, `png`, `webp`, `mp4`, `mov`, `avi`, `mkv`, `webm`,
+   `mp3`, `wav`, `ogg`, `aac`.
+2. Check for a missing or doubled extension — validation reads the extension,
+   not the file's contents, so `report.pdf.txt` is a `.txt` file.
+3. Legacy Office formats (`doc`, `ppt`, `xls`) are not on the list. Re-save them
+   in the modern format first.
+
+### "Free workspaces support PDF uploads only"
+
+**Likely cause:** the workspace is on the Free plan, which allows PDF uploads
+only.
+
+**What to check:** confirm the plan in **Subscription & Usage**. This guard runs
+on upload _and_ on conversion, so a non-PDF file cannot get in through a retried
+conversion either. Upgrade the workspace, or convert the file to PDF before
+uploading.
+
+### "Storage limit reached. Delete files or upgrade your plan."
+
+**Likely cause:** the projected storage after this upload would exceed the
+plan's allowance (250 MB on Free, 5 GB Essential, 30 GB Plus, 200 GB Max).
+
+**What to check:**
+
+1. Current usage in **Subscription & Usage**.
+2. Retained previous versions. Replacing a file archives the prior content as a
+   previous version, and retained versions occupy storage. Lowering retention
+   prunes the oldest previous versions first; pruned versions survive as
+   metadata-only history rows that do not contribute to storage size.
+
+Note that replacing an existing document is measured as a _delta_: the size of
+the document being replaced is subtracted before the new size is added, so a
+same-size replacement does not push you over the line on its own.
+
+### "Unable to verify workspace storage usage"
+
+**Likely cause:** the usage lookup itself failed, so the upload was refused
+rather than allowed through unmeasured.
+
+**What to check:** this is transient and fails closed on purpose. Retry. If it
+persists on a self-hosted install, check database connectivity and the server
+logs for a `[plan-guards]` entry.
+
+### Inviting a teammate fails with a member limit
+
+**Likely cause:** Free workspaces include one member — the owner.
+
+**What to check:** the plan. Upgrading lifts the member cap; there is no way to
+add a second member on Free.
+
+### A duplicate filename triggers a "Review duplicate filenames" dialog
+
+**Not a failure.** Conflicts are resolved per destination folder plus filename,
+case-insensitively. Each conflicting file defaults to **Replace**, which
+overwrites the current content and archives the old content as a previous
+version while keeping the same document identity. You can switch any item to
+**Keep Existing** to skip it. There is no "keep both" or auto-rename behaviour.
+
+## Conversion failures and their reason codes
+
+Every conversion failure carries a machine code end to end. No layer guesses at
+the cause by reading message prose, and the internal diagnostic detail — the
+machine sub-codes an operator sees in logs — is stripped from the public
+response. Viewers only ever see the fixed message for the code.
+
+| Code                  | What the requester sees                             | HTTP | Retry worth it? |
+| --------------------- | --------------------------------------------------- | ---- | --------------- |
+| `invalid_input`       | The document request is invalid.                    | 400  | No              |
+| `unsupported_format`  | This file format is not supported.                  | 415  | No              |
+| `unsupported_feature` | This document uses an unsupported feature.          | 422  | No              |
+| `missing_glyph`       | This document contains unsupported text.            | 422  | No              |
+| `missing_asset`       | A required document asset is unavailable.           | 422  | No              |
+| `password_protected`  | Password-protected documents are not supported.     | 422  | No              |
+| `malformed_container` | This document could not be processed.               | 422  | No              |
+| `resource_limit`      | This document exceeds processing limits.            | 413  | No              |
+| `invalid_output`      | The document processor returned an invalid result.  | 502  | No              |
+| `internal_error`      | The document could not be processed.                | 502  | No              |
+| `protocol_error`      | The document could not be processed.                | 502  | No              |
+| `deadline_exceeded`   | The document operation timed out. Please try again. | 504  | **Yes**         |
+| `queue_busy`          | The document processor is busy. Please try again.   | 429  | **Yes**         |
+| `worker_boot_failed`  | The document processor is temporarily unavailable.  | 503  | **Yes**         |
+| `engine_unavailable`  | The document processor is temporarily unavailable.  | 503  | **Yes**         |
+| `trap`                | The document could not be processed.                | 502  | **Yes**         |
+
+### What to check, by code
+
+**`resource_limit`** — the input exceeded a processing limit: 50 MiB for a
+conversion, 100 MiB for PDF processing or a merged download, 100 documents or
+500 MiB for a data room ZIP. Reduce the input — split a large deck, compress
+embedded media — and re-upload. A file that stays over the limit can still be
+shared; the viewer serves the original instead of a converted PDF, with the
+consequences listed below.
+
+**`unsupported_format`** — the format is outside the engine's validated
+envelope, even though the extension passed upload validation. Re-save in a
+supported modern format.
+
+**`unsupported_feature`** — a specific construct in the document is outside the
+envelope. Known examples that fail closed rather than rendering approximately:
+SmartArt without its pre-resolved drawing fallback, EMF/WMF images, OLE
+previews, advanced equation layouts such as matrices and equation arrays, 3-D,
+surface, radar, stock, bubble and combo charts, spreadsheet icon-set conditional
+formatting, colour emoji, and vertical CJK text. Removing or flattening the
+construct — for example, exporting the slide to PDF from the authoring
+application — is the reliable workaround.
+
+**`missing_glyph`** — the document requests characters that no registered font
+can cover. Packaged fonts cover Latin-1, Greek, Cyrillic, CJK, Arabic, Hebrew,
+Devanagari, Thai, and monochrome emoji. Check for an unusual script, private-use
+characters, or a symbol font the document expects to be installed.
+
+**`missing_asset`** — a required visible image could not be resolved or decoded:
+a broken relationship, a missing part, a wrong content type, an undecodable
+image, or one outside dimension limits. Every required visible image is
+preflighted precisely so a conversion cannot quietly succeed with content
+missing. Re-insert the image and re-upload.
+
+**`password_protected`** — remove the document's own password before uploading.
+Use a DocKosha [password gate](/docs/guides/gate-password) instead.
+
+**`malformed_container`** — the file structure is damaged. Re-export it from the
+authoring application; a file that opens in Word or PowerPoint can still be
+structurally invalid.
+
+**`deadline_exceeded`, `queue_busy`, `worker_boot_failed`, `engine_unavailable`,
+`trap`** — transient. Retry once. If `queue_busy` is persistent, more jobs are
+arriving than the bounded admission queue accepts; stagger the uploads. If
+`worker_boot_failed` or `engine_unavailable` persists on a self-hosted install,
+check the DocYantra `0.0.25` dependency and its documented envelope in
+[DocYantra integration](/docs/self-hosting/providers).
+
+**`invalid_output`, `internal_error`, `protocol_error`** — the engine returned
+something unusable. Retry once; if it repeats on the same document, the document
+is the trigger. Capture the code and the document for a bug report.
+
+### The document still opens, but not as a PDF
+
+**Expected behaviour after a failed conversion.** The viewer prefers a converted
+asset only when conversion has completed. When it has not, the original file is
+served so viewing is never blocked.
+
+Two consequences worth planning around:
+
+- **Per-page analytics need the converted PDF.** Page-level events come from the
+  PDF rendering path, so a document served in its original form does not produce
+  them.
+- **PDF watermarking needs the converted PDF.** A watermarked download streams
+  the converted PDF only after watermarking succeeds; it never substitutes raw
+  bytes. If the conversion did not complete, that download is not available.
+
+**What to check:** the document's conversion status in the workspace. Statuses
+are pending, in progress, completed, or failed. Re-running conversion from the
+document is the first step; if it fails again with the same code, treat the code
+as the answer.
+
+## Link access problems
+
+Viewer-facing codes, and what each one actually means:
+
+| Code                      | HTTP | Meaning                                                                  |
+| ------------------------- | ---- | ------------------------------------------------------------------------ |
+| `NOT_FOUND`               | 404  | No such link — or the owning workspace is not entitled                   |
+| `INVALID_HOST`            | 400  | The request arrived on a host that is not a recognised custom domain     |
+| `INVALID_DOMAIN`          | 404  | The custom domain exists but does not apply to this link                 |
+| `EMAIL_OTP_REQUIRED`      | 401  | The link needs a verified email before anything else                     |
+| `EMAIL_NOT_ALLOWED`       | 403  | The verified email is not on the allowlist, or is on the blocklist       |
+| `NDA_SIGN_REQUIRED`       | 403  | No NDA signature on file for this email and link                         |
+| `NDA_PDF_PENDING`         | 403  | Signed, but the signed PDF is still being prepared                       |
+| `PASSWORD_REQUIRED`       | 401  | The link is password-protected and no password was supplied              |
+| `BAD_PASSWORD`            | 401  | Wrong password — or the password attempt limit for this link was reached |
+| `EXPIRED`                 | 410  | Past the link's expiry timestamp                                         |
+| `REVOKED`                 | 410  | Revoked explicitly, or consumed by a one-time-open link                  |
+| `BANDWIDTH_LIMIT_REACHED` | 403  | The owning workspace is over its public bandwidth allowance              |
+
+### "Link expired"
+
+**Likely cause:** the expiry timestamp has passed.
+
+**What to check:** the link's expiry in the links manager, and the recipient's
+time zone if the deadline was tight. Expiry is a property of the link, not of a
+particular open, so pushing the date out or clearing it restores access on the
+same URL — you do not have to issue a new link.
+
+### "Link revoked" on a link nobody revoked
+
+**Likely cause:** the link had **one-time open** enabled and has already been
+opened successfully.
+
+**What to check:** a one-time-open link is revoked at the moment it resolves.
+That means a preview fetch, a link scanner in the recipient's email security
+gateway, or the sender testing the link first all consume it. If recipients
+routinely report this, their mail provider is probably opening links before they
+do — use an email OTP gate instead of one-time open, which ties access to the
+person rather than to the first request.
+
+### "Email not allowed for this link"
+
+**Likely cause:** the verified email is not on the link's allowlist, or matches
+its blocklist.
+
+**What to check:**
+
+1. The exact address, including the domain. Matching is on the normalised
+   address, so an alias or a plus-tag is a different address.
+2. Whether the viewer verified a _different_ address earlier — the verified
+   email is what is checked, not what they typed into a form.
+3. On data room links using access lists, the blocklist stays a hard deny even
+   where the allowlist is bypassed by the access list.
+
+### The viewer is asked to verify email on a link with no OTP gate
+
+**Not a bug.** Email verification is required whenever an NDA gate or an
+allow/blocklist is active, because both need a verified identity to decide
+against. Turning off the OTP toggle does not remove that requirement.
+
+### "Signed NDA is being prepared"
+
+**Likely cause:** the signature was captured but the signed PDF has not
+finished generating.
+
+**What to check:** retry in a few moments. The gate deliberately holds access
+until the signed PDF exists, so the evidence trail is complete before content is
+released — an incomplete record is treated as a reason to withhold access, not
+as a detail to fix later. If it does not clear, re-open the NDA flow and sign
+again; on a self-hosted install, check the server logs and storage connectivity,
+since the signed PDF has to be written before the gate opens.
+
+### The link works for you but shows "not found" for a recipient
+
+**Likely cause:** an entitlement or host problem rather than a link problem.
+
+**What to check:**
+
+1. Workspace entitlement — an unentitled workspace's links return a plain "not
+   found" rather than revealing that the link exists.
+2. The host the recipient used. If you shared a custom-domain URL, that domain
+   must be verified, still active for the workspace, and the workspace must be
+   entitled to custom domains. See
+   [Custom-domain issues](#custom-domain-issues) below.
+
+### "Bandwidth limit reached"
+
+**Likely cause:** the workspace has exceeded its public bandwidth allowance —
+2 GB per month on Free.
+
+**What to check:** usage in **Subscription & Usage**. Paid plans have no
+bandwidth cap under fair use.
+
+## OTP email not arriving
+
+**How the code behaves:** a six-digit code, valid for 10 minutes. Requesting a
+new code deletes the previous one for that link, resource, and email — so an
+older message in the inbox stops working the moment a newer one is sent. Once
+verified, the viewer's session for that link lasts up to 30 days via an
+httpOnly, per-link cookie.
+
+**What to check, in order:**
+
+1. **Spam and quarantine folders**, and any corporate mail security gateway.
+2. **Whether the viewer is on the allowlist.** A blocked address is refused
+   before any email is generated, and the viewer sees "email not allowed", not a
+   delivery problem.
+3. **Whether they are reading the newest email.** Three requests in a row means
+   only the third code works.
+4. **Whether the sending limit was hit.** Five sends per email address per link
+   per 15 minutes, and 30 sends per link per hour. Past either, the request is
+   refused as "too many requests".
+5. **Self-hosted installs: SMTP configuration.** Auth emails go out over the
+   configured SMTP transport. A send failure surfaces as a failure to send the
+   email rather than a silent drop, so check the server logs for an `[OTP]`
+   entry.
+6. **Clock skew on a self-hosted install.** A 10-minute expiry window is
+   unforgiving of a badly wrong server clock.
+
+### The code is entered correctly but is rejected
+
+**Likely cause:** the code expired, was superseded by a newer request, was
+already used, or the attempt limit was reached.
+
+**What to check:** all four failures return the same "invalid or expired code"
+message on purpose. Request a fresh code and use it immediately. Each code
+allows a small number of attempts before it stops being usable, and repeated
+verification attempts for the same email and link are throttled — see below.
+
+## Rate-limit lockouts
+
+Abuse limits are enforced server-side. Where saying "you have been throttled"
+would leak information — password attempts and OTP verification, the two
+surfaces an attacker guesses against — the response is deliberately identical to
+an ordinary failure. Surfaces where nothing is being guessed say "too many
+requests" plainly.
+
+| Surface                | Limit                                               | Response when exceeded                                   |
+| ---------------------- | --------------------------------------------------- | -------------------------------------------------------- |
+| Link password attempts | 30 per link per 10 minutes                          | "Incorrect password" — the same 401 as a wrong password  |
+| OTP send, per address  | 5 per email per link per 15 minutes                 | "Too many requests" (429)                                |
+| OTP send, per link     | 30 per link per hour                                | "Too many requests" (429)                                |
+| OTP verify             | 15 per email per link per 15 minutes                | "Invalid or expired code" — the same 401 as a wrong code |
+| Contact form           | 5 per sender per 24 hours, 100 overall per 24 hours | "Too many requests" (429)                                |
+| Data request form      | 5 per sender per 24 hours, 100 overall per 24 hours | "Too many requests" (429)                                |
+
+### "My password is right but it says incorrect"
+
+**Likely cause:** the link hit its password attempt limit. The throttled
+response is identical to a wrong-password response.
+
+**What to check:** wait out the window and try again — windows are fixed
+intervals, not rolling, so the counter resets at the next boundary rather than
+gradually. If a link repeatedly hits 30 attempts per 10 minutes and your
+recipients are not simply mistyping, someone is guessing: revoke the link and
+issue a new one behind an email gate.
+
+<Callout type="info">
+  Generic responses are intentional. Telling an attacker "you have been rate
+  limited" confirms the link exists and that they were close enough to be worth
+  throttling. Telling them "incorrect password" tells them nothing.
+</Callout>
+
+### Everything is being refused, including first attempts
+
+**Likely cause:** the limiter itself is failing. It fails **closed** — if the
+counter cannot be recorded, the attempt is denied rather than let through
+unmetered.
+
+**What to check:** on a self-hosted install, database connectivity, and server
+logs for a `[rate-limit] failed to consume` entry. This is the one case where a
+lockout is genuinely a system problem rather than an abuse signal.
+
+### Which identifier is being counted?
+
+Link IDs and normalised, hashed email addresses — never IP addresses, raw or
+hashed. Per-link caps bound total guess volume regardless of how many machines
+an attacker uses, and hashed IPs would be trivially re-identifiable, so they are
+not used at all.
+
+The practical consequence: a limit is shared across everyone using that link.
+One person hammering a password prompt affects the other recipients of the same
+link, which is a reason to issue per-recipient links for sensitive material.
+
+## Custom-domain issues
+
+Custom domains require a plan entitled to them, and they are part of the
+hosted plan. Verification uses DNS records you add at your
+registrar.
+
+**Records to publish:**
+
+| Type    | Name                              | Purpose                |
+| ------- | --------------------------------- | ---------------------- |
+| `CNAME` | your custom hostname              | Routes traffic         |
+| `TXT`   | the ownership record shown in-app | Proves you own it      |
+| `TXT`   | any SSL validation records shown  | Issues the certificate |
+
+The ownership record is shown in-app under a `_cf-custom-hostname` name for the
+domain, or replaced by a provider-specific ownership record once provisioning
+starts. Copy the values from the app rather than from this page — they
+are per-domain.
+
+### Verification stays "pending"
+
+**Likely cause:** DNS has not propagated, or a record is published at the wrong
+name.
+
+**What to check:**
+
+1. Resolve each record from outside your network. A record visible in the
+   registrar's UI is not necessarily live.
+2. Confirm the record **names** exactly, including any leading underscore label
+   and whether your registrar appends the zone automatically — a doubled zone
+   suffix is the most common mistake.
+3. Confirm the SSL validation TXT records too, not just the CNAME. The domain
+   only becomes active once the certificate is issued.
+4. Re-run verification. If the domain is still provisioning, the app says so and
+   asks you to retry in roughly 15 seconds.
+
+### "Domain verification is temporarily unavailable"
+
+**Likely cause:** the deployment's domain provider credentials are missing,
+expired, or lack permission — not a problem with your DNS.
+
+**What to check:** on Cloud, contact support. On a self-hosted install, check the
+domain provider credentials in your configuration; the server log records
+whether the failure was authentication or permission.
+
+### Links return "Invalid host" or "Domain mismatch"
+
+**Likely cause:** the hostname in the URL does not map to a usable custom domain
+for that link's workspace.
+
+**What to check:**
+
+1. `INVALID_HOST` (400) — the hostname is not a recognised, verified custom
+   domain at all. Usually an old or mistyped hostname.
+2. `INVALID_DOMAIN` (404) — the domain is recognised, but one of three things is
+   wrong: it belongs to a different workspace, it is not the workspace's
+   _active_ custom domain, or the workspace is not entitled to custom domains.
+   Check the active domain selection and the plan.
+3. If you recently switched active domains, re-share links on the new hostname.
+   Previously shared URLs on the old hostname stop resolving.
+
+## Reporting something this page did not solve
+
+Capture the exact code — the reason code for a processing failure, the access
+code for a link failure — plus what you did and what you expected. Codes are
+stable and machine-readable precisely so that a report can be acted on without
+guesswork. For security issues, follow the repository's security policy rather
+than filing a public issue.
+
+> **Availability note:** External self-hosting is not currently available. The
+> operator checks below are technical reference material for authorized
+> maintainers and future provider work, not an external installation path.

@@ -1,0 +1,77 @@
+title = "DocKosha secret detection"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "dockosha-supabase-service-role-jwt"
+description = "Supabase service-role JWT"
+regex = '''(?im)(?:supabase[_-]?(?:service[_-]?role|secret)[a-z0-9_-]*|service[_-]?role[_-]?(?:key|jwt))[ \t]*=[ \t]*["']?(eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,})["']?(?:$|[ \t,;)}\]])'''
+secretGroup = 1
+tags = ["supabase", "jwt", "service-role"]
+
+[[rules]]
+id = "dockosha-supabase-anon-key"
+description = "Supabase anon JWT"
+regex = '''(?im)(?:(?:next[_-]?public[_-]?)?supabase[_-]?anon[_-]?key)[ \t]*=[ \t]*["']?(eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,})["']?(?:$|[ \t,;)}\]])'''
+secretGroup = 1
+tags = ["supabase", "jwt", "anon"]
+
+[[rules]]
+id = "dockosha-stripe-secret-key"
+description = "Stripe live/test secret or restricted key"
+regex = '''(?im)(?:^|[ \t"'=:\(\[])((?:sk_live_|sk_test_|rk_live_|rk_test_)[A-Za-z0-9]{16,})(?:$|[ \t"',;)}\]])'''
+secretGroup = 1
+tags = ["stripe", "secret-key"]
+
+[[rules]]
+id = "dockosha-cloudflare-api-token"
+description = "Cloudflare API token assigned to a Cloudflare token variable"
+regex = '''(?im)(?:cloudflare|cf)[a-z0-9_-]*(?:api[_-]?)?token[ \t]*=[ \t]*["']?([A-Za-z0-9_-]{30,80})["']?(?:$|[ \t,;)}\]])'''
+secretGroup = 1
+tags = ["cloudflare", "api-token"]
+
+[[rules]]
+id = "dockosha-cloudflare-worker-origin-secret"
+description = "Cloudflare Worker origin secret assigned to its environment variable"
+regex = '''(?im)cloudflare_worker_origin_secret[ \t]*=[ \t]*["']?([A-Za-z0-9_./+=-]{32,})["']?(?:$|[ \t,;)}\]])'''
+secretGroup = 1
+tags = ["cloudflare", "worker", "origin-secret"]
+
+[[rules]]
+id = "dockosha-github-pat"
+description = "GitHub personal access token"
+regex = '''(?im)(?:^|[ \t"'=:\(\[])((?:ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}))(?:$|[ \t"',;)}\]])'''
+secretGroup = 1
+tags = ["github", "pat"]
+
+[[rules]]
+id = "dockosha-zeptomail-smtp-password"
+description = "ZeptoMail or SMTP password/token"
+regex = '''(?im)(?:zepto[_-]?mail|smtp)[a-z0-9_-]*(?:password|pass|token|key)[ \t]*=[ \t]*["']?([A-Za-z0-9_./+=-]{12,})["']?(?:$|[ \t,;)}\]])'''
+secretGroup = 1
+tags = ["zeptomail", "smtp", "password"]
+
+[[allowlists]]
+description = "Lockfiles and obvious binary/test fixtures"
+paths = [
+  '''^docs-site/pnpm-lock\.yaml$''',
+  '''^pnpm-lock\.yaml$''',
+  '''^mock-files/''',
+]
+
+[[allowlists]]
+description = "Generated dependency and cache output"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)\.next(?:-[^/]*)?(?:/|$)''',
+  '''(^|/)tmp/''',
+  '''^docs-site/node_modules/''',
+  '''^docs-site/\.next(?:-[^/]*)?(?:/|$)''',
+  '''^docs-site/\.source(?:/|$)''',
+]
+
+[[allowlists]]
+description = "Deterministic unit-test cookie placeholder"
+regexTarget = "secret"
+regexes = ['''^0123456789abcdef0123456789abcdef$''']

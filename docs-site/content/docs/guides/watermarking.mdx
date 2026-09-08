@@ -1,0 +1,89 @@
+---
+title: "Watermarking"
+description: "Build static watermark templates, add viewer-specific dynamic lines, and understand exactly where DocKosha burns the watermark into the delivered PDF."
+---
+
+Watermarking in DocKosha has two halves. A **template** defines what the watermark looks like. A **link setting** decides whether it is applied to what that link serves.
+
+The part that matters most is where the watermark ends up: **the file a viewer downloads has the watermark burned into its PDF bytes by the server.** It is not a layer the browser draws on top and it is not something a viewer can strip by disabling scripts.
+
+## Create a watermark template
+
+1. Open **Watermarks** from the sidebar. (Only the workspace owner can manage watermark templates.)
+2. Create a template and name it.
+3. Choose the content type:
+   - **Text** — a text watermark, such as `CONFIDENTIAL` or your company name.
+   - **Image** — a logo or seal. An image is required for this mode.
+   - **Hybrid (text + image)** — both, stacked.
+4. Choose the pattern: **Single** (one stamp in the middle of the page), **Grid**, or **Diagonal grid**.
+5. Tune the appearance — colour, font size, opacity, horizontal and vertical spacing, and rotation. Diagonal grid defaults to a rotated stamp.
+6. Check the live preview, then save.
+
+Uploaded watermark images must be 2 MB or smaller.
+
+If your workspace branding has a watermark title configured, that also appears in the link editor as **Branding watermark**, so you can apply it without building a template.
+
+## Apply a watermark to a link
+
+1. Create or edit the link.
+2. Turn on the watermark setting.
+3. Pick the template to use.
+4. Save.
+
+The watermark option is only offered when the workspace has at least one watermark template or a branding watermark configured. If neither exists, create one first.
+
+## Dynamic watermarks
+
+A static template is the same for everyone. Dynamic lines add per-viewer context underneath it:
+
+| Line              | What it adds                                                 |
+| ----------------- | ------------------------------------------------------------ |
+| **Email**         | The viewer's verified email address.                         |
+| **IP**            | The client IP address seen at the moment the file is served. |
+| **Date and time** | The moment the file was served.                              |
+
+Turn these on alongside the watermark; enabling any of them turns the watermark on if it was off.
+
+**The email line requires a verified viewer.** Turning it on forces the link's [email verification gate](/docs/guides/gate-email-otp) on, because there is no address to stamp otherwise. If the verified-email cookie has expired, the email line is simply omitted from that delivery rather than being guessed.
+
+> **On the IP line and privacy.** The IP address is rendered into the bytes of the file being delivered at that moment. DocKosha's viewer analytics do not store raw IP addresses — country is derived server-side and kept only as aggregated counts. Turning on the IP watermark puts an IP address into a document you hand to someone; treat that as a deliberate disclosure decision. See [Privacy and analytics boundaries](/docs/how-it-works/privacy-and-analytics).
+
+## Where the watermark actually lives
+
+This distinction decides how much protection you actually get.
+
+**In the delivered file — burned in.** When a viewer downloads a watermarked document, the server takes the PDF (the upload itself, or a PDF DocYantra completed), stamps the watermark into the PDF content, and streams those bytes. The watermark is part of the file. It travels with the file, survives being forwarded, and is not something a viewer can switch off in their browser. See [Watermark in bytes, explained](/docs/how-it-works/watermark-in-bytes).
+
+**On screen — a preview overlay.** While a viewer reads the document in the browser, the watermark is drawn as an overlay layer on top of the rendered pages, using the same spacing, rotation, and sizing rules as the burned-in version so that what they see matches what they would download. That overlay is a _preview_. It is browser-side, and it is not the protection — the burned-in download is.
+
+Because the overlay and the burned-in stamp are produced by different renderers, the on-screen preview is a close approximation rather than a pixel-exact match, particularly for text outside the Latin-1 repertoire. The downloaded PDF is the authoritative artifact.
+
+## Watermarking fails closed
+
+If a link requires a watermark, DocKosha will not serve unwatermarked bytes to satisfy the request.
+
+- A watermark template that was deleted after the link was configured, a missing image asset for an image or hybrid watermark, a failed transform, or invalid output all cause the download to **fail** with an error. A deleted template does not quietly fall back to your branding watermark.
+- In a data room ZIP download, any file whose required watermark could not be produced is **omitted from the archive** and listed in a `_MISSING_FILES.txt` entry inside it, so nobody quietly receives an unmarked copy or wonders where a file went.
+
+## What can and cannot be watermarked
+
+Watermarks are a PDF feature, so they apply to PDFs and to documents after the
+DocYantra completes a conversion to PDF:
+
+- **Watermarked:** `pdf`, plus formats DocYantra supports for PDF conversion within its validated envelope.
+- **Not watermarked:** images, audio, and video. These have no PDF watermark representation, so they are delivered as the original file even on a link whose watermark setting is turned on. Enabling the setting does not silently change what those viewers receive.
+
+If a document's conversion to PDF failed, it is served as the original upload and therefore has no burned-in watermark. See [The conversion envelope](/docs/how-it-works/conversion-envelope).
+
+## Honest limits
+
+- **A watermark is attribution, not prevention.** It makes a leaked copy traceable back to whoever it was served to. It does not stop the copy from being made.
+- **Anyone who can read a document can photograph the screen.** A dynamic watermark makes that photograph identifiable; it does not make it impossible. See [Download and screenshot controls](/docs/guides/download-and-screenshot-controls) for what browsers can and cannot do here.
+- **Watermarks can be attacked.** A determined party with the right tooling can degrade or remove a visual watermark from a PDF. DocKosha's claim is that the mark is in the bytes we deliver, not that it is indelible.
+
+## Next steps
+
+- [Watermark in bytes, explained](/docs/how-it-works/watermark-in-bytes)
+- [Download and screenshot controls](/docs/guides/download-and-screenshot-controls)
+- [Require an NDA before viewing](/docs/guides/nda-gates)
+- [Branding and custom domains](/docs/guides/branding-and-custom-domains)

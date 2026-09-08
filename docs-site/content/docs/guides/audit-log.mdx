@@ -1,0 +1,70 @@
+---
+title: "Audit log"
+description: "Open the owner-only internal audit log for a document or data room, read what each entry records, and understand what it deliberately leaves out."
+---
+
+The audit log is the record of what **your team** did: who uploaded, renamed or deleted content, who created or changed a link, who was granted or lost access. It also records comment activity, including comments left by viewers.
+
+It is an ordinary application capability. Audit quality does not depend on a
+separate source edition.
+
+## Where to find it
+
+| Scope         | Where                                                   |
+| ------------- | ------------------------------------------------------- |
+| One document  | Open the document → **Audit log** tab                   |
+| One data room | Open the data room → room menu → **Internal audit log** |
+
+Both entry points only appear for workspace owners. There is no workspace-wide audit feed today: you read the trail for the document or room you are investigating.
+
+## Who can read it
+
+Only **workspace owners**. Editors and viewers see _Access restricted_.
+
+That restriction is enforced in the database with row-level security, not just hidden in the UI, and the application role has read-only access to the table. Entries are written server-side by database triggers and server code, so a member cannot write, edit or delete their own audit trail from the app.
+
+## Read an entry
+
+1. Open the **Audit log** for the document or room.
+2. Scan the list — each row shows the action, the resource type, who did it, the item it touched, and how long ago.
+3. Click a row to expand it.
+4. Read the detail grid: **Action**, **Area** (Documents, Data rooms, Folders, Room contents, Access, Link sharing, Comments), the item name, and the link involved.
+
+For a link that was **updated**, the expanded row shows a field-by-field before → after diff for the settings that are safe to display: link name, access type, expiration, download, email verification, NDA gate, watermark, screenshot protection, open-once, invite emails, and collect-emails-for-analytics. Anything else that changed is summarised as _N hidden_ rather than dumped as raw columns.
+
+Two of those fields carry caveats worth knowing when you read them:
+
+- **Screenshot protection** is a best-effort deterrent. Browsers cannot block OS-level screen capture, so an entry showing it enabled means the deterrent was on — not that copying became impossible. See [download and screenshot controls](/docs/guides/download-and-screenshot-controls).
+- **Watermark** means watermarks are burned into the delivered PDF bytes server-side before the file is sent. It is not an overlay drawn in the browser. See [watermarking](/docs/guides/watermarking).
+
+## What is recorded
+
+- **Documents** — uploaded, renamed, deleted.
+- **Data rooms** — created.
+- **Room contents** — documents added to or removed from a room.
+- **Folders** (inside data rooms) — created, renamed, deleted.
+- **Links** — created, updated, deleted, with the safe diff described above.
+- **Access** — data room access granted and revoked.
+- **Comments** — thread created, reply sent, thread resolved, thread reopened, with the page number, the quoted text and a short preview of the message. Viewer-authored comment entries show the viewer's verified email as the actor.
+
+## What is deliberately not recorded
+
+- Routine background updates, such as a document's conversion status changing, are filtered out so the trail stays readable. A document `update` is only kept when the title actually changed; a folder `update` only when the name changed. A data room is recorded when it is created, not when it is renamed or deleted.
+- Changes to [user groups](/docs/guides/user-groups), including workspace group and group-email membership changes, are outside the recorded set. Link presets and a link's allow/block lists are also outside the recorded set. The link record itself is recorded, so you see that a link changed, but not the individual addresses added to its lists. Workspaces that predate the current allowlist may still show older entries from those areas.
+- Secrets never reach the log: link password hashes and stored NDA template snapshots are stripped from the before/after snapshots at write time.
+- Viewer engagement (views, page time, downloads, countries) is not this feed. That is [analytics](/docs/guides/analytics), which follows a different privacy model.
+
+## Durability and limits
+
+- Audit entries survive the thing they describe. Deleting a document or data room clears the reference on the entry instead of deleting the entry.
+- The panel loads the most recent recorded events and displays up to 60 that match the recorded-event allowlist. It is a review surface, not a bulk archive.
+- There is no signed-PDF audit export today. Do not plan a compliance process
+  around that format.
+- Failure to write an audit row never blocks the underlying action. The product prioritises completing your work over refusing it, so treat the log as a strong record, not a transactional guarantee.
+
+## Related
+
+- [How the audit trail works](/docs/how-it-works/audit-trail)
+- [Analytics](/docs/guides/analytics)
+- [Q&A, feedback and comments](/docs/guides/qa-feedback-and-comments)
+- [Invites and member levels](/docs/guides/invites-and-member-levels)

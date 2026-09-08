@@ -1,0 +1,79 @@
+{
+  "badge": "Free Forever Plan Now Available",
+  "title": "Free-first pricing for secure document sharing and lightweight VDR workflows",
+  "subtitle": "Start with Free, then upgrade when you need more storage or team capacity. Paid plans include a 14-day trial on Essential with no credit card required.",
+  "allPlansInclude": {
+    "title": "All paid plans include full room controls from day one",
+    "subtitle": "Free is intentionally constrained for lightweight sharing. Paid plans unlock unrestricted uploads, branding controls, and deeper version retention.",
+    "items": [
+      "Unlimited public viewing*",
+      "High-fidelity PDF-first viewer through DocKosha Cloud’s validated document-processing path",
+      "Data rooms with folder access controls and aggregated analytics",
+      "Link gates: password, email verification, allowlists/blocklists (emails + groups), custom NDA templates",
+      "Dynamic watermarking and download controls",
+      "Privacy-first viewer analytics (views, time per page, downloads)",
+      "Verified viewer commenting (pinned to highlighted text)",
+      "Document version history (retention controls, preview, restore) on paid plans",
+      "Link presets for fast reuse of secure configurations",
+      "Owner-only internal audit logs for workspace activity",
+      "Feedback and Q&A from viewers",
+      "Custom domains and branding removal on paid plans"
+    ]
+  },
+  "engineKeys": {
+    "title": "Source access and Cloud availability",
+    "subtitle": "DocKosha source is published under AGPL-3.0-or-later for reading and contribution. DocKosha Cloud is the available hosted product; external self-hosting and DocYantra access are not currently available.",
+    "items": [
+      {
+        "title": "What powers DocKosha Cloud",
+        "body": "DocYantra provides document conversion through the validated Office and PDF fidelity envelope inside DocKosha Cloud. Outside a validated format, size, and fidelity envelope, conversion fails closed with a typed reason and the viewer serves the original file unchanged."
+      },
+      {
+        "title": "Private processing dependency",
+        "body": "DocYantra is the mandatory private direct 0.0.25 dependency for this application. It is not offered as a package, SDK, API, standalone product, or engine license to external users."
+      },
+      {
+        "title": "Enterprise is a separate agreement",
+        "body": "The AGPL-3.0-or-later DocKosha source and any Enterprise agreement are distinct. Enterprise terms require a separate signed agreement and do not imply access to the private DocYantra engine."
+      }
+    ],
+    "cta": {
+      "label": "Explore DocKosha Cloud",
+      "href": "/features",
+      "note": "DocKosha Cloud is available for hosted use. Enterprise terms require a separate signed agreement; contact us for commercial terms without implying engine access."
+    }
+  },
+  "faq": {
+    "title": "Pricing FAQs",
+    "items": [
+      {
+        "q": "How does monthly vs annual billing work?",
+        "a": "Monthly plans are billed every month. Annual plans are billed upfront and include 30% off compared to monthly pricing."
+      },
+      {
+        "q": "Can I switch plans or billing intervals later?",
+        "a": "Yes. You can upgrade, downgrade, or switch billing intervals any time. Changes take effect immediately and are prorated by Stripe."
+      },
+      {
+        "q": "Do you charge per user or per viewer?",
+        "a": "No. Pricing is workspace-based, so teams can add internal collaborators and share externally without per-user or per-viewer fees."
+      },
+      {
+        "q": "What happens when we hit included storage?",
+        "a": "Uploads are blocked once included storage is exhausted until you delete files or upgrade. Storage reflects total workspace usage and does not reset monthly."
+      },
+      {
+        "q": "Is there a free trial?",
+        "a": "Essential includes a 14-day trial with no credit card required."
+      },
+      {
+        "q": "What payment methods do you accept?",
+        "a": "Credit and debit cards. For annual invoicing or larger contracts, contact sales."
+      },
+      {
+        "q": "What does the Free plan include?",
+        "a": "Free includes 250 MB storage, 2 GB monthly bandwidth, one workspace member, and PDF-only uploads. It keeps DocKosha branding, does not support custom domains, and does not retain previous versions."
+      }
+    ]
+  }
+}

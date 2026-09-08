@@ -1,0 +1,138 @@
+---
+title: "Create and share links"
+description: "Create a share link for a document or data room, set every option in the Basics, Security, and Access tabs, copy the URL, edit it later, and delete it to revoke access."
+---
+
+A link is what you actually send. The document or room stays where it is; each link carries its own gates, viewer permissions, expiry, and analytics. One document can have many links with different rules for different audiences.
+
+## Create a link
+
+1. Open the document (or data room) and go to the **Share** tab.
+2. Click **New Link**.
+3. Fill in the **Basics**, **Security**, and **Access** tabs — everything below is optional except the link name.
+4. Save.
+
+The share URL is copied to your clipboard on save. Copy it again any time with **Copy link** on the link row.
+
+Creating and editing links requires an owner or editor role. Viewers see the links list read-only and get _"Viewer access: read-only."_ if they try to change something.
+
+## Basics
+
+| Setting                             | What it does                                                                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Link name**                       | Required, up to 120 characters. Shown to teammates and used to label the link in analytics                                                                                                              |
+| **Custom URL**                      | Optional readable slug, up to 64 characters. See [Link presets and custom slugs](/docs/guides/link-presets-and-custom-slugs)                                                                            |
+| **Expiration**                      | Date and time, to the minute. Leave empty for no expiry. See [Expire a link](/docs/guides/gate-expiry)                                                                                                  |
+| **Public viewer language**          | The language of the viewer's system copy and recipient-facing emails: the workspace default, or English, French, Spanish, or German. Links left on _inherit_ follow the workspace default as it changes |
+| **Allow downloads**                 | Off by default. When off, the viewer has no download button and the download endpoint refuses the request                                                                                               |
+| **Email notifications**             | Emails the workspace when this link is viewed                                                                                                                                                           |
+| **Allow feedback**                  | Shows a feedback control in the viewer                                                                                                                                                                  |
+| **Allow comments** (documents only) | Lets viewers create text-anchored comments in the PDF viewer. Viewers must verify their email before posting                                                                                            |
+| **Show questions & answers**        | Displays curated question-and-answer pairs alongside the content. A pair with only a question or only an answer is not saved                                                                            |
+
+## Security
+
+| Setting                          | What it does                                                                                                                                                                                                            |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Password protection**          | Requires a password before the content opens. See [Gate a link with a password](/docs/guides/gate-password)                                                                                                             |
+| **Collect emails for analytics** | Stores the verified viewer email against analytics. Turning it on forces email verification, so the address is one the viewer proved they control                                                                       |
+| **Screenshot protection**        | On by default. Blurs the content when a screenshot is detected. A deterrent — see the limits below                                                                                                                      |
+| **NDA required to open**         | Requires a signed NDA before viewing. The template is locked to the version saved at link creation and cannot be changed afterwards. See [NDA gates](/docs/guides/nda-gates)                                            |
+| **Watermark**                    | Stamps the selected watermark template onto shared PDFs. Needs at least one watermark template (or a branding watermark) to exist first — otherwise the toggle is disabled and offers **Configure watermark templates** |
+| **Dynamic watermark**            | Adds viewer-specific lines under the watermark: **Include email** (requires email verification), **Include IP**, **Include date & time** (a UTC timestamp)                                                              |
+
+<Callout type="warn" title="Screenshot protection is a best-effort deterrent">
+
+It blurs content on focus loss and reacts to common screenshot hotkeys. Browsers cannot block operating-system screen capture, screen-recording software, or a camera pointed at the screen. It is friction, not enforcement. See [Download and screenshot controls](/docs/guides/download-and-screenshot-controls).
+
+</Callout>
+
+<Callout type="info" title="Watermarks are burned into the delivered bytes">
+
+The watermark is stamped into the PDF bytes the server hands over, not drawn as a browser overlay. If watermarking cannot complete — an invalid template, a missing image, an engine failure — the request returns an error rather than raw unmarked bytes. Images, audio, and video have no PDF watermark representation, so those files are delivered unmarked even when the toggle is on. See [Watermarking](/docs/guides/watermarking).
+
+</Callout>
+
+## Access
+
+The **Access** tab holds the email and group rules:
+
+- **Allowed emails** — only these addresses get in. Entries are exact email addresses, normalised to lower case and de-duplicated.
+- **Allowed groups** — every member of the selected user groups gets in.
+- **Blocked emails** and **Blocked groups** — denied even if allowed elsewhere. Blocked always wins.
+- **Invite emails** — send invites to allowed recipients immediately on save, or not at all. **Resend invites** is available later from the link editor, with a cooldown between sends.
+
+Details and edge cases: [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists).
+
+Data-room links additionally offer **Advanced Level Control (ALC)** for per-room, per-folder, and per-document rules. When ALC is active it becomes authoritative and the global allowlist is disabled; the blocklist still applies as a hard deny. See [Access lists](/docs/guides/access-lists).
+
+## Email verification turns itself on
+
+There is no separate "require email verification" switch. The link requires an emailed one-time code whenever it needs a verified identity to work:
+
+- **Collect emails for analytics** is on, or
+- the dynamic watermark **Include email** is on, or
+- the link has any allow or block entry (email or group), or
+- ALC is active on a data-room link.
+
+The summary panel then shows an `OTP` chip. NDA gating is the exception: signing an NDA already verifies the email, so no separate code gate is added on top. See [Gate a link with email verification](/docs/guides/gate-email-otp).
+
+## Check the summary before sending
+
+The **Viewer experience** panel on the right updates live:
+
+- **Access controls** — `Password`, `OTP`, `Allowlist (n)`, `Blocklist (n)`, `ALC`, `NDA`, `Expires`. `Public` means anyone with the URL gets in.
+- **Viewer controls** — `Downloads on` / `Downloads off`, `Screenshot protection`, `Watermark` or `Dynamic watermark`, `Q&A`, `Feedback`, `Comments`.
+- **Analytics** — `Store viewer email` or `No email stored`, plus `Notify on view`.
+- **Expiration** and **Viewer language** as resolved values.
+
+New links default to: downloads off, screenshot protection on, notifications off, feedback off, no expiry, no gates.
+
+## Edit a link
+
+Click **Edit** on the link row. Changes take effect as soon as you save, for anyone who has not already passed the gate within the last hour.
+
+Two things are pinned once a link exists:
+
+- **NDA gating.** It is decided at creation. A saved link that has an NDA cannot have it switched off and cannot swap its template — the template is snapshotted at creation. A saved link that has no NDA cannot have one added; the toggle is not shown when editing. Create a new link instead.
+- **The password value.** Leave the password field blank to keep the existing password; type a new one to rotate it. Turning the toggle off removes password protection.
+
+If the access rules cannot be loaded while you are editing, saving is disabled on purpose so a failed read cannot silently wipe the link's existing rules. Use **Retry**.
+
+## Delete a link to revoke it
+
+Click the delete icon on the link row and confirm. The link stops working immediately for everyone.
+
+The viewer then sees _"This document link is invalid or has been revoked."_ There is no undo, the URL cannot be reissued, and any custom slug it used becomes free again.
+
+## Share URL shapes
+
+| Setup                  | URL                                 |
+| ---------------------- | ----------------------------------- |
+| Document, default      | `/d/{documentId}/{linkId}`          |
+| Data room, default     | `/r/{dataRoomId}/{linkId}`          |
+| Custom URL set         | `/{workspace-slug}/{your-slug}`     |
+| Verified custom domain | the same paths on your own hostname |
+
+Custom domains and white-label branding are ordinary application capabilities. A
+link opened on an unverified or inactive custom domain is refused — the viewer
+sees _"This document can only be opened from a verified workspace domain."_
+
+## Troubleshooting
+
+| Symptom                                            | Cause                                                                                  | Fix                                                |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Save fails: password required                      | The password toggle is on with an empty field                                          | Enter a password, or turn the toggle off           |
+| Save fails: NDA template required                  | NDA gating on with no template chosen                                                  | Pick a template, or create one under NDA templates |
+| The watermark toggle is disabled                   | No watermark template or branding watermark exists                                     | Create one under **Configure watermark templates** |
+| Everything is read-only                            | Your role is viewer                                                                    | Ask an owner to change your role                   |
+| The new link resolves to "Link Unavailable"        | The workspace has no active plan record                                                | Select a plan in **Settings → Subscription**       |
+| Viewers are asked for a code you did not configure | An access rule, analytics email collection, or an email watermark implies verification | Remove the setting if you did not want a code gate |
+
+## Related
+
+- [Link presets and custom slugs](/docs/guides/link-presets-and-custom-slugs)
+- [Gate a link with a password](/docs/guides/gate-password)
+- [Gate a link with email verification](/docs/guides/gate-email-otp)
+- [Expire a link](/docs/guides/gate-expiry)
+- [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists)

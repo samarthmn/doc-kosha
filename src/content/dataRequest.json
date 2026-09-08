@@ -1,0 +1,20 @@
+{
+  "badge": "Data Rights",
+  "title": "Submit a data request",
+  "subtitle": "Request access, export, correction, deletion, or consent withdrawal. We’ll respond as required by applicable laws and our policy.",
+  "form": {
+    "title": "Request details",
+    "successTitle": "Request submitted",
+    "successBody": "We’ve received your request and will follow up via email.",
+    "error": "Something went wrong. Please try again."
+  },
+  "requestTypes": [
+    { "value": "access", "label": "Access my data" },
+    { "value": "export", "label": "Export my data" },
+    { "value": "correction", "label": "Correct my data" },
+    { "value": "deletion", "label": "Delete my data" },
+    { "value": "consent_withdrawal", "label": "Withdraw consent" },
+    { "value": "other", "label": "Other" }
+  ],
+  "privacyNote": "For details on what we collect and why, see our Privacy Policy."
+}

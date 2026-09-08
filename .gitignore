@@ -1,0 +1,75 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# email previews
+.email-previews/
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# local/service account keys (never commit)
+vercel-gotenberg-invoker.json
+key.b64
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+/playwright-report
+/test-results
+
+# Sentry Config File
+.env.sentry-build-plugin
+logs/
+
+/image-gen-posts/
+/outputs/
+
+# Browser wasm asset — synced from the engine adapter by scripts/prepare-engine-assets.mjs
+/public/wasm/
+
+# React-PDF/PDF.js browser assets — copied by scripts/sync-pdfjs-assets.mjs
+/public/pdfjs/
+
+# Playwright Next build caches
+/.next-e2e-*
+
+/.worktrees/
+/.pnpm-store/
+
+# Supabase CLI generated local state (may contain service credentials)
+/supabase/.temp/
+# Repository scratch space
+/tmp/

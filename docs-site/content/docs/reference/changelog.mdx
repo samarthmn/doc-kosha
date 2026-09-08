@@ -1,0 +1,54 @@
+---
+title: "Changelog"
+description: "Dated record of notable DocKosha changes in Keep a Changelog format — Added, Changed, Deprecated, Removed, Fixed, Security — newest first, starting with the initial public documentation set."
+---
+
+Notable changes to DocKosha and to this documentation, newest first.
+
+## How to read this page
+
+This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+- Dates are ISO 8601 (`YYYY-MM-DD`).
+- Each entry groups its changes under the standard categories: **Added**,
+  **Changed**, **Deprecated**, **Removed**, **Fixed**, and **Security**. A
+  category only appears when there is something in it.
+- **Unreleased** collects changes that are merged but not yet part of a dated
+  entry.
+
+Two conventions specific to DocKosha:
+
+- **Documentation ships with the change it describes.** A feature change that
+  does not update its documentation is incomplete, and documentation that has
+  drifted from the implementation is treated as a claim-accuracy defect, not as
+  cosmetic debt.
+- **Nothing is listed here before it exists.** This page records what shipped.
+  Planned work lives in the roadmap, not in the changelog.
+
+## Unreleased
+
+Nothing yet.
+
+## 2026-07-29
+
+### Added
+
+- **Initial public documentation.** The public documentation site, rendered
+  from MDX versioned alongside the application source, covering:
+  - [Getting started](/docs/getting-started) — what DocKosha is, a quickstart,
+    and the first document and first link.
+  - [Guides](/docs/guides) — task pages for documents and versioning, links and
+    every gate type, data rooms and access lists, NDA gates, watermarking,
+    download and screenshot controls, analytics, audit log, user groups,
+    notifications, Q&A and comments, redaction, and branding and custom domains.
+  - [How it works](/docs/how-it-works) — the server-enforced security model,
+    watermarking burned into delivered PDF bytes, the fail-closed conversion
+    envelope, the audit trail, privacy and analytics boundaries, and plans and
+    limits.
+  - [Self-hosting](/docs/self-hosting) — the operator set, rendered from the
+    same repository files operators read in the source tree, so no fact exists
+    in two places.
+  - [Reference](/docs/reference) — the
+    [capability matrix](/docs/reference/capability-matrix), the
+    [FAQ](/docs/reference/faq), symptom-based
+    [troubleshooting](/docs/reference/troubleshooting), and this changelog.

@@ -1,0 +1,94 @@
+---
+title: "Gate a link with email verification"
+description: "Require viewers to verify an email address with a six-digit code before a link opens — how it turns on, the ten-minute code window, the send and verify limits, and the 30-day remembered session."
+---
+
+Email verification proves that whoever opens the link controls the address they typed. It is what turns anonymous viewing into named viewing.
+
+## How to turn it on
+
+There is no standalone "require email verification" switch. The gate appears automatically whenever the link needs a verified identity to do its job. On the link editor's **Security** and **Access** tabs, any one of these turns it on:
+
+| Setting                                        | Why it needs a verified email                                                         |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Collect emails for analytics**               | Analytics should record an address the viewer proved they control, not one they typed |
+| **Dynamic watermark → Include email**          | The email is burned into the delivered PDF, so it must be real                        |
+| Any **allowed** or **blocked** email or group  | The rule cannot be evaluated without knowing who the viewer is                        |
+| **Advanced Level Control** on a data-room link | Room, folder, and document rules are matched against the viewer's email               |
+
+An `OTP` chip appears in the **Access controls** summary once it is active.
+
+Two related cases behave differently:
+
+- **NDA gating** does not add a second code step. Signing an NDA already includes email verification, so the NDA flow carries it. See [NDA gates](/docs/guides/nda-gates).
+- **Allow comments** does not gate opening the document. The viewer reads it freely and is asked to verify only at the moment they try to post a comment.
+
+## What the viewer does
+
+1. They open the link and see **Email Verification Required** — _"Verify your email to view the document."_
+2. They type their email address and click **Send Code**.
+3. A six-digit code arrives by email.
+4. They enter it and click **Verify**. The content opens.
+
+**Resend code** is available after a 30-second cooldown, and **Change email** starts over with a different address.
+
+## The rules behind it
+
+| Rule                     | Value                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| Code format              | Six digits                                                                       |
+| Code lifetime            | 10 minutes                                                                       |
+| Codes per address        | One live code per email per link — requesting a new one invalidates the previous |
+| Attempts per code        | 5. Beyond that the code stops working, even if the sixth attempt is correct      |
+| Send limit per address   | 5 requests per link in a 15-minute window                                        |
+| Send limit per link      | 30 requests per hour across all addresses                                        |
+| Verify limit per address | 15 attempts per link in a 15-minute window                                       |
+| Remembered for           | 30 days, in that browser, for that link                                          |
+
+Addresses are normalised (trimmed and lower-cased) before anything is matched, so `Viewer@Example.com` and `viewer@example.com` are the same person.
+
+Once verified, the browser holds a signed, `httpOnly` cookie scoped to that link and resource. The viewer is not asked again for 30 days unless they clear cookies or use a different browser or device.
+
+<Callout type="warn" title="Rate limits answer vaguely on purpose">
+
+Exceeding a send limit returns _"Too many requests"_. Exceeding a verify limit returns _"Invalid or expired code"_ — the same message as a genuinely wrong code, so an attacker learns nothing from the difference. A legitimate viewer who hits this should wait for the window to roll over rather than retrying immediately.
+
+</Callout>
+
+## Combined with allow and block rules
+
+When a link has access rules, they are applied at the moment the code is requested, not after verification. An address that is blocked, or that is not on the allowlist, is refused with _"Email not allowed for this link"_ and never receives a code.
+
+Blocked entries always win over allowed ones. See [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists).
+
+## What the verified email is used for
+
+- Matching allow and block rules, ALC rules, and NDA signatures.
+- Burning into the delivered PDF when the dynamic watermark includes the email.
+- Attribution in analytics — **only if the link has Collect emails for analytics switched on**. Otherwise reporting stays pseudonymous and exports carry a viewer key instead of an address.
+
+Viewer analytics are consent-gated and regional: in the EU, EEA, and UK they require opt-in; elsewhere they are granted by default with an opt-out; a Global Privacy Control signal always wins. Raw IP addresses are never stored. See [Privacy and analytics](/docs/how-it-works/privacy-and-analytics).
+
+## Honest limits
+
+- **Verification proves control of a mailbox, not identity.** Anyone who can read that inbox — a shared alias, a forwarded message, a colleague at the same terminal — can pass the gate. If a specific person matters, combine it with an allowlist.
+- **A forwarded code works.** The code is not bound to a device or a browser session until it is used.
+- **It depends on email delivery.** No SMTP, a rejected sender, or an aggressive spam filter means no code and no access. Authorized maintainers should consult the [self-hosting reference](/docs/self-hosting); external self-hosting is not currently available.
+- **The 30-day session is per browser.** A viewer on a new laptop verifies again.
+
+## Troubleshooting
+
+| Symptom                                                | Cause                                                                                                      | Fix                                                       |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| No code arrives                                        | SMTP misconfigured, sender rejected, or the message is in spam                                             | Check SMTP configuration and the spam folder, then resend |
+| _"Email not allowed for this link"_                    | The address is blocked, or is not on the allowlist                                                         | Add it to the allowlist, or remove it from the blocklist  |
+| _"Invalid or expired code"_ on a code that looks right | It is older than 10 minutes, superseded by a newer code, past 5 attempts, or the verify limit is exhausted | Request a fresh code and wait for the window if needed    |
+| _"Too many requests"_                                  | The send limit for that address or link is exhausted                                                       | Wait for the window to roll over                          |
+| Viewers are asked for a code you did not configure     | An access rule, analytics email collection, an email watermark, or comments implies verification           | Remove that setting if the code gate is unwanted          |
+
+## Related
+
+- [Create and share links](/docs/guides/create-and-share-links)
+- [Restrict a link to specific viewers](/docs/guides/gate-allow-and-blocklists)
+- [NDA gates](/docs/guides/nda-gates)
+- [Analytics](/docs/guides/analytics)

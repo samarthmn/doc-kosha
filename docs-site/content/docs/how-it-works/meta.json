@@ -1,0 +1,12 @@
+{
+  "title": "How it works",
+  "pages": [
+    "index",
+    "security-model",
+    "watermark-in-bytes",
+    "conversion-envelope",
+    "audit-trail",
+    "privacy-and-analytics",
+    "plans-and-limits"
+  ]
+}

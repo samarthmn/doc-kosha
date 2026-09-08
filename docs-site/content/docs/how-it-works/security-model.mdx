@@ -1,0 +1,120 @@
+---
+title: "Security model"
+description: "Every public link gate mapped to the server route that enforces it, how workspaces are isolated in the database, the abuse limits, and which controls are deterrents rather than enforcement."
+---
+
+Every protection on a DocKosha link is decided on the server. The recipient's browser renders what the server chose to send; it is never asked whether a gate should apply. This page maps each protection to the code that enforces it, then states plainly which controls are deterrents rather than enforcement.
+
+## The two enforcement points
+
+A shared link passes through two independent server checks.
+
+**1. Resolve.** `src/app/api/public/links/resolve/route.ts` receives a link id plus a document or data room id, loads the `links` row with the service-role client, and evaluates every gate against that row. Nothing in the request body influences the outcome except the identifiers and a password attempt. All settings returned to the viewer — download allowed, watermark required, expiry, NDA, screenshot protection — are read from the database row, never from the client.
+
+**2. Asset delivery.** `src/app/api/public/links/file/route.ts` (viewing) and `src/app/api/public/links/download/route.ts` (download) re-derive access before releasing any bytes. They independently re-check workspace entitlement, email verification, allow and block lists, data-room access lists, and the NDA signature, and they require a valid signed access cookie. A resolved link is not a bearer token for the underlying storage object: storage URLs are presigned server-side, short-lived, and issued only after these checks pass.
+
+## Gate map
+
+Each row is a protection you can set on a link, the server that enforces it, and the response a blocked viewer receives.
+
+| Protection                                      | Enforced in                                                                   | Viewer receives                                                                                                                                                                                                                              |
+| ----------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workspace entitlement (no active plan or trial) | resolve, file, download                                                       | `404` with code `NOT_FOUND`                                                                                                                                                                                                                  |
+| Custom domain binding                           | resolve (`ensureHostAccess`)                                                  | `400 INVALID_HOST` for a host that is not a recognised, verified custom domain; `404 INVALID_DOMAIN` when the domain belongs to another workspace, is not that workspace's active domain, or the workspace is not entitled to custom domains |
+| Link revoked                                    | resolve                                                                       | `410` with code `REVOKED`                                                                                                                                                                                                                    |
+| Link expired                                    | resolve                                                                       | `410` with code `EXPIRED`                                                                                                                                                                                                                    |
+| One-time open                                   | resolve (`consumeOpenOnceLink` sets `revoked_at` on first successful resolve) | Second attempt is `410 REVOKED`                                                                                                                                                                                                              |
+| Password                                        | resolve (`bcrypt.compare` against `links.password_hash`)                      | `401 PASSWORD_REQUIRED`, then `401 BAD_PASSWORD`                                                                                                                                                                                             |
+| Email verification (OTP)                        | resolve, file, download                                                       | `401` with code `EMAIL_OTP_REQUIRED`                                                                                                                                                                                                         |
+| Allow list / block list                         | resolve, file, download                                                       | `403` with code `EMAIL_NOT_ALLOWED`                                                                                                                                                                                                          |
+| Data-room access lists                          | resolve (content filtered per viewer), file, download                         | Hidden items are absent from the listing; a direct request returns `403 ALC_NOT_ALLOWED`                                                                                                                                                     |
+| NDA gate                                        | resolve, file, download                                                       | `403 NDA_SIGN_REQUIRED`, or `403 NDA_PDF_PENDING` while the signed NDA PDF is still being prepared                                                                                                                                           |
+| Data room disabled                              | resolve                                                                       | `410` with code `ROOM_DISABLED`                                                                                                                                                                                                              |
+| Bandwidth cap reached                           | resolve, and re-checked on every asset route before and during streaming      | `403` with code `BANDWIDTH_LIMIT_REACHED`                                                                                                                                                                                                    |
+| Downloads disabled                              | download, merged download, ZIP download                                       | `403 Downloads disabled`                                                                                                                                                                                                                     |
+| Watermark required but no eligible PDF source   | file, download                                                                | Typed engine failure; no bytes are served (see [Watermarks in the bytes](/docs/how-it-works/watermark-in-bytes))                                                                                                                             |
+
+The order of these checks differs slightly between a single document and a data room — data-room resolution checks revocation and expiry first so a dead link fails before any heavier lookup — but the set of gates is the same, and no gate is skipped for either resource type.
+
+### What the password gate actually does
+
+The password is compared with bcrypt against the stored hash. Attempts are rate limited per link (`link_password`, 30 attempts per 10 minutes). When that budget is exhausted the response is `401 BAD_PASSWORD` — the same response as a wrong password — so the limiter does not tell an attacker they have found the ceiling.
+
+### Session cookies
+
+A successful resolve sets an HMAC-signed, `httpOnly` access cookie (`dk_acc_*`) scoped to that specific link and resource. Completing email verification sets a matching `dk_ev_*` cookie carrying the verified address. Both are signed with a server-only secret (`src/server/cookieHelper.ts`), carry an expiry inside the signed payload, and are rejected if the signature, the expiry, or the link and resource ids do not match. Because they are `httpOnly`, page scripts cannot read them.
+
+## Tenant isolation
+
+Workspace data is separated in the database, not only in application code. Row Level Security is enabled on every workspace-scoped table in `supabase/migrations/0001_init.sql`, and the policies are built from two `SECURITY DEFINER` helper functions:
+
+- `is_workspace_member(ws)` — true for the service role, for the workspace creator, or for a user with a row in `workspace_members` for that workspace.
+- `has_workspace_role(ws, roles)` — true for the service role, or for the workspace owner (`workspaces.created_by`) when `owner` is among the requested roles.
+
+From those, the policy shape is consistent across the schema:
+
+- **Reads** of documents, links, folders, data rooms, branding, watermarks, analytics, and subscriptions require workspace membership. A few internal analytics tables are not readable by members at all.
+- **Writes** to documents, links, folders, and data rooms additionally require an owner or editor role _and_ an active workspace entitlement (`workspace_has_entitlement`).
+- **Owner-only writes** cover branding, custom domains, NDA templates, and subscriptions. The audit log is owner-only even to read.
+- **Service-role only** tables include email OTP codes (`email_otps`) and every analytics write; the `authenticated` role holds no insert grant on them.
+- **Self-scoped** tables — profiles and notification settings — are readable and writable only by the user they belong to.
+
+The service-role key is server-only and is never included in the client bundle. Public routes use it precisely because unauthenticated viewers have no database identity; every one of those routes derives the workspace from the link row rather than accepting a workspace id from the caller.
+
+## Abuse limits
+
+`src/server/rateLimit.ts` implements a fixed-window counter in the database. Two properties matter for a reviewer:
+
+- **It fails closed.** If the counting RPC errors or throws, the decision returned is _not allowed_. An abuse limiter that fails open is worse than none, so this one refuses instead.
+- **It never keys on IP addresses.** Identifiers are link ids, SHA-256 hashes of normalised email addresses, or fixed sentinels. Hashed IPs are trivially re-identifiable, and a per-link cap bounds total guess volume regardless of how many addresses an attacker controls.
+
+| Bucket                                | Scope                     | Limit                                     |
+| ------------------------------------- | ------------------------- | ----------------------------------------- |
+| `link_password`                       | per link                  | 30 per 10 minutes                         |
+| `otp_send_email`                      | per link and email        | 5 per 15 minutes                          |
+| `otp_send_link`                       | per link                  | 30 per hour                               |
+| `otp_verify`                          | per link and email        | 15 per 15 minutes                         |
+| `contact_form`, `contact_form_global` | per sender, and global    | Applied to the public contact relay       |
+| `data_request`, `data_request_global` | per requester, and global | Applied to the privacy data-request relay |
+
+## Transport and response headers
+
+TLS in transit and AES-256 at rest are managed by the database and storage providers. DocKosha sets its own response headers for every route in `next.config.ts`:
+
+| Header                                | Value                                                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `Strict-Transport-Security`           | `max-age=31536000`                                                                                            |
+| `X-Frame-Options`                     | `SAMEORIGIN`                                                                                                  |
+| `X-Content-Type-Options`              | `nosniff`                                                                                                     |
+| `Referrer-Policy`                     | `strict-origin-when-cross-origin`                                                                             |
+| `Permissions-Policy`                  | `camera=(), microphone=(), geolocation=()`                                                                    |
+| `Content-Security-Policy-Report-Only` | Self-first policy with `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `frame-ancestors 'self'` |
+
+Two honest notes about these:
+
+- **HSTS is a bare `max-age`.** `includeSubDomains` and `preload` are deliberately omitted, because the same header is forwarded verbatim to customer custom domains and those directives would bind domains DocKosha does not own.
+- **The Content Security Policy is report-only, not enforcing.** The App Router currently requires inline bootstrap scripts; moving to nonces would force dynamic rendering across the app. Report-Only lets violations be measured before that migration. Clickjacking is still enforced, by `X-Frame-Options`. Additionally, bytes streamed directly from object storage on a custom domain bypass this policy entirely, because the edge worker builds fresh response headers for those responses.
+
+## Deterrents, not enforcement
+
+Some controls raise the cost of copying without being able to prevent it. They are useful; they are not access control, and DocKosha does not describe them as such.
+
+### Screenshot protection
+
+**A browser cannot block OS-level screen capture. Screenshot protection is a best-effort deterrent only.**
+
+`src/components/public/ScreenshotShield.tsx` blurs the document when the tab loses focus or becomes hidden, and when a known screenshot hotkey is pressed (`PrintScreen`, and `Cmd+Shift+3/4/5/S` on macOS). On Windows the `PrintScreen` event reaches the page _after_ the operating system has already captured the screen. Screen-recording software, a second device pointed at the display, and any capture tool that does not surface a key event to the page are unaffected. The viewer overlay itself says this to the recipient rather than implying a guarantee.
+
+Use it to discourage casual capture. Pair it with a dynamic watermark if you need attribution — see [Watermarks in the bytes](/docs/how-it-works/watermark-in-bytes) and the [download and screenshot controls guide](/docs/guides/download-and-screenshot-controls).
+
+### Disabling downloads
+
+Turning downloads off _is_ enforced: the download route returns `403` and refuses to stream the file. What it cannot do is prevent extraction by someone who is allowed to view the document, because viewing requires sending the rendered bytes to their browser. Disabling downloads removes the convenient path, not the capability.
+
+## Known limits, stated plainly
+
+- **Revocation takes effect at the next resolve.** Revocation, expiry, and one-time-open are evaluated during resolve. A successful resolve issues an access cookie valid for one hour, and asset requests inside that window are served against the cookie. A session that had already opened the document can therefore continue fetching it for up to an hour after you revoke the link.
+- **The Content Security Policy is report-only.** It reports violations; it does not block them yet.
+- **Screenshot protection is a deterrent.** See above.
+- **Watermarks attribute, they do not prevent.** They identify who received a copy; they do not stop the copy being made.
+- **Email verification proves control of an inbox**, not the identity of a person. Combine it with an allow list when the recipient set matters.

@@ -1,0 +1,74 @@
+{
+  "badge": "FAQ",
+  "title": "Frequently asked questions",
+  "subtitle": "Quick answers about secure document sharing, virtual data rooms, analytics, and privacy.",
+  "sections": [
+    {
+      "title": "Getting started",
+      "items": [
+        {
+          "q": "What is DocKosha?",
+          "a": "DocKosha is a secure document sharing and virtual data room platform built for high-fidelity viewing, access controls, watermarking, and privacy-first analytics."
+        },
+        {
+          "q": "What’s the difference between a secure link and a data room?",
+          "a": "A secure link is best for sharing a single document with link-level controls. A data room is best for sharing a structured set of documents and folders with unified access rules and aggregated analytics."
+        },
+        {
+          "q": "Can I create multiple links for the same document?",
+          "a": "Yes. You can create multiple links with different access rules, expirations, and analytics. Each link can be revoked or updated independently."
+        },
+        {
+          "q": "Do you charge per viewer or per share link?",
+          "a": "No. Pricing is workspace-based so you can share with external stakeholders without per-viewer surprises."
+        },
+        {
+          "q": "Do you offer a trial?",
+          "a": "Yes. Essential includes a 14-day trial with no credit card required so you can validate the workflow before committing."
+        }
+      ]
+    },
+    {
+      "title": "Files, viewing, and downloads",
+      "items": [
+        {
+          "q": "Which file types can I upload?",
+          "a": "DocKosha Cloud supports PDF and validated CSV/Office/Markdown conversion, plus JPG/JPEG/PNG/WEBP images, MP4/MOV/AVI/MKV/WEBM video, and MP3/WAV/OGG/AAC audio. Legacy .ppt, .doc, and .xls uploads are not supported."
+        },
+        {
+          "q": "What happens when I upload a PPTX, DOCX, XLSX, or XLSM file?",
+          "a": "DocKosha Cloud converts supported modern Office formats to PDF within its validated envelope. When processing fails, output is not published and the original remains available. Legacy .ppt, .doc, and .xls files cannot be uploaded."
+        },
+        {
+          "q": "What powers document processing in DocKosha?",
+          "a": "DocKosha Cloud provides PDF merge, watermarking, CSV conversion, page counting, Office conversion, and redaction through isolated workers with finite deadlines. It validates output before publishing, and anything outside its envelope fails closed with a clear, typed error instead of silently losing quality."
+        },
+        {
+          "q": "How do watermarked downloads work?",
+          "a": "When watermarking is enabled, downloads stream the processed PDF and always use a .pdf filename. When watermarking is disabled, downloads stream the original uploaded file."
+        }
+      ]
+    },
+    {
+      "title": "Security, privacy, and analytics",
+      "items": [
+        {
+          "q": "How can I restrict access to a shared document?",
+          "a": "Use link gates like passwords, email verification, allowlists, and NDA acceptance. You can also set expirations, enable/disable downloads, and apply dynamic watermarking."
+        },
+        {
+          "q": "Does analytics collect personal data?",
+          "a": "Analytics are anonymized by default. DocKosha does not store raw IP addresses, and viewer email is captured only when link settings require it (for example, Email Verification, Allowlist gates, or NDA)."
+        },
+        {
+          "q": "Can I export analytics to CSV?",
+          "a": "Yes. You can export document viewer insights as CSV from the analytics UI. If a link collects verified viewer email, exports include email; otherwise exports include a pseudonymous viewer ID. Broader exports (data room and workspace) are on the roadmap."
+        },
+        {
+          "q": "What can I track with analytics?",
+          "a": "Track views, time per page, downloads, and engagement signals. Viewer-level insights appear when your links require verified identity (email/NDA)."
+        }
+      ]
+    }
+  ]
+}

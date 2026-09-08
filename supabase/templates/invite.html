@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>You are invited to DocKosha</title>
+    <style>
+      @media only screen and (max-width: 640px) {
+        .container {
+          width: 100% !important;
+        }
+        .logo {
+          padding: 0 0 12px 0 !important;
+        }
+        .card {
+          border-radius: 10px !important;
+        }
+        .header {
+          padding: 24px 20px 0 20px !important;
+          font-size: 18px !important;
+        }
+        .content {
+          padding: 18px 20px 8px 20px !important;
+        }
+        .footer {
+          padding: 14px 20px 20px 20px !important;
+        }
+        .button-table {
+          width: 100% !important;
+        }
+        .button-cell {
+          width: 100% !important;
+        }
+        .button-link {
+          display: block !important;
+          text-align: center !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background-color: #f3f4f6;
+      color: #111827;
+      font-family:
+        &quot;Inter&quot;, &quot;Segoe UI&quot;, &quot;Helvetica Neue&quot;,
+        Arial, &quot;Noto Sans&quot;, sans-serif;
+    "
+  >
+    <div
+      style="
+        display: none !important;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        mso-hide: all;
+      "
+    >
+      You have been invited to DocKosha.
+    </div>
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      style="width: 100%; background-color: #f3f4f6"
+    >
+      <tr>
+        <td align="center" style="padding: 24px 12px">
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            style="width: 600px; max-width: 600px"
+            class="container"
+          >
+            <tr>
+              <td
+                align="left"
+                style="
+                  padding: 0 0 12px 0;
+                  font-size: 18px;
+                  font-weight: 600;
+                  color: #111827;
+                "
+                class="logo"
+              >
+                DocKosha
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellspacing="0"
+                  cellpadding="0"
+                  style="
+                    width: 100%;
+                    background-color: #ffffff;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 12px;
+                  "
+                  class="card"
+                >
+                  <tr>
+                    <td
+                      style="
+                        padding: 28px 32px 0 32px;
+                        font-size: 20px;
+                        font-weight: 600;
+                        letter-spacing: -0.2px;
+                      "
+                      class="header"
+                    >
+                      You are invited to DocKosha
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 20px 32px 8px 32px" class="content">
+                      <p
+                        style="
+                          margin: 0 0 16px 0;
+                          font-size: 16px;
+                          line-height: 1.6;
+                        "
+                      >
+                        You have been invited to create an account on DocKosha.
+                        Accept the invite to get started.
+                      </p>
+                      <table
+                        role="presentation"
+                        cellspacing="0"
+                        cellpadding="0"
+                        style="margin: 16px 0 20px 0"
+                        class="button-table"
+                      >
+                        <tr>
+                          <td
+                            align="left"
+                            style="
+                              background-color: #111827;
+                              border-radius: 8px;
+                            "
+                            class="button-cell"
+                          >
+                            <a
+                              href="{{ .ConfirmationURL }}"
+                              style="
+                                display: inline-block;
+                                padding: 12px 20px;
+                                color: #ffffff;
+                                text-decoration: none;
+                                font-weight: 600;
+                                font-size: 15px;
+                              "
+                              class="button-link"
+                            >
+                              Accept invite
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                      <p
+                        style="
+                          margin: 0 0 8px 0;
+                          font-size: 14px;
+                          line-height: 1.6;
+                          color: #6b7280;
+                        "
+                      >
+                        If the button does not work, copy and paste this link
+                        into your browser:
+                      </p>
+                      <p
+                        style="
+                          margin: 0 0 16px 0;
+                          font-size: 14px;
+                          line-height: 1.6;
+                        "
+                      >
+                        <a
+                          href="{{ .ConfirmationURL }}"
+                          style="
+                            color: #2563eb;
+                            text-decoration: underline;
+                            word-break: break-all;
+                          "
+                        >
+                          {{ .ConfirmationURL }}
+                        </a>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style="
+                        padding: 16px 32px 24px 32px;
+                        font-size: 12px;
+                        line-height: 1.5;
+                        color: #6b7280;
+                      "
+                      class="footer"
+                    >
+                      This is an automated message from DocKosha. If you did not
+                      expect this email, you can ignore it.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

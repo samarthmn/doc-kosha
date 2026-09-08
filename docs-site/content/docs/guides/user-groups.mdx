@@ -1,0 +1,69 @@
+---
+title: "User groups"
+description: "Create reusable named lists of email addresses in a workspace and apply them as allow or block rules on links, link presets and data room access lists."
+---
+
+A user group is a named list of email addresses that lives in the workspace. Instead of pasting the same twelve investor emails onto every link, you create the group once and select it wherever access rules are set.
+
+User groups and group-based access rules are ordinary application capabilities;
+see the [capability matrix](/docs/reference/capability-matrix).
+
+**Who can manage groups:** workspace owners and members with **Editor** access to workspace documents. Everyone else, including document viewers, sees _Access restricted_ on the User groups page.
+
+## Create a group
+
+1. Go to **User groups** in the workspace navigation.
+2. Click **New group**.
+3. Enter a **Group name** (up to 120 characters), for example `Finance stakeholders`.
+4. Paste the **Emails** — one per line. Commas and semicolons also work as separators.
+5. Click **Create group**.
+
+Addresses are trimmed, lowercased and de-duplicated as they are saved. A group needs at least one email. If any address is not a valid email the dialog names the offending entries and nothing is saved.
+
+## Edit a group
+
+1. On **User groups**, click the pencil icon on the group's row.
+2. Change the name, or edit the email list — the dialog loads the current members, one per line.
+3. Click **Save changes**.
+
+Links and presets reference the group itself, not a copy of its addresses. Editing membership therefore updates every link, preset and access list that uses the group; there is nothing to re-apply.
+
+## Delete a group
+
+1. Click the trash icon on the group's row.
+2. Confirm.
+
+Deleting is permanent and removes the group and its member emails from **all** links and presets that referenced it. Anyone who had access only through that group loses it.
+
+## Apply a group to a link
+
+1. Open the link's settings and go to its access rules.
+2. Under **Allowed groups**, tick the groups whose members should be let in.
+3. Under **Blocked groups**, tick the groups whose members should be denied.
+4. Save the link.
+
+Each group is shown with its member count so you can sanity-check what you are about to grant.
+
+Groups work the same way on **link presets** and on **data room, folder and document access lists**, so a single group can drive room-level and document-level rules at once.
+
+If the workspace has no groups yet, the picker says so and offers a shortcut to the User groups page.
+
+## How allow and block interact
+
+- **Blocking wins.** An address that is in both an allowed group and a blocked group (or on a blocklist directly) is denied.
+- The editor detects overlapping members and warns you before you save. Saving a **preset** is refused until the overlap is resolved, and a data room link with access lists is refused too. Fix the membership rather than relying on precedence.
+
+Group rules are matched against the viewer's **verified** email, so they only do useful work on links that verify email. See [allow and blocklists](/docs/guides/gate-allow-and-blocklists) and [the email OTP gate](/docs/guides/gate-email-otp).
+
+## Limits
+
+- Groups are scoped to one workspace. They are not shared across workspaces.
+- Group changes are **not** written to the internal [audit log](/docs/guides/audit-log) today. That log records document, data room, folder, room-content, link and access-grant activity; workspace user-group and group-email membership changes are outside its final recorded set.
+- Group membership is a list of email addresses, not DocKosha accounts. Members of a group do not become workspace members and get no access to the app — see [invites and member levels](/docs/guides/invites-and-member-levels) for that.
+- There is no directory or SSO group sync in this guide.
+
+## Related
+
+- [Allow and blocklists](/docs/guides/gate-allow-and-blocklists)
+- [Access lists for rooms, folders and documents](/docs/guides/access-lists)
+- [Link presets and custom slugs](/docs/guides/link-presets-and-custom-slugs)

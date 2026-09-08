@@ -1,0 +1,232 @@
+---
+title: "FAQ"
+description: "Evaluator answers about DocKosha: supported file types and size limits, conversion failures, link gates, analytics, self-hosting versus Cloud, and providers."
+---
+
+Answers to the questions people ask while deciding whether DocKosha fits. Every
+answer here matches the shipped implementation; where a capability is limited,
+the limit is stated rather than glossed.
+
+## Documents, formats, and limits
+
+### What file types can I upload?
+
+Four categories, validated against a fixed list at upload time:
+
+- **Text/docs:** `pdf`, `pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md`
+- **Images:** `jpg`, `jpeg`, `png`, `webp`
+- **Video:** `mp4`, `mov`, `avi`, `mkv`, `webm`
+- **Audio:** `mp3`, `wav`, `ogg`, `aac`
+
+Anything else is rejected with an unsupported-file-type error. Free workspaces
+are narrower still: PDF uploads only.
+
+### Are there size limits?
+
+Yes, and they are processing limits rather than plan limits:
+
+- A conversion accepts at most **50 MiB** of input.
+- PDF processing — watermarking, redaction, page counting — accepts at most
+  **100 MiB**.
+- A merged PDF download accepts at most **100 MiB** of combined input.
+- A data room ZIP download covers at most **100 documents** and **500 MiB** of
+  combined input.
+
+Separately, your plan caps total workspace storage (250 MB on Free, up to
+200 GB on Max) and, on Free, public bandwidth at 2 GB per month.
+
+### Which files get converted to PDF?
+
+Mandatory DocYantra `0.0.25` converts supported CSV, Markdown, and Office files to PDF within its documented envelope. PDFs are already PDFs. Images, video, and audio
+are delivered in their original form and are never converted.
+
+Conversion gives watermarking and per-page analytics a consistent target when
+DocYantra completes it. The viewer prefers the converted PDF
+**only** after successful conversion.
+
+### What happens when a conversion fails?
+
+Conversion fails closed. Outside its validated format, size, and fidelity
+envelope, the processing engine refuses the job and returns a stable typed
+reason code — it never emits a degraded or partial render, and never silently
+drops visible content such as an image it could not decode.
+
+When that happens, viewing is not blocked: the viewer falls back to the
+**original uploaded file**. A viewer opening a `.docx` whose conversion failed
+receives that `.docx`, not a half-rendered PDF.
+
+<Callout type="warn">
+  Watermarking is the one place where fallback is not offered. If a download
+  requires a watermark and watermarking cannot be completed, the download fails
+  rather than serving unwatermarked bytes.
+</Callout>
+
+The failure codes, their meanings, and which ones are worth retrying are listed
+in [Troubleshooting](/docs/reference/troubleshooting).
+
+### Is my document sent to a third-party conversion service?
+
+DocYantra is the mandatory direct dependency and runs the documented conversion path. It controls its own bundled dependencies and fails closed outside its validated envelope.
+
+## Viewers and access
+
+### Do viewers need an account?
+
+No. Anyone opening a shared document link or data room link is anonymous to the
+system unless a gate on that link asks for identity. There is no sign-up, and no
+password to create.
+
+An email OTP gate, an allow/blocklist, or an NDA gate will ask a viewer for an
+email address and verify it with a one-time code — but that is verification, not
+account creation.
+
+Teammates are different. People you invite **into your workspace** — with
+document or data room access levels — do sign in, because they are members of
+your workspace rather than viewers of a link.
+
+### How do the gates combine?
+
+They combine with AND. Every gate configured on a link must pass, and every one
+of them is enforced on the server before any document bytes are released. The
+server evaluates them in a fixed order, which determines only which message a
+viewer sees first:
+
+1. **Link and workspace exist and are entitled.** Otherwise the response is a
+   plain "not found" — an unentitled workspace's links are indistinguishable
+   from links that never existed.
+2. **Host.** If the request arrives on a custom domain, that domain must be
+   verified, active, entitled, and owned by the same workspace.
+3. **Email identity.** Required whenever email verification, an NDA gate, or an
+   allow/blocklist is active on the link.
+4. **Allow/blocklist.** The verified email is checked against the link's list.
+5. **NDA.** A signature must exist for that email _and_ its signed PDF must be
+   ready.
+6. **Password.** Requested, then verified.
+7. **Bandwidth.** A workspace over its bandwidth allowance stops serving public
+   views.
+8. **Link state.** Expired or revoked links are refused during resolution.
+
+On success, a one-time-open link is consumed immediately: it is revoked, so the
+next open is refused as revoked.
+
+### Can a viewer forward the link to someone else?
+
+If the link has no email gate, yes — a URL is a URL. That is why the gates
+exist. An allow/blocklist plus an email OTP gate limits access to addresses you
+name; a dynamic watermark stamps the viewer's identity into the delivered PDF
+bytes; and the viewer log records the opens, with a verified email attached
+whenever the link required one.
+
+### Does screenshot protection stop screenshots?
+
+No, and the product says so in the viewer itself. Screenshot protection is a
+**best-effort deterrent**: it reacts to tab blur, window focus loss, and a few
+known screenshot hotkeys by covering the content. A browser cannot block
+operating-system-level screen capture — on Windows, for example, `PrintScreen`
+events reach the page only _after_ the OS has already captured the screen — and
+nothing in a browser can stop a phone camera pointed at the monitor.
+
+Treat it as friction against casual capture. If a document genuinely must not
+leave the room, rely on dynamic watermarking and the audit log for
+accountability, not on the shield for prevention.
+
+### Are watermarks drawn in the viewer?
+
+No. Watermarks are **burned into the delivered PDF bytes on the server** before
+those bytes reach the browser. There is no browser overlay to remove with dev
+tools, and no unwatermarked copy is served alongside the watermarked one.
+
+Images, audio, and video keep their original delivery, because there is no PDF
+watermark representation for them. That applies even to older links where the
+watermark flag is already switched on. See
+[Watermark in bytes](/docs/how-it-works/watermark-in-bytes).
+
+## Analytics and privacy
+
+### What viewer analytics are collected?
+
+Four core events, recorded server-side for entitled workspaces:
+
+| Event          | Meaning                       |
+| -------------- | ----------------------------- |
+| `view`         | A link was opened             |
+| `download`     | A download was taken          |
+| `page_view`    | Time spent on a specific page |
+| `section_time` | Time spent in a media section |
+
+Viewer-submitted `feedback` and `qa` events are recorded when those surfaces are
+enabled on the link. Country is derived server-side on the `view` event and kept
+only as aggregated counts. Viewer analytics are pruned at 365 days.
+
+Collection and presentation are separate questions. Viewer analytics,
+page-level events, country aggregates, media sections, and the shipped export
+surfaces are ordinary application capabilities. Cloud plans may limit hosted
+capacity without creating a second source edition.
+
+### What is deliberately not collected?
+
+- **Raw IP addresses are never stored.** Country is derived at request time; the
+  address itself is not persisted.
+- **Viewer email is only captured when the link's own settings require it** —
+  an OTP gate, an allow/blocklist, or an NDA gate. It is only persisted into
+  analytics when the link's "collect email for analytics" setting is on.
+- Viewer session tracking uses httpOnly, per-link cookies. Local storage and
+  ad-hoc tracking cookies are not used for viewer identity.
+
+### How does consent work?
+
+DocKosha's own marketing and product analytics — the third-party vendors on
+dockosha.com and in the authenticated app — are consent-gated and regional:
+
+- **EU/EEA/UK visitors, and visitors whose region cannot be determined, get
+  nothing until they explicitly opt in.** Unknown geography fails safe to EU
+  behaviour.
+- **Elsewhere, analytics are default-granted with a persistent opt-out** in the
+  consent banner and in settings.
+- **Global Privacy Control always wins.** A GPC signal forces analytics and
+  session replay off regardless of region or of any stored consent.
+
+Session replay only runs when analytics consent is granted, and it masks inputs
+and blocks sensitive surfaces — document viewers, media players, upload
+controls, password and payment fields — so document content is never recorded.
+
+First-party viewer analytics on shared links are a different system: they are
+the product feature your recipients' engagement data comes from, they run
+server-side for entitled workspaces, and they follow the storage discipline
+above (no raw IPs, email only when the link requires it). They are disclosed in
+the privacy policy rather than gated behind the marketing consent banner. See
+[Privacy and analytics](/docs/how-it-works/privacy-and-analytics).
+
+## Self-hosting, Cloud, and providers
+
+### What is the difference between self-hosting and Cloud?
+
+The source is public under AGPL-3.0-or-later for reading and contribution, but
+external self-hosting is not currently available. The mandatory direct
+DocYantra `0.0.25` dependency is private and unavailable to external users.
+DocKosha Cloud is the available hosted product.
+
+### Can I install DocKosha or obtain DocYantra access?
+
+Not currently. There is no external DocYantra package, token, SDK, API,
+standalone product, or engine-license offering. Use DocKosha Cloud for the
+available product.
+
+### How does document processing work?
+
+DocYantra is the mandatory direct `0.0.25` dependency. Operations outside its
+validated conversion and redaction envelope return explicit typed errors; there
+is no provider-selection variable or fallback. DocKosha Cloud may operate the
+same engine for managed processing, but it is not a separate install
+requirement.
+
+### Where is the authoritative capability list?
+
+The [capability matrix](/docs/reference/capability-matrix). It is rendered here
+from the same `docs/capability-matrix.md` file that ships in the repository, so
+there is exactly one copy of those facts.
+
+## Still stuck?
+
+If something behaves unexpectedly rather than being unclear, start with
+[Troubleshooting](/docs/reference/troubleshooting) — it is organised by symptom.

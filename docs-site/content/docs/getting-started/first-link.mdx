@@ -1,0 +1,69 @@
+---
+title: "Your first shared link"
+description: "Create a share link for a document, add a password gate, copy the URL, and verify what an outside viewer actually sees."
+---
+
+A link is the unit of sharing in DocKosha. The document stays put; each link carries its own gates, its own viewer permissions, and its own analytics.
+
+## Create the link
+
+1. Open the document and go to the **Share** tab.
+2. Click **New Link**. The link editor opens with three tabs — **Basics**, **Security**, **Access** — and a **Viewer experience** summary on the right that updates as you change settings.
+3. On **Basics**, give the link a **Link name**. This is required. It is shown to teammates and used to label the link in analytics — for example `Investor update – March 2025`.
+4. On **Security**, switch on **Password protection** and type a password. A password is required whenever the toggle is on.
+5. Click save.
+
+The share URL is copied to your clipboard as soon as the link is created. You can copy it again at any time from the **Copy link** button on the link row.
+
+## Read the summary before you send
+
+The right-hand panel is the fastest way to check you have built what you meant to:
+
+- **Access controls** — the gates a viewer must pass: `Password`, `OTP`, `Allowlist`, `Blocklist`, `NDA`, `Expires`. If it says `Public`, anyone with the URL gets in.
+- **Viewer controls** — `Downloads on` / `Downloads off`, `Screenshot protection`, `Watermark`, `Q&A`, `Feedback`, `Comments`.
+- **Analytics** — `Store viewer email` or `No email stored`, and `Notify on view`.
+- **Expiration** — the exact date and time, or `Never`.
+
+Defaults for a new link: downloads **off**, screenshot protection **on**, email notifications **off**, no expiry, no gates other than the ones you add.
+
+## Open it as a viewer would
+
+Test the link in a **private or incognito window**. Access, email-verification, and viewer-identity cookies are per-link and persist in your normal browser, so testing in the same session tells you very little.
+
+A password-gated document link shows:
+
+> **Password Protected Link** — Enter the password to view the document.
+
+Enter the password and the document opens. Get it wrong and the viewer sees _"Incorrect password. Please try again."_
+
+## What the link URL looks like
+
+| Setup                         | URL shape                                                                           |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| Default                       | `/d/{documentId}/{linkId}` for documents, `/r/{dataRoomId}/{linkId}` for data rooms |
+| With a custom URL set         | `/{workspace-slug}/{your-slug}`                                                     |
+| With a verified custom domain | the same paths on your own hostname                                                 |
+
+Custom URLs are covered in [Link presets and custom slugs](/docs/guides/link-presets-and-custom-slugs). Custom domains and white-label branding are ordinary application capabilities; see [Branding and custom domains](/docs/guides/branding-and-custom-domains).
+
+## Honest limits on this first link
+
+<Callout type="warn" title="A password limits access, not copying">
+
+Once a viewer is through the gate they can read the document. Screenshot protection is a best-effort deterrent — it blurs the content and reacts to common screenshot hotkeys, but no browser can block an operating-system screen capture, a screen recorder, or a phone camera. Downloads are off by default; leave them off if you do not want the file leaving the viewer.
+
+</Callout>
+
+Other things worth knowing before you send this link to someone:
+
+- **Password attempts are rate limited per link.** After 30 attempts in a fixed ten-minute window, further attempts are answered as if the password were wrong, even when it is correct. A viewer who is genuinely locked out should wait for the window to roll over.
+- **A successful unlock is remembered for one hour** in that browser, in a signed server-set cookie. After that the gate is presented again.
+- **Deleting the link revokes it.** The viewer then sees _"This document link is invalid or has been revoked."_ There is no undo, and the URL cannot be reissued.
+- **Editing a link takes effect immediately** for anyone who has not already passed the gate in the last hour.
+
+## Next steps
+
+- Add a second gate: [email verification](/docs/guides/gate-email-otp), [expiry](/docs/guides/gate-expiry), or an [allowlist](/docs/guides/gate-allow-and-blocklists)
+- Understand every setting in the editor: [Create and share links](/docs/guides/create-and-share-links)
+- Watch what happens after you send it: [Analytics](/docs/guides/analytics)
+- Share a whole set of files instead: [Create a data room](/docs/guides/create-a-data-room)

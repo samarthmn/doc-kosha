@@ -1,0 +1,45 @@
+# Public template only. Keep the real wrangler.toml, account/zone identifiers,
+# routes, and Wrangler secrets in private ops.
+#
+# Setup:
+#   cp wrangler.toml.example wrangler.toml
+#   replace every <PLACEHOLDER>
+#   npx wrangler secret put CLOUDFLARE_WORKER_ORIGIN_SECRET --env staging
+#   npx wrangler secret put CLOUDFLARE_WORKER_ORIGIN_SECRET --env production
+#
+# CLOUDFLARE_WORKER_ORIGIN_SECRET must be at least 32 characters and match the
+# Vercel app secret of the same name for each environment. Never log or commit
+# its value.
+
+name = "<WORKER_NAME>"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+account_id = "<CLOUDFLARE_ACCOUNT_ID>"
+
+# Development configuration (default)
+[vars]
+APP_ORIGIN = "http://localhost:3000"
+ENVIRONMENT = "development"
+
+# Staging environment
+[env.staging]
+name = "<STAGING_WORKER_NAME>"
+routes = [
+  { pattern = "<STAGING_CUSTOM_DOMAIN_ROUTE>", zone_id = "<CLOUDFLARE_ZONE_ID>" }
+]
+[env.staging.vars]
+APP_ORIGIN = "<STAGING_APP_ORIGIN>"
+ENVIRONMENT = "staging"
+
+# Production environment
+[env.production]
+name = "<PRODUCTION_WORKER_NAME>"
+routes = [
+  { pattern = "<PRODUCTION_CUSTOM_DOMAIN_ROUTE>", zone_id = "<CLOUDFLARE_ZONE_ID>" }
+]
+[env.production.vars]
+APP_ORIGIN = "<PRODUCTION_APP_ORIGIN>"
+ENVIRONMENT = "production"
+
+# Do not put secret values in this file. Add CLOUDFLARE_WORKER_ORIGIN_SECRET
+# with `wrangler secret put`; private ops owns its value.

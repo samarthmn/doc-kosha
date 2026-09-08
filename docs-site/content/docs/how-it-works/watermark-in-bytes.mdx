@@ -1,0 +1,79 @@
+---
+title: "Watermarks in the bytes"
+description: "DocKosha composes watermarks into the delivered PDF bytes on the server for both viewing and download, resolves dynamic values per request, and refuses to serve a document when a required watermark cannot be applied."
+---
+
+A watermark that lives in the browser disappears the moment the file does. DocKosha does not draw watermarks over the viewer. It composes them into the PDF bytes on the server, for every delivery path, before the response is sent.
+
+## What "in the bytes" means
+
+When a link has watermarking enabled, the server reads the eligible source PDF,
+runs it through DocYantra together with the watermark definition,
+and streams the **resulting PDF** to the recipient. The mark is part of the file
+DocKosha produced for that request. It is not an HTML layer sitting on top of a
+canvas, and it does not vanish when the file is saved, forwarded, or opened in
+another PDF reader.
+
+This is true of on-screen viewing too, not only downloads. The public viewer deliberately renders no client-side watermark overlay — the bytes it receives from `src/app/api/public/links/file/route.ts` are already watermarked, which is also why a viewer never shows a doubled mark.
+
+## Where it happens
+
+| Path                                      | Route                                               | Engine call                                        |
+| ----------------------------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| Viewing a document in a link or data room | `src/app/api/public/links/file/route.ts`            | `applyWatermarkToPdf`                              |
+| Downloading a single document             | `src/app/api/public/links/download/route.ts`        | `applyWatermarkToPdf`                              |
+| Downloading a data room as one merged PDF | `src/app/api/public/links/download-merged/route.ts` | `mergePdfs` (merge and watermark in one operation) |
+| Downloading a data room as a ZIP          | `src/app/api/public/links/download-zip/route.ts`    | `applyWatermarkToPdf` per eligible document        |
+
+All four go through `src/server/watermarkService.ts`, which calls the selected
+document-processing engine. DocYantra is the mandatory direct `0.0.25`
+dependency; engine failures fail closed and there is no fallback converter.
+
+## Static templates and dynamic values
+
+A **static template** is the workspace-level design: text, an image, or both, with colour, size, opacity and rotation. Templates live in the `watermarks` table; a link can point at a specific template, and workspace branding provides the fallback.
+
+**Dynamic values** are resolved per request, at the moment of delivery, so two recipients of the same link receive different bytes:
+
+| Value             | Source                                             |
+| ----------------- | -------------------------------------------------- |
+| Viewer email      | The email verified for that link session           |
+| Viewer IP address | Derived from the request headers for that response |
+| Date and time     | The server time when the response is produced      |
+
+The IP address is composed into that one response. It is not written to viewer analytics — see [Privacy and analytics boundaries](/docs/how-it-works/privacy-and-analytics), where the no-raw-IP-storage rule is described.
+
+To turn any of this on, follow the [watermarking guide](/docs/guides/watermarking).
+
+## Fail-closed rules
+
+Watermarking is a security-relevant transform, so it refuses rather than degrades. Every one of these returns a typed engine failure and **no document bytes**:
+
+1. **The watermark template is missing.** A link that requires a watermark but has no resolvable definition is refused.
+2. **An image-mode or hybrid-mode template has no image asset.** `src/server/watermarkPolicy.ts` returns a `missing_asset` failure rather than silently falling back to text.
+3. **The engine fails, traps, times out, or returns invalid output.** The failure is typed (`deadline_exceeded`, `invalid_output`, `internal_error`, and so on) and mapped to an HTTP status by `src/server/engineErrors.ts`.
+4. **There is no eligible PDF source.** If the document is not a PDF and has no completed conversion, the request fails with `unsupported_format` instead of serving the raw file.
+
+Raw bytes are never substituted for a failed watermark. When a watermarked PDF _is_ served for download, the filename is forced to end in `.pdf`, so the recipient does not receive an Office file name wrapping PDF content.
+
+## Formats that carry no watermark
+
+Images, audio, and video have no PDF watermark representation, so they are delivered as the original asset. Enabling the watermark flag on a link that points at one of these formats does not produce a marked file — including on older links where the flag is already switched on. If a media file must carry attribution, it has to be marked before upload.
+
+## What a watermark is for, and what it is not
+
+A watermark is **attribution and deterrence**. It makes a leaked copy traceable to the session that received it, and it makes casual redistribution costly.
+
+It is **not** a protection mechanism:
+
+- It does not encrypt the file or restrict what the recipient can do after delivery.
+- A determined recipient with PDF editing tools can attempt to remove or obscure a burned-in mark. Composing it into the bytes makes that a deliberate act rather than a browser setting, which is the whole of the claim.
+- It does not prevent screen capture. Browsers cannot block OS-level screen capture; see the deterrent note in the [security model](/docs/how-it-works/security-model).
+
+## Checking it yourself
+
+1. Create a link with watermarking enabled and the dynamic email value switched on.
+2. Open the link, verify an email address, and download the document.
+3. Open the downloaded file in any PDF reader, on any machine, offline.
+
+The mark is present because it is in the file. Re-open the link with a different verified email and download again: the two files differ, because the dynamic values were resolved per request.

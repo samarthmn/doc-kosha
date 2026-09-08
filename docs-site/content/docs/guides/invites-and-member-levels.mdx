@@ -1,0 +1,100 @@
+---
+title: "Invites and member levels"
+description: "Invite teammates to a DocKosha workspace and set what each one can reach — workspace documents, all data rooms, or specific rooms only."
+---
+
+Workspace membership controls what your own team can do **inside DocKosha**. It is a separate system from the gates and access lists that control outside viewers on a public link.
+
+## The access model
+
+There are three moving parts.
+
+**The owner is implicit.** The person who created the workspace is the owner. Ownership is not a role you assign — it is a property of the workspace. The owner always has full access to everything, their access cannot be edited, and they cannot be removed from the workspace.
+
+**Every other member has two access levels, one per surface.**
+
+| Setting                        | Values                                                              | What it covers                                                               |
+| ------------------------------ | ------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **Workspace documents access** | `None`, `Viewer`, `Editor`                                          | Documents outside data rooms — the **My Documents** area.                    |
+| **Data rooms access**          | `Custom (select rooms)`, `Viewer (all rooms)`, `Editor (all rooms)` | Data rooms. The "all rooms" values apply to every current _and future_ room. |
+
+**Explicit per-room grants fill the gap.** When data rooms access is set to `Custom (select rooms)`, you pick individual rooms and give the member `Viewer` or `Editor` on each. A member with no workspace-wide room access and no explicit grant for a room cannot open that room at all.
+
+Broadly: `Viewer` can read and copy existing share links; `Editor` can also create and change content and links.
+
+## Invite a teammate
+
+Only the workspace owner can invite.
+
+1. Open **Settings** and stay on the **Profile** tab.
+2. Find the **Members** card and choose **Add member**.
+3. Enter the person's email address.
+4. Set **Workspace documents access**.
+5. Set **Data rooms access**. If you choose `Custom (select rooms)`, tick the specific rooms and set `Viewer` or `Editor` for each.
+6. Send the invite.
+
+DocKosha emails the invitation. Nothing is granted until the invite is accepted.
+
+### Invite from inside a room
+
+If you are already in a data room, its **Access** area has an **Invite Member** shortcut. It invites the person to the workspace and grants them this room in one step. The shortcut is for people who are not yet workspace members — to grant an existing member a room, change their access instead.
+
+## What the invited person does
+
+1. They open the invite link from the email.
+2. They sign in or sign up **with the address the invite was sent to**. Acceptance is matched against that email address; signing in with a different address will not accept the invite.
+3. On acceptance, their membership and any room grants are created, and the workspace owner is notified.
+
+Invites expire **14 days** after they are issued. An expired, revoked, or already-accepted invite is rejected when opened.
+
+## Change a member's access
+
+1. **Settings → Profile → Members**.
+2. Open the member you want to change.
+3. Adjust **Workspace documents access**, **Data rooms access**, or their specific room grants.
+4. Save.
+
+The room grants you save replace that member's existing explicit grants — the list you submit is the new complete set, not an addition to it.
+
+If the member has security and workspace emails enabled in their notification preferences, they get an email telling them their access changed.
+
+You can also change a single room's grant from that room's **Access** area, using the **Explicit access** selector next to each member.
+
+## Remove a member
+
+1. **Settings → Profile → Members**.
+2. Remove the member and confirm.
+
+Removal deletes their workspace membership and all of their explicit room grants. If they have security and workspace emails enabled, they are notified.
+
+## Revoke a pending invite
+
+Pending invites appear alongside members in the same list, marked **Pending Invite**. Revoke one to stop it from being accepted. A revoked invite cannot be reinstated — issue a new one.
+
+## Role presets
+
+Presets let you save a named combination of documents access, data rooms access, and room grants, then apply it when inviting or editing someone.
+
+Presets are **apply-only**. Applying a preset copies its values onto that member or invite at that moment; it does not link them. Editing the preset later does not change anyone who was created from it.
+
+## Rules that surprise people
+
+- **Only the owner can manage members.** Invites, access changes, and removals are all owner-only.
+- **You cannot change your own access**, and you cannot remove yourself from the workspace.
+- **The owner cannot be edited or removed.** Owner access is implicit.
+- **One workspace per user.** DocKosha currently enforces a single workspace per account. Inviting someone who already belongs to another workspace is rejected.
+- **One pending invite per address.** A second invite to an address that already has one pending is rejected — revoke the first one if you want to change its access levels.
+- **The Cloud Free plan is a single member.** It allows only the owner, so teammate invites are unavailable until you upgrade. See [Plans and limits](/docs/how-it-works/plans-and-limits).
+
+## What member levels do _not_ control
+
+Member levels have no effect on public links. An outside viewer never becomes a workspace member by opening a link, and a workspace member gets no special treatment when they open a public link — they still face the link's gates.
+
+To scope what an outside viewer sees inside a shared data room, use [room, folder, and document access lists](/docs/guides/access-lists).
+
+## Next steps
+
+- [Room, folder, and document access lists](/docs/guides/access-lists)
+- [User groups](/docs/guides/user-groups)
+- [Notifications](/docs/guides/notifications)
+- [Audit log](/docs/guides/audit-log)

@@ -1,0 +1,56 @@
+---
+title: "Quickstart"
+description: "Get a DocKosha Cloud workspace you can sign in to in a few minutes."
+---
+
+You need a DocKosha Cloud workspace with an active plan before you can upload anything. The public repository is available for source review and contribution; external self-hosting is not currently available.
+
+## Route A — DocKosha Cloud
+
+1. Go to [dockosha.com](https://dockosha.com) and sign in or create an account.
+2. Complete onboarding. It has three steps: your profile, your workspace, then your plan.
+3. Choose a plan. **Free** is a real plan and is enough to finish this guide — it accepts PDF uploads, 250 MB of storage, 2 GB of monthly viewing bandwidth, and a single member.
+4. You land on the dashboard. Continue with [Your first document](/docs/getting-started/first-document).
+
+<Callout type="info" title="You must finish the plan step">
+
+A workspace only becomes usable once it has an active plan record. Until then, document, folder, link, and data-room reads and writes are refused, and public share links resolve as if they do not exist. If the app looks empty or a freshly created link returns "Link Unavailable", finish onboarding or open **Settings → Subscription** and select a plan.
+
+</Callout>
+
+## Source publication (not an external install)
+
+The source repository is public under AGPL-3.0-or-later for reading and contribution. The maintainer development setup requires authorized access to private DocYantra packages and is not available to external users.
+
+External users cannot run the repository as a self-hosted installation at this
+time because the mandatory DocYantra dependency is private.
+
+### Maintainer note
+
+Maintainers use the project’s internal development setup. It is not an
+external installation or package-access path.
+
+### Maintainer stack reference
+
+| Service                         | Why it is needed                                                                                                                         |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Supabase                        | Postgres, authentication, and row-level security — the source of truth for workspaces, documents, links, and access rules                |
+| MinIO (`docker-compose.r2.yml`) | S3-compatible object storage for uploaded files, converted PDFs, and branding assets                                                     |
+| SMTP                            | Email verification codes, invites, and view notifications. Without a working SMTP configuration, the email OTP gate cannot deliver codes |
+
+These service notes are informational for authorized maintainers; they are not
+an external installation guide.
+
+## What can go wrong
+
+| Symptom                                                                                  | Cause                                             | Fix                                                                               |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------- |
+| The app loads but shows no workspace                                                     | Onboarding was not completed                      | Finish onboarding; the workspace and plan steps are both required                 |
+| Documents and links appear to vanish, or a new share link resolves to "Link Unavailable" | The workspace has no active plan record           | Select a plan in **Settings → Subscription**                                      |
+| Upload rejected with a message about PDF-only                                            | The workspace is on the Free plan                 | Upload a PDF, or move to a paid plan                                              |
+| The verification code email does not arrive                                              | SMTP is not configured, or the sender is rejected | Fix the SMTP variables in `env.example` and retry; codes are valid for 10 minutes |
+| Uploads start and then fail                                                              | Object storage is unreachable                     | Confirm the storage container is running and that the R2/MinIO variables match it |
+
+## Next
+
+[Your first document](/docs/getting-started/first-document) — upload a file and confirm it previews.

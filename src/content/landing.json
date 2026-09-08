@@ -1,0 +1,50 @@
+{
+  "hero": {
+    "badge": "M&A and Founder Data Rooms",
+    "headlineLine1": "Virtual data rooms for M&A teams and founders",
+    "highlight": "",
+    "subtext": "Run M&A diligence rooms and founder investor data rooms with gated links, dynamic watermarking, download controls, and privacy-first analytics. Start free for PDF sharing, then upgrade as deal or fundraising volume grows."
+  },
+  "features": [
+    {
+      "icon": "Users",
+      "title": "Deal rooms built for M&A and founder diligence",
+      "description": "Set up client-facing rooms for sell-side, buy-side, investor, and diligence workflows your team can reuse across processes."
+    },
+    {
+      "icon": "Lock",
+      "title": "Secure sharing controls by default",
+      "description": "Control who can open, download, and revisit sensitive documents with email verification, allowlists, expirations, NDA gates, and room-level access rules."
+    },
+    {
+      "icon": "Shield",
+      "title": "Watermarking and redaction for sensitive files",
+      "description": "Deter casual leaks in deal, investor, and legal packets with dynamic watermarking and permanent PDF redaction through DocKosha Cloud’s validated processing path, before documents leave your organization."
+    },
+    {
+      "icon": "BarChart3",
+      "title": "Privacy-first analytics for follow-up",
+      "description": "See views, time per page, downloads, and engagement across deal, investor, and legal review without defaulting to unnecessary identity collection."
+    },
+    {
+      "icon": "FileText",
+      "title": "High-fidelity room and document viewing",
+      "description": "Present CIMs, pitch decks, contracts, models, board packs, and diligence files in a viewer that stays consistent across desktop and mobile through DocKosha Cloud’s validated processing path."
+    },
+    {
+      "icon": "Globe2",
+      "title": "Free secure sharing for lighter use",
+      "description": "Use the Free plan for PDF-first document sharing when a full room is not needed yet, then move to paid tiers as deal, fundraising, or legal needs grow."
+    },
+    {
+      "icon": "Clock",
+      "title": "Version history without link churn",
+      "description": "Replace files and keep a clean version trail without breaking links already shared with customers, partners, or reviewers."
+    },
+    {
+      "icon": "ScrollText",
+      "title": "Audit logs for internal accountability",
+      "description": "Keep an owner-only audit trail of uploads, renames, link changes, and access updates across documents and data rooms."
+    }
+  ]
+}

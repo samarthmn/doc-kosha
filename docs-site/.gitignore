@@ -1,0 +1,5 @@
+/.next/
+/node_modules/
+/.source/
+/content/docs/**/(synced-content)/
+*.tsbuildinfo

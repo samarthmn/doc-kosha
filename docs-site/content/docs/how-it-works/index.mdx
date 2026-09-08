@@ -1,0 +1,40 @@
+---
+title: "How it works"
+description: "Where DocKosha enforces each protection, what fails closed, what is only a deterrent, and which file or migration you can read to check it."
+---
+
+This section is written for people who have to verify a claim before they trust it: security reviewers, procurement, and anyone evaluating DocKosha against a checklist. It is not a feature tour. Each page states a mechanism, names the file or database migration that implements it, and states the limits of that mechanism.
+
+If you are looking for step-by-step instructions instead, start with [Getting started](/docs/getting-started) or the [Guides](/docs/guides).
+
+## Three rules these pages follow
+
+**1. Enforcement and deterrence are labelled separately.** A protection is "enforced" only when a server refuses the request. Anything that runs in the recipient's browser is a deterrent — it raises effort, it does not remove capability. Screenshot protection is the clearest example, and it is labelled as a deterrent everywhere it appears.
+
+**2. Failures close, they do not degrade.** When document conversion or watermarking cannot complete inside its validated envelope, DocKosha refuses the operation with a typed reason code. A failed conversion falls back to serving the original file — never a partially rendered or silently incomplete one. A required watermark that cannot be applied blocks delivery rather than releasing unmarked bytes.
+
+**3. No page here describes work that has not shipped.** Where the implementation has a known gap, the gap is stated in the same paragraph as the capability.
+
+## The pages
+
+| Page                                                                         | The question it answers                                                                             |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [Security model](/docs/how-it-works/security-model)                          | Which server route enforces each link gate, how tenants are isolated, and what is only a deterrent  |
+| [Watermarks in the bytes](/docs/how-it-works/watermark-in-bytes)             | Why watermarks are composed into the delivered PDF server-side, and what happens when that fails    |
+| [Conversion and supported formats](/docs/how-it-works/conversion-envelope)   | Which formats convert, the size and time budget, and the typed failure codes                        |
+| [Audit trail](/docs/how-it-works/audit-trail)                                | What is recorded, who can read it, what is stripped from the record                                 |
+| [Privacy and analytics boundaries](/docs/how-it-works/privacy-and-analytics) | Regional consent, Global Privacy Control, and why raw IP addresses are never stored                 |
+| [Plans and limits](/docs/how-it-works/plans-and-limits)                      | Which capacities belong to each plan and which document-processing operations the provider supports |
+
+## How to check any of this
+
+DocKosha is licensed under AGPL-3.0-or-later. Enterprise licensing is available only through a separate signed agreement; see [Commercial Licensing](/COMMERCIAL-LICENSING.md). Every enforcement point named in this section is a path in the repository, so a reviewer can read the code rather than take the claim on trust:
+
+- Public link gate evaluation: `src/app/api/public/links/resolve/route.ts`
+- Asset delivery and server-side watermarking: `src/app/api/public/links/file/route.ts`, `src/app/api/public/links/download/route.ts`
+- Tenant isolation policies: `supabase/migrations/0001_init.sql`
+- Abuse limits: `src/server/rateLimit.ts`
+- Response headers: `next.config.ts`
+- Typed engine failures: `src/server/engineErrors.ts`
+
+The one-edition capability and provider envelope is recorded in `docs/capability-matrix.md`, which the [Plans and limits](/docs/how-it-works/plans-and-limits) page summarises.

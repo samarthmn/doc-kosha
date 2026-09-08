@@ -1,0 +1,18 @@
+{
+  "badge": "Get in Touch",
+  "title": "Contact Us",
+  "subtitle": "Questions about security controls, pricing, or your workflow? Send us a message and we’ll get back to you.",
+  "form": {
+    "title": "Send a Message",
+    "success": "Thank you! We’ll be in touch shortly.",
+    "error": "Something went wrong. Please try again."
+  },
+  "other": {
+    "title": "Other ways to reach us",
+    "items": [
+      "Sales: sales@dockosha.com",
+      "Support: support@dockosha.com",
+      "Status & updates: coming soon"
+    ]
+  }
+}

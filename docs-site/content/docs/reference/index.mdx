@@ -1,0 +1,130 @@
+---
+title: "Reference"
+description: "Look up DocKosha facts fast: supported file types, size and plan limits, link gates, the tier capability matrix, the evaluator FAQ, symptom-based troubleshooting, and the docs changelog."
+---
+
+Reference pages are for looking something up, not for learning a task. If you
+are trying to get something done, start in [Guides](/docs/guides). If you want
+to understand why DocKosha behaves the way it does, read
+[How it works](/docs/how-it-works).
+
+## Pages in this section
+
+<Cards>
+  <Card
+    title="Capability matrix"
+    href="/docs/reference/capability-matrix"
+    description="Which application capabilities ship in the one edition and which document-processing operations the provider supports."
+  />
+  <Card
+    title="FAQ"
+    href="/docs/reference/faq"
+    description="The questions evaluators actually ask: formats, limits, conversion failure, viewer accounts, gate combinations, analytics, self-host versus Cloud."
+  />
+  <Card
+    title="Troubleshooting"
+    href="/docs/reference/troubleshooting"
+    description="Symptom, likely cause, and what to check for uploads, conversions, link access, OTP email, rate limits, and custom domains."
+  />
+  <Card
+    title="Changelog"
+    href="/docs/reference/changelog"
+    description="Dated, categorised record of notable changes to DocKosha and to this documentation."
+  />
+</Cards>
+
+## Supported file types
+
+Uploads are validated against a fixed extension list. Anything not on this list
+is rejected at upload time.
+
+| Category  | Extensions                           | Converted to PDF for viewing?                                                |
+| --------- | ------------------------------------ | ---------------------------------------------------------------------------- |
+| Text/docs | `pdf`                                | No — already a PDF                                                           |
+| Text/docs | `csv`                                | Yes within the DocYantra validated envelope                                  |
+| Text/docs | `pptx`, `docx`, `xlsx`, `xlsm`, `md` | Yes within the DocYantra validated envelope; otherwise `unsupported_feature` |
+| Images    | `jpg`, `jpeg`, `png`, `webp`         | No — delivered in its original form                                          |
+| Video     | `mp4`, `mov`, `avi`, `mkv`, `webm`   | No — delivered in its original form                                          |
+| Audio     | `mp3`, `wav`, `ogg`, `aac`           | No — delivered in its original form                                          |
+
+DocYantra converts supported non-PDF text/docs formats within its validated
+envelope. The viewer prefers a converted PDF **only** when DocYantra has
+completed conversion; otherwise it serves the original file. See [Conversion
+envelope](/docs/how-it-works/conversion-envelope).
+
+## Size and volume limits
+
+These are product-wide processing limits, independent of your plan.
+
+| Limit                                                                   | Value   |
+| ----------------------------------------------------------------------- | ------- |
+| Maximum input for a conversion                                          | 50 MiB  |
+| Maximum input for PDF processing (watermarking, redaction, page counts) | 100 MiB |
+| Maximum combined input for a merged PDF download                        | 100 MiB |
+| Maximum documents in one data room ZIP download                         | 100     |
+| Maximum combined input for one data room ZIP download                   | 500 MiB |
+
+Every processing operation also runs under a finite deadline — roughly 150
+seconds of engine time inside a 165-second budget for a single document, with
+larger budgets for merged and ZIP downloads. Anything that exceeds a size limit
+or a deadline fails closed with a typed reason code; it is never silently
+truncated, and a conversion never succeeds with visible content missing. The
+codes and what they mean are in
+[Troubleshooting](/docs/reference/troubleshooting).
+
+## Plan limits
+
+| Plan      | Included storage | Public bandwidth  | Workspace members | Upload types  |
+| --------- | ---------------- | ----------------- | ----------------- | ------------- |
+| Free      | 250 MB           | 2 GB / month      | 1                 | PDF only      |
+| Essential | 5 GB             | No cap (fair use) | Unlimited         | All supported |
+| Plus      | 30 GB            | No cap (fair use) | Unlimited         | All supported |
+| Max       | 200 GB           | No cap (fair use) | Unlimited         | All supported |
+
+Free workspaces retain no previous document versions. On paid plans a workspace
+owner sets retention from 1 to 20 previous versions — the current version is not
+counted — in **Subscription & Usage**. See
+[Plans and limits](/docs/how-it-works/plans-and-limits) and
+[Document versioning and restore](/docs/guides/document-versioning-and-restore).
+
+DocKosha has one normal application edition. Cloud plans can charge for hosted
+operations or limit capacity without creating a second source edition. The
+[capability matrix](/docs/reference/capability-matrix) is authoritative for
+application and provider capabilities; the table above is authoritative for
+Cloud plan limits.
+
+## Link gates at a glance
+
+Every gate is enforced on the server, not in the viewer's browser. Gates combine
+with AND: a viewer must clear all of them.
+
+| Gate            | What it does                                                    | Guide                                                          |
+| --------------- | --------------------------------------------------------------- | -------------------------------------------------------------- |
+| Password        | Requires a shared secret before the document resolves           | [Password](/docs/guides/gate-password)                         |
+| Email OTP       | Requires a one-time code sent to the viewer's email address     | [Email OTP](/docs/guides/gate-email-otp)                       |
+| Expiry          | Refuses the link after a timestamp                              | [Expiry](/docs/guides/gate-expiry)                             |
+| One-time open   | Revokes the link the moment it resolves successfully            | [One-time open](/docs/guides/gate-one-time-open)               |
+| Allow/blocklist | Restricts which verified email addresses may proceed            | [Allow and blocklists](/docs/guides/gate-allow-and-blocklists) |
+| NDA             | Requires a signature, and a completed signed PDF, before access | [NDA gates](/docs/guides/nda-gates)                            |
+| Revocation      | Refuses the link from the moment it is revoked                  | [Create and share links](/docs/guides/create-and-share-links)  |
+
+Two viewer-side controls are not gates and should not be treated as ones.
+Download control decides whether the download action is offered at all;
+screenshot protection is a browser-level deterrent that cannot stop
+operating-system or camera capture. Both are covered in
+[Download and screenshot controls](/docs/guides/download-and-screenshot-controls).
+
+## Where these numbers come from
+
+The documentation is versioned with the code, so every figure above has a single
+source in the repository:
+
+- Supported extensions and processing limits: `src/lib/constants.ts`
+- Plan limits and entitlements: `src/modules/billing/plans.ts`
+- Typed processing failure codes: `src/server/engineErrors.ts` and
+  `@dockosha/provider-interface`
+- Application and provider capabilities: `docs/capability-matrix.md`, rendered here as the
+  [capability matrix](/docs/reference/capability-matrix)
+
+If a page here disagrees with the product, that is a documentation bug. Report it
+the same way you would report a behaviour bug.

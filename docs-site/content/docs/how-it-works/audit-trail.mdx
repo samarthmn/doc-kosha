@@ -1,0 +1,70 @@
+---
+title: "Audit trail"
+description: "Which workspace changes DocKosha records in audit_events, how database triggers write them, what is stripped from each record, who can read it, and what lives in analytics instead."
+---
+
+The audit log answers "who changed what, and when" for a workspace. Records are written in the database rather than assembled by feature code, they are readable only by the workspace owner, and the scope is deliberately narrow: changes to workspace objects, not viewer traffic.
+
+## How records are written
+
+Audit rows live in the `audit_events` table (`supabase/migrations/0003_audit_logs_groups_presets.sql`, refined by `supabase/migrations/0010_audit_event_allowlist_and_data_room_access.sql`). There are exactly two writers.
+
+**1. A database trigger.** `record_audit_event_from_trigger` is a `SECURITY DEFINER` function attached to the workspace object tables. It fires inside the same transaction as the change it describes, so a change that commits is recorded and a change that rolls back is not. The actor is taken from the authenticated session's JWT claims — user id, name, and email — rather than from anything the client sends.
+
+**2. The comments service.** Public and internal comment activity is written server-side with the service role (`src/modules/comments/server/audit.ts`), because a commenting viewer has no database session to trigger from.
+
+Nothing else writes to this table.
+
+## What is recorded
+
+The trigger applies a product allowlist. Anything not on this list returns without writing a row — which is why the log stays readable instead of filling with background churn such as conversion-status updates.
+
+| Object                   | Recorded                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| Documents                | Upload and delete, always. Update only when the title changed — that is, a rename        |
+| Data rooms               | Creation only                                                                            |
+| Links                    | Create, update, and delete, for both document links and data-room links                  |
+| Documents in a data room | Added to a room, removed from a room                                                     |
+| Folders                  | Data-room folders only, not workspace library folders. Update only when the name changed |
+| Data-room access         | Access granted and access revoked                                                        |
+| Comments                 | Thread created, reply sent, thread resolved, thread unresolved                           |
+
+Comment records identify the actor either as a workspace member (with a user id) or as a viewer (by the email address verified for that link). Comment quotes and bodies are stored as previews truncated to 280 characters.
+
+## What each record contains
+
+| Field                                        | Contents                                                          |
+| -------------------------------------------- | ----------------------------------------------------------------- |
+| `workspace_id`                               | The workspace the change belongs to                               |
+| `actor_user_id`, `actor_name`, `actor_email` | Who acted. The user id is null for a viewer acting through a link |
+| `event_type`                                 | The operation, or the named comment event                         |
+| `resource_type`, `resource_id`               | What was acted on                                                 |
+| `data_room_id`, `document_id`                | Context for filtering the log by room or document                 |
+| `metadata`                                   | The before and after row snapshot, plus the table and operation   |
+| `created_at`                                 | Server timestamp                                                  |
+
+**Two fields are stripped from every snapshot before it is stored:** `password_hash` and `nda_template_snapshot_html`. A link password never enters the audit log in any form, and the NDA body text is not duplicated into it.
+
+## Who can read it
+
+Row Level Security restricts `SELECT` on `audit_events` to the **workspace owner** (policy `audit_events_select_owners`). Other members, including editors, cannot read it.
+
+The table grants are equally narrow: the `authenticated` role holds `SELECT` only. There is no insert, update, or delete grant for application users, so a signed-in user cannot append to the log, edit an entry, or delete one. All writes arrive through the `SECURITY DEFINER` trigger or the service role.
+
+To read the log in the product, see the [audit log guide](/docs/guides/audit-log).
+
+## Durability
+
+Audit rows outlive the objects they describe. The foreign keys to `documents` and `data_rooms` are `ON DELETE SET NULL`, and when a delete happens the trigger clears a reference that is already gone, so a constraint on the audit table can never block a legitimate mutation. Deleting a document therefore leaves its history intact, with the document reference cleared.
+
+The exception is the workspace itself: the `workspace_id` foreign key cascades, so deleting a workspace deletes its audit records along with the rest of its data.
+
+There is **no scheduled pruning job for `audit_events`**. Viewer analytics are pruned at 365 days, but that is a separate system on a separate table — see [Privacy and analytics boundaries](/docs/how-it-works/privacy-and-analytics).
+
+## What the audit log is not
+
+- **It is not viewer traffic.** Views, per-page dwell time, downloads, and country counts are recorded by the analytics pipeline, not by the audit trigger. If you want to know who opened a link, look at [analytics](/docs/guides/analytics); if you want to know who changed the link's settings, look at the audit log.
+- **It is not an account sign-in log.** New-device sign-ins are tracked separately in `user_known_devices`, which drives the new-device notification email, and account authentication itself is handled by the auth provider.
+- **It is not a signed, exportable evidence pack.** A signed-PDF export is not
+  part of the current application. Do not plan an evidence workflow around it
+  today.
