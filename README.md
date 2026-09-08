@@ -85,6 +85,7 @@ browser suite, start the local services and run
 - [Capability matrix](./docs/capability-matrix.md)
 - [Self-hosting](./docs/self-hosting.md)
 - [Testing](./testing-docs/TESTING.md)
+- [Maintainer Vercel deployments](./docs/vercel-deployment.md)
 - [Documentation site](./docs-site/README.md)
 - [Contributing](./CONTRIBUTING.md)
 - [Security reports](./SECURITY.md)
