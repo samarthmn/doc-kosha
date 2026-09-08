@@ -20,6 +20,27 @@ Keep route files thin, validate IO at boundaries, preserve the provider's
 typed failures, and document any capability limit instead of silently
 degrading it.
 
+## Branch and release workflow
+
+Use `staging` as the GitHub default branch and the base for feature branches
+and contribution PRs. Reserve `main` for verified production releases.
+
+1. Create a feature branch from `staging` and open its PR against `staging`.
+2. After review and required checks, merge the PR into `staging`. Once the
+   Vercel Git integration is configured, this deploys to `staging.dockosha.com`.
+3. Verify the changes on staging, then open a release PR from `staging` to
+   `main`. Use a merge commit for this release PR to preserve shared history.
+4. Merging the release PR triggers the production build and deployment to
+   `www.dockosha.com` once the Git integration is configured.
+
+Protect both branches with PR review and required checks. If an emergency fix
+is released through a PR directly to `main`, merge `main` back into `staging`
+before continuing development. The licensing and CLA gate below still applies
+to contributions targeting `staging`.
+
+See [Maintainer Vercel deployments](./docs/vercel-deployment.md) for branch,
+domain, environment, and release-check configuration.
+
 ## Licensing and CLA gate
 
 DocKosha is licensed under AGPL-3.0-or-later. Before an outside contribution can be
