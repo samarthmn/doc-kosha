@@ -1,5 +1,21 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { provisionCoreWorkspace } from "./helpers/provision";
+
+const observeHeadshotCleanup = (page: Page) => {
+  const deletedPaths: string[] = [];
+  const statuses: number[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname === "/api/storage/delete") {
+      deletedPaths.push(request.postDataJSON().path);
+    }
+  });
+  page.on("response", (response) => {
+    if (new URL(response.url()).pathname === "/api/storage/delete") {
+      statuses.push(response.status());
+    }
+  });
+  return { deletedPaths, statuses };
+};
 
 test("TESTIMONIAL-002 preserves input when a deployment no longer recognizes the action @core", async ({
   page,
@@ -12,6 +28,15 @@ test("TESTIMONIAL-002 preserves input when a deployment no longer recognizes the
   const testimonial =
     "DocKosha made secure sharing predictable for our client review process.";
   await page.locator("#testimonial-body").fill(testimonial);
+  await page
+    .locator("#testimonial-headshot")
+    .setInputFiles("public/assets/blog-placeholder.png");
+  const cleanup = observeHeadshotCleanup(page);
+  const upload = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === "/api/storage/upload-url" &&
+      response.request().method() === "POST",
+  );
   let submissions = 0;
   await page.route("**/testimonial", async (route) => {
     if (
@@ -41,6 +66,15 @@ test("TESTIMONIAL-002 preserves input when a deployment no longer recognizes the
   await expect(
     page.getByRole("button", { name: "Submit", exact: true }),
   ).toBeEnabled();
+  const { storagePath } = await (await upload).json();
+  expect(storagePath).toBeTruthy();
+  await expect.poll(() => cleanup.deletedPaths).toEqual([storagePath]);
+  await expect.poll(() => cleanup.statuses).toEqual([200]);
+  expect(
+    await page
+      .locator("#testimonial-headshot")
+      .evaluate((input: HTMLInputElement) => input.files?.length),
+  ).toBe(1);
   const reload = page.getByRole("button", { name: "Reload page", exact: true });
   await reload.focus();
   await expect(reload).toBeFocused();
@@ -72,6 +106,15 @@ test("TESTIMONIAL-003 preserves input and settles pending state when submission 
   await page.locator("#testimonial-role-title").fill(values.roleTitle);
   await page.locator("#testimonial-company").fill(values.company);
   await page.locator("#testimonial-body").fill(values.testimonial);
+  await page
+    .locator("#testimonial-headshot")
+    .setInputFiles("public/assets/blog-placeholder.png");
+  const cleanup = observeHeadshotCleanup(page);
+  const upload = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === "/api/storage/upload-url" &&
+      response.request().method() === "POST",
+  );
   let submissions = 0;
   await page.route("**/testimonial", async (route) => {
     if (
@@ -107,6 +150,10 @@ test("TESTIMONIAL-003 preserves input and settles pending state when submission 
     page.getByRole("button", { name: "Reload page", exact: true }),
   ).toHaveCount(0);
   expect(submissions).toBe(1);
+  const { storagePath } = await (await upload).json();
+  expect(storagePath).toBeTruthy();
+  expect(cleanup.deletedPaths).toEqual([]);
+  expect(cleanup.statuses).toEqual([]);
 });
 
 test("TESTIMONIAL-001 submits and revalidates the testimonial Server Action @core", async ({

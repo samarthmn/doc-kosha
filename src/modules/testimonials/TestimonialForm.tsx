@@ -421,18 +421,22 @@ export const TestimonialForm: React.FC<TestimonialFormProps> = ({
         applyServerResult(result);
       } catch (error) {
         if (unstable_isUnrecognizedActionError(error)) {
+          // The action never ran, so this attempt's new upload is unreferenced.
+          if (uploadedHeadshotPath && headshotFile) {
+            await cleanupUploadedHeadshot(uploadedHeadshotPath);
+          }
           setNeedsReload(true);
           setServerMessage(
             "The app was updated. Your entries are still here. Copy them before reloading this page, then submit again.",
           );
         } else {
+          // A transport failure does not prove the action failed to save. Keep
+          // uploaded assets intact instead of deleting a possibly saved headshot.
           setServerMessage(
             "We couldn't confirm your submission. Your entries are still here. Please try again.",
           );
           if (isSentryEnabled()) Sentry.captureException(error);
         }
-        // A transport failure does not prove the action failed to save. Keep
-        // uploaded assets intact instead of deleting a possibly saved headshot.
       }
     });
   });
