@@ -4162,6 +4162,54 @@ export type Database = {
           },
         ]
       }
+      login_alert_rollout: {
+        Row: {
+          enabled: boolean
+          enabled_at: string | null
+          singleton: boolean
+        }
+        Insert: {
+          enabled?: boolean
+          enabled_at?: string | null
+          singleton?: boolean
+        }
+        Update: {
+          enabled?: boolean
+          enabled_at?: string | null
+          singleton?: boolean
+        }
+        Relationships: []
+      }
+      login_session_events: {
+        Row: {
+          country_code: string | null
+          device_label: string | null
+          disabled_at: string | null
+          eligible: boolean
+          occurred_at: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          country_code?: string | null
+          device_label?: string | null
+          disabled_at?: string | null
+          eligible: boolean
+          occurred_at: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          country_code?: string | null
+          device_label?: string | null
+          disabled_at?: string | null
+          eligible?: boolean
+          occurred_at?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company: string | null
@@ -4340,6 +4388,24 @@ export type Database = {
           last_country_code?: string | null
           last_seen_at?: string
           ua_hash?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_login_baselines: {
+        Row: {
+          created_at: string
+          first_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          first_session_id?: string | null
           user_id?: string
         }
         Relationships: []
@@ -5037,6 +5103,7 @@ export type Database = {
         Returns: boolean
       }
       can_edit_workspace_documents: { Args: { ws: string }; Returns: boolean }
+      activate_login_session_alerts: { Args: never; Returns: undefined }
       claim_email_delivery: {
         Args: {
           p_claim_timeout?: string
@@ -5108,6 +5175,15 @@ export type Database = {
           p_claim: Database["public"]["Tables"]["document_deletion_claims"]["Row"]
         }
         Returns: Json
+      }
+      enrich_login_session_event: {
+        Args: {
+          p_country_code?: string
+          p_device_label: string
+          p_session_id: string
+          p_user_id: string
+        }
+        Returns: boolean
       }
       enqueue_lifecycle_email_job: {
         Args: {

@@ -8,7 +8,9 @@ import {
 } from "@/lib/constants";
 import {
   REDACTION_WARNING_CODES,
+  REDACTION_WARNING_KINDS,
   type RedactionWarningCode,
+  type RedactionWarningKindCounts,
 } from "@/lib/redactionWarnings";
 import { documentProcessingProvider } from "@/server/documentProcessing/provider";
 import {
@@ -61,6 +63,7 @@ type RedactionWarningReport = {
   count: number;
   codes: string[];
   otherCount: number;
+  kindCounts: RedactionWarningKindCounts;
 };
 
 type RedactPdfResponse =
@@ -296,8 +299,18 @@ export const redactPdf = async (
   }
 
   const warningCodes: RedactionWarningCode[] = [];
+  const kindCounts: RedactionWarningKindCounts = {};
   let otherCount = 0;
   for (const warning of parsedWarnings.data) {
+    const parsedKind = z
+      .enum(REDACTION_WARNING_KINDS)
+      .safeParse(
+        typeof warning !== "string" && warning.code === "over_redaction"
+          ? warning.kind
+          : undefined,
+      );
+    const kind = parsedKind.success ? parsedKind.data : "unknown";
+    kindCounts[kind] = (kindCounts[kind] ?? 0) + 1;
     if (typeof warning === "string") {
       otherCount += 1;
       continue;
@@ -316,6 +329,7 @@ export const redactPdf = async (
       count: parsedWarnings.data.length,
       codes: [...uniqueWarningCodes, ...(otherCount > 0 ? ["other"] : [])],
       otherCount,
+      kindCounts,
     };
     if (dependencies.reportWarning) dependencies.reportWarning(report);
     else {
@@ -324,6 +338,7 @@ export const redactPdf = async (
         report.count,
         report.codes,
         report.otherCount,
+        report.kindCounts,
       );
     }
   }

@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 import { isSentryEnabled } from "@/lib/deployment";
+import { getServerActionFailureTags } from "@/lib/sentryErrorClassification";
 
 const sentryEnabled = isSentryEnabled();
 
@@ -22,5 +23,13 @@ export async function register() {
 
 export const onRequestError: typeof Sentry.captureRequestError = (...args) => {
   if (!sentryEnabled) return;
-  return Sentry.captureRequestError(...args);
+  const tags = getServerActionFailureTags(
+    args[0],
+    args[1],
+    process.env.NEXT_DEPLOYMENT_ID,
+  );
+  return Sentry.withScope((scope) => {
+    if (tags) scope.setTags(tags);
+    return Sentry.captureRequestError(...args);
+  });
 };

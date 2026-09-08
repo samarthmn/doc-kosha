@@ -4,6 +4,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { isSentryEnabled } from "@/lib/deployment";
+import { isExternalAndroidLoggerError } from "@/lib/sentryErrorClassification";
 
 const sentryEnabled = isSentryEnabled();
 const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -99,6 +100,7 @@ Sentry.init({
   sendDefaultPii: false,
 
   beforeSend(event) {
+    if (isExternalAndroidLoggerError(event)) return null;
     // Drop non-actionable errors (browser extensions, hydration noise, etc.)
     const message = getEventMessage(event);
     if (IGNORED_ERROR_PATTERNS.some((re) => re.test(message))) {

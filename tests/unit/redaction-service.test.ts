@@ -255,12 +255,13 @@ test("page count and redaction consume one aggregate deadline", async () => {
   assert.deepEqual(observedTimeouts, [1_000, 600]);
 });
 
-test("structured redaction warnings expose only stable allowlisted codes", async () => {
+test("structured redaction warnings expose only stable allowlisted codes and warning kinds", async () => {
   const { redactPdf } = await loadRedactionService();
   const reports: Array<{
     count: number;
     codes: string[];
     otherCount: number;
+    kindCounts: Record<string, number>;
   }> = [];
 
   const result = await redactPdf(
@@ -284,6 +285,8 @@ test("structured redaction warnings expose only stable allowlisted codes", async
           },
           { code: "future_warning", page: 2, kind: "vector_path" },
           "legacy warning prose",
+          { code: "over_redaction", page: 1, kind: "private-unknown-shape" },
+          { code: "over_redaction", page: 1, kind: "image_xobject" },
         ],
       }),
       reportWarning: (report) => reports.push(report),
@@ -295,7 +298,8 @@ test("structured redaction warnings expose only stable allowlisted codes", async
   assert.deepEqual(result.warningCodes, ["over_redaction"]);
   assert.deepEqual(reports, [
     {
-      count: 3,
+      count: 5,
+      kindCounts: { text: 1, unknown: 3, image_xobject: 1 },
       codes: ["over_redaction", "other"],
       otherCount: 2,
     },

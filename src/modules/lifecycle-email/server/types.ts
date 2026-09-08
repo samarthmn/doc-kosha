@@ -1,6 +1,7 @@
 import { Tables } from "@/types/generated/supabase";
 
 export type LifecycleEmailKey =
+  | "login-session"
   | "setup-incomplete-1h"
   | "setup-incomplete-2d"
   | "founder-help-day-1"

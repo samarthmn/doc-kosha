@@ -8,7 +8,8 @@ import {
   PaperPlaneTilt as SendHorizonal,
   Trash as Trash2,
 } from "@phosphor-icons/react";
-import { useRouter } from "next/navigation";
+import { useRouter, unstable_isUnrecognizedActionError } from "next/navigation";
+import * as Sentry from "@sentry/nextjs";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
@@ -28,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { isSentryEnabled } from "@/lib/deployment";
 
 import {
   submitTestimonialAction,
@@ -179,6 +181,7 @@ export const TestimonialForm: React.FC<TestimonialFormProps> = ({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [needsReload, setNeedsReload] = useState(false);
   const [submittedAt, setSubmittedAt] = useState<string | null>(
     existingSubmissionAt ?? null,
   );
@@ -376,6 +379,7 @@ export const TestimonialForm: React.FC<TestimonialFormProps> = ({
 
   const onSubmit = handleSubmit(async (values) => {
     setServerMessage(null);
+    setNeedsReload(false);
     setHeadshotError(null);
 
     let uploadedHeadshotPath: string | null = storedHeadshotPath;
@@ -396,24 +400,40 @@ export const TestimonialForm: React.FC<TestimonialFormProps> = ({
     }
 
     startTransition(async () => {
-      const result = await submitTestimonialAction({
-        ...values,
-        headshotStoragePath: uploadedHeadshotPath,
-      });
+      try {
+        const result = await submitTestimonialAction({
+          ...values,
+          headshotStoragePath: uploadedHeadshotPath,
+        });
 
-      if (result.status === "error" && uploadedHeadshotPath && headshotFile) {
-        await cleanupUploadedHeadshot(uploadedHeadshotPath);
+        if (result.status === "error" && uploadedHeadshotPath && headshotFile) {
+          await cleanupUploadedHeadshot(uploadedHeadshotPath);
+        }
+
+        if (result.status === "success" && uploadedHeadshotPath) {
+          setStoredHeadshotPath(uploadedHeadshotPath);
+          replacePreviewUrl(
+            buildStoredHeadshotUrl(workspaceId, uploadedHeadshotPath),
+            false,
+          );
+        }
+
+        applyServerResult(result);
+      } catch (error) {
+        if (unstable_isUnrecognizedActionError(error)) {
+          setNeedsReload(true);
+          setServerMessage(
+            "The app was updated. Your entries are still here. Copy them before reloading this page, then submit again.",
+          );
+        } else {
+          setServerMessage(
+            "We couldn't confirm your submission. Your entries are still here. Please try again.",
+          );
+          if (isSentryEnabled()) Sentry.captureException(error);
+        }
+        // A transport failure does not prove the action failed to save. Keep
+        // uploaded assets intact instead of deleting a possibly saved headshot.
       }
-
-      if (result.status === "success" && uploadedHeadshotPath) {
-        setStoredHeadshotPath(uploadedHeadshotPath);
-        replacePreviewUrl(
-          buildStoredHeadshotUrl(workspaceId, uploadedHeadshotPath),
-          false,
-        );
-      }
-
-      applyServerResult(result);
     });
   });
 
@@ -677,6 +697,16 @@ export const TestimonialForm: React.FC<TestimonialFormProps> = ({
               aria-live={hasSubmitted ? "polite" : "assertive"}
             >
               {serverMessage}
+              {needsReload ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-3 block"
+                  onClick={() => window.location.reload()}
+                >
+                  Reload page
+                </Button>
+              ) : null}
             </div>
           ) : null}
 
