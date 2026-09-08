@@ -111,6 +111,13 @@ read-only token for the four private DocYantra packages on GitHub Packages only
 for trusted maintainer checks; public source CI remains credential-free. The
 same public repository workflow supports a manual `run_maintainer_engine`
 opt-in, default false, protected by the `maintainer-engine-ci` environment and
-restricted to the default branch. A change is ready for review when the relevant focused checks and the
-full public checks pass, the docs match the code, and no secrets or generated
-files are included.
+restricted to GitHub's default branch (`staging` in the documented workflow).
+The protected environment's branch rules must permit `staging` while retaining
+its approval protections. Run the maintainer checks and verify the staging
+deployment before merging a release PR from `staging` into `main`, which
+triggers production deployment once Vercel's Git integration is configured.
+See the [branch and release workflow](../CONTRIBUTING.md#branch-and-release-workflow).
+
+A change is ready for review when the relevant focused checks and the full
+public checks pass, the docs match the code, and no secrets or generated files
+are included.

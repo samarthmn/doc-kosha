@@ -10,19 +10,36 @@ Use Vercel's existing production project and connect it to
 under the `samarthmn` account. Access to a previous organization's repository
 does not grant access to this repository.
 
-Set the production branch to `main`, keep the project root at the repository
-root, and retain the existing production domains and environment variables.
+Set GitHub's default branch to `staging` so new contribution PRs normally
+target it. Explicitly set Vercel's production branch to `main`; this setting
+is separate from GitHub's default branch. Keep the project root at the
+repository root and retain the existing production domains and environment
+variables.
+
+Assign `staging.dockosha.com` to the `staging` Git branch using the preview
+environment and staging service credentials. Keep the production domains and
+production service credentials assigned to `main` through Vercel's production
+environment. Protect both branches with PR review and required checks.
 Keep Git fork protection enabled so outside pull requests require maintainer
 authorization before Vercel runs their code with private dependencies.
 
-Once connected, pushes or merges to `main` trigger Vercel's production build
-and a successful deployment replaces the production site. Other branches use
-preview deployments. A separate GitHub Actions deployment workflow and a
-GitHub Actions Vercel token are unnecessary for this setup.
+Once connected, feature PRs merge into `staging` and automatically update the
+staging website. After verification there, open a release PR from `staging`
+to `main`. Merge that PR with a merge commit to preserve shared history;
+Vercel then builds the production release and a successful deployment replaces
+the production site. Merge any emergency production fixes back into `staging`.
+See the [contribution workflow](../CONTRIBUTING.md#branch-and-release-workflow).
+
+Other branches use preview deployments. A separate GitHub Actions deployment
+workflow and a GitHub Actions Vercel token are unnecessary for this setup.
 
 Public GitHub CI checks the source boundary and release tooling. The full
-maintainer application jobs are separately protected and manually dispatched;
-a green public CI run alone does not certify an application build.
+maintainer application jobs are separately protected, manually dispatched,
+and restricted to GitHub's default branch. With `staging` configured as the
+default, run these checks on `staging` before opening the production release
+PR. Ensure the `maintainer-engine-ci` environment permits that branch while
+retaining its approval protections. A green public CI run alone does not
+certify an application build.
 
 ## Build settings
 
@@ -55,8 +72,9 @@ maintainer process.
 
 ## Release checks
 
-Before a production push, run the checks documented in the README and verify
-any new database migrations against the production migration history.
+Before merging a release PR from `staging` into `main`, verify the staging
+deployment, run the checks documented in the README, and verify any new
+database migrations against the production migration history.
 Vercel application builds do not apply database migrations. Database changes
 require separate, explicit authorization and verification.
 
