@@ -20,6 +20,26 @@ Keep route files thin, validate IO at boundaries, preserve the provider's
 typed failures, and document any capability limit instead of silently
 degrading it.
 
+## Commit checks
+
+The repository uses Husky, lint-staged, ESLint, and Prettier. `pnpm install`
+activates the Git hooks through the `prepare` script. If dependencies are
+already installed, run `pnpm prepare` to activate or repair the hooks.
+
+Before each commit, the hook runs `pnpm lint-staged`, `pnpm lint:fix`, and
+`pnpm typecheck`. Staged JavaScript or TypeScript files trigger the full
+type check, lint fixes with zero warnings allowed, and formatting fixes.
+Staged JSON, Markdown, stylesheets, HTML, or YAML files trigger formatting
+fixes. These fix commands run across the repository, so review any resulting
+changes before committing again. A failed check blocks the commit.
+
+Use `pnpm format` to check formatting or `pnpm format:fix` to apply it manually.
+
+Some Cursor versions disable Git hooks for Source Control commits by overriding
+`core.hooksPath` to `/dev/null`. In that case, commit from a terminal with
+`git commit` so Husky runs. To verify the hook without creating a commit, run
+`git hook run pre-commit`; this runs the same checks and may apply fixes.
+
 ## Branch and release workflow
 
 Use `staging` as the GitHub default branch and the base for feature branches
