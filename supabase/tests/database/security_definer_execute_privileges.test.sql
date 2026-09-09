@@ -80,6 +80,7 @@ values
   ('service_role', 'trusted', 'public.workspace_name_available(text)'),
   ('service_role', 'trusted', 'public.record_public_analytics_event(uuid,uuid,public.resource_type,uuid,uuid,public.analytics_resource_category,text,text,text,text,public.analytics_event_type,integer,bigint,integer)'),
   ('service_role', 'trusted', 'public.record_public_analytics_event_v2(uuid,uuid,public.resource_type,uuid,uuid,text,text,text,text,public.analytics_event_type,integer,bigint,integer,text,text)'),
+  ('service_role', 'trusted', 'public.enrich_login_session_event(uuid,uuid,text,text)'),
   ('service_role', 'trusted', 'public.enqueue_lifecycle_email_job(text,uuid,uuid,timestamptz,text,jsonb)'),
   ('service_role', 'trusted', 'public.claim_lifecycle_email_jobs(integer,timestamptz)'),
   ('service_role', 'trusted', 'public.finalize_lifecycle_email_job(uuid,text,text)'),
@@ -200,6 +201,10 @@ select ok(
       on n.oid = p.pronamespace
     where n.nspname = 'public'
       and p.prosecdef
+      and p.oid not in (
+        'public.activate_login_session_alerts()'::regprocedure,
+        'public.capture_login_session()'::regprocedure
+      )
       and not has_function_privilege('service_role', p.oid, 'EXECUTE')
   ),
   'service_role retains execution of already-hardened public security-definer functions'

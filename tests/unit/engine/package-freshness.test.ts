@@ -9,7 +9,7 @@ import { getEngineProvider } from "./provider";
 const ADAPTER = "@samarthmn/dockosha-provider-docyantra";
 const FONTS = "@samarthmn/doc-yantra-fonts";
 const ENGINES = ["@samarthmn/doc-yantra", "@samarthmn/doc-yantra-office"];
-const VERSION = "0.0.25";
+const VERSION = "0.0.26";
 const requireCjs = createRequire(import.meta.url);
 type WorkflowStep = {
   env?: Record<string, string>;

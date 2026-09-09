@@ -766,7 +766,7 @@ const SubscriptionUsage: React.FC = () => {
       <SettingsSection
         kicker="Capabilities"
         title="Document processing"
-        description="DocYantra 0.0.25 supports PDF merge, watermarking, CSV/Office/Markdown conversion, page counting, redaction, and health checks within its validated envelope."
+        description="DocYantra 0.0.26 supports PDF merge, watermarking, CSV/Office/Markdown conversion, page counting, redaction, and health checks within its validated envelope."
       >
         <p className="text-sm text-muted-foreground">
           The full comparison lives in the{" "}

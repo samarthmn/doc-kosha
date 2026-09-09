@@ -459,7 +459,7 @@ const HostedVsSelfHostPage: React.FC = () => {
                 them as roadmap rather than as something you are buying.
               </p>
               <p>
-                DocYantra is the private mandatory direct `0.0.25` dependency
+                DocYantra is the private mandatory direct `0.0.26` dependency
                 for the validated Office and PDF path. Enterprise terms require
                 a separate signed agreement and do not imply engine access; see{" "}
                 <Link href="/pricing" className="text-primary underline">

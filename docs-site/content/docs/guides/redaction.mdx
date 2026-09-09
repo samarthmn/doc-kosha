@@ -8,7 +8,7 @@ output of the DocYantra engine, not a black rectangle drawn over the page in
 your browser.
 
 Redaction is an application capability provided by the mandatory direct
-DocYantra `0.0.25` dependency. Work outside its validated envelope returns a
+DocYantra `0.0.26` dependency. Work outside its validated envelope returns a
 typed `unsupported_feature` result; nothing is saved and no partially redacted
 file is produced. See [the conversion envelope](/docs/how-it-works/conversion-envelope).
 
@@ -66,6 +66,13 @@ Every failure below returns an error and saves nothing — you never get a parti
 - **Engine unavailable** — DocYantra could not start or is temporarily down; retry.
 
 ## Limits
+
+Supported text is removed at the glyph level while neighboring glyphs retain
+their positions, including text inside nested PDF objects. Some embedded fonts
+provide validated glyph outlines for tighter bounds; other supported fonts use
+conservative bounds. Images and vector content can still require whole-object
+removal. The review warning remains necessary when safe removal extends beyond
+your selection.
 
 - Up to **800** redaction boxes per document in one pass; the studio tells you when you hit the cap.
 - Redaction applies to the PDF that DocKosha stores. A copy a viewer already downloaded is beyond recall — see [download and screenshot controls](/docs/guides/download-and-screenshot-controls) for what those controls can and cannot do. Screenshot protection in particular is a best-effort deterrent; browsers cannot block OS-level screen capture.

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { sendLoginSessionAlert } from "./loginSessionAlerts";
+import { dispatchLifecycleJob } from "./dispatch";
 
 import { clientEnv, serverEnv } from "@/lib/env";
 import { createSupabaseServiceClient } from "@/lib/supabase/serviceClient";
@@ -59,6 +61,7 @@ const lifecycleEmailJobSchema = z.object({
     "subscription-cancelled",
     "plan-downgraded",
     "workspace-invite-accepted",
+    "login-session",
   ]),
   workspace_id: z.string().uuid().nullable(),
   user_id: z.string().uuid().nullable(),
@@ -801,7 +804,13 @@ const processInactiveOwnerJob = async (
   return sent === "sent" ? "sent" : "skipped";
 };
 
-const processLifecycleJob = async (
+const processLifecycleJob = (job: LifecycleEmailJobRecord) =>
+  dispatchLifecycleJob(job, {
+    loginSession: sendLoginSessionAlert,
+    workspace: processWorkspaceLifecycleJob,
+  });
+
+const processWorkspaceLifecycleJob = async (
   job: LifecycleEmailJobRecord,
 ): Promise<"sent" | "skipped"> => {
   if (!job.workspace_id) {
@@ -1035,7 +1044,14 @@ export const processLifecycleEmailJobs = async (args?: {
   for (const job of jobs) {
     try {
       const result = await processLifecycleJob(job);
-      if (result === "sent") {
+      if (result === "deferred") {
+        const admin = createSupabaseServiceClient();
+        const { error } = await admin.rpc("reschedule_lifecycle_email_job", {
+          p_job_id: job.id,
+          p_scheduled_for: new Date(Date.now() + 60_000).toISOString(),
+        });
+        if (error) throw error;
+      } else if (result === "sent") {
         sent += 1;
         await markLifecycleEmailJobStatus(job.id, "sent");
       } else {
@@ -1071,3 +1087,6 @@ export const isLifecycleProcessorAuthorizationHeader = (
 
 export const getPlanRank = (planId: string | null | undefined): number =>
   planRanks[planId ?? ""] ?? 0;
+
+/** Browser requests only accelerate delivery; the durable job remains authoritative. */
+export const processLoginSessionFastPath = sendLoginSessionAlert;

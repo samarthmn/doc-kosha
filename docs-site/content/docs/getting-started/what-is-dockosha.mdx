@@ -48,7 +48,7 @@ When a link applies a watermark, the server stamps it into the PDF bytes it hand
 
 <Callout type="info" title="Conversion fails closed">
 
-DocYantra, the mandatory direct `0.0.25` dependency, converts supported non-PDF files to PDF for the viewer. Its documented capability and fidelity envelope is authoritative; work outside it returns a typed failure. If processing falls outside the
+DocYantra, the mandatory direct `0.0.26` dependency, converts supported non-PDF files to PDF for the viewer. Its documented capability and fidelity envelope is authoritative; work outside it returns a typed failure. If processing falls outside the
 validated envelope, the attempt fails and the viewer falls back to the
 original file. DocKosha never substitutes a partial or degraded rendering for
 the real document. See [Conversion envelope](/docs/how-it-works/conversion-envelope).
@@ -79,7 +79,7 @@ custom domains, user groups, advanced analytics, and versioning retention.
 Cloud plans can charge for hosting or limit capacity without creating a second
 source edition. See [Self-hosting](/docs/self-hosting).
 
-The managed service uses the private mandatory DocYantra `0.0.25` dependency for validated PDF and Office conversion, merge,
+The managed service uses the private mandatory DocYantra `0.0.26` dependency for validated PDF and Office conversion, merge,
 watermark burn-in, page counting, CSV conversion, and redaction. Work outside
 its documented envelope fails closed with a typed reason; there is no provider
 selection variable or fallback converter.

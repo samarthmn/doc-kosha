@@ -50,7 +50,7 @@ application's mandatory private direct engine dependency for Cloud and authorize
 maintainer builds; provider-specific
 implementation details remain isolated behind that contract.
 
-DocYantra is the private mandatory direct `0.0.25` dependency for document processing.
+DocYantra is the private mandatory direct `0.0.26` dependency for document processing.
 It provides the validated PDF and Office conversion, merge, watermark, page
 count, and redaction operations. Work outside its documented envelope returns a
 typed failure and never falls back to a lower-fidelity converter.

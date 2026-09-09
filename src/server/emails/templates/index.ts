@@ -22,7 +22,7 @@ export { buildPaymentFailedEmail } from "./paymentFailed";
 export { buildSubscriptionCancelledEmail } from "./subscriptionCancelled";
 export { buildPlanDowngradedEmail } from "./planDowngraded";
 export { buildWorkspaceInviteAcceptedEmail } from "./workspaceInviteAccepted";
-export { buildLoginNewDeviceEmail } from "./loginNewDevice";
+export { buildLoginSessionEmail } from "./loginSession";
 export { buildWorkspaceAccessChangedEmail } from "./workspaceAccessChanged";
 export { buildWorkspaceRemovedEmail } from "./workspaceRemoved";
 export { buildTestimonialSubmittedEmail } from "./testimonialSubmitted";
