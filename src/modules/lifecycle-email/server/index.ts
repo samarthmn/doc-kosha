@@ -1,5 +1,6 @@
 export {
   getPlanRank,
+  processLoginSessionFastPath,
   isLifecycleProcessorAuthorizationHeader,
   processLifecycleEmailJobs,
   queueSetupIncompleteLifecycleEmails,

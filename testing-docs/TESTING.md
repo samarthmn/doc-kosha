@@ -91,7 +91,7 @@ the suite; a partially migrated database is not a valid test environment.
 
 ## Provider expectations
 
-DocYantra is the mandatory private direct `0.0.25` dependency and handles the
+DocYantra is the mandatory private direct `0.0.26` dependency and handles the
 document-processing operations within its validated envelope. Package and
 capability failures must produce typed failures and fail closed; there is no
 provider-selection variable or fallback provider.

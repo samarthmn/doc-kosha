@@ -441,7 +441,7 @@ const LandingPageContent: React.FC = () => {
                 {[
                   {
                     title: "Before sharing",
-                    body: "Prepare documents, redact sensitive PDF content through DocYantra 0.0.25, and keep folder access organized.",
+                    body: "Prepare documents, redact sensitive PDF content through DocYantra 0.0.26, and keep folder access organized.",
                   },
                   {
                     title: "At launch",

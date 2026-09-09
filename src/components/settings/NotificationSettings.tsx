@@ -157,11 +157,11 @@ const NotificationSettings: React.FC = () => {
                   />
                   <div>
                     <Label htmlFor="notif-login-alerts" className="font-medium">
-                      New-device login alerts
+                      Sign-in alerts
                     </Label>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Sends an email when your account signs in from an unknown
-                      device.
+                      Sends an email for each sign-in after your first session,
+                      including on familiar devices.
                     </p>
                   </div>
                 </div>
@@ -174,7 +174,7 @@ const NotificationSettings: React.FC = () => {
                       securityLoginAlertsEnabled: checked,
                     }))
                   }
-                  aria-label="Toggle new-device login alerts"
+                  aria-label="Toggle sign-in alerts"
                 />
               </div>
 

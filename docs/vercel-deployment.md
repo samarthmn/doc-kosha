@@ -44,7 +44,7 @@ certify an application build.
 ## Build settings
 
 Use the Next.js framework preset and Node.js `24.x`. The repository pins pnpm
-`11.25.0` and DocYantra `0.0.25`. Its workspace configuration selects the
+`11.25.0` and DocYantra `0.0.26`. Its workspace configuration selects the
 private package registry and the hoisted dependency layout required by the
 Vercel function packager.
 

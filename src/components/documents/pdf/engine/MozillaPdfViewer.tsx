@@ -44,6 +44,7 @@ import {
   getPageOverlayHostStyles,
   type PageOverlayContext,
 } from "@/components/documents/pdf/geometry/pageAreas";
+import { isCurrentPdfPageEvent } from "@/components/documents/pdf/engine/pdfPageEvents";
 import { cn } from "@/lib/utils";
 import { useOptionalSidebarLayoutTransitionCoordinator } from "@/components/layouts/SidebarLayoutTransitionContext";
 import { createSidebarAwareResizeCommitter } from "@/components/layouts/sidebarLayoutTransition";
@@ -98,7 +99,7 @@ export type MozillaPdfViewerProps = {
 };
 
 type PageRenderEvent = {
-  source: PDFPageView;
+  source: unknown;
   pageNumber: number;
   error?: unknown;
 };
@@ -484,7 +485,7 @@ export const MozillaPdfViewer = forwardRef<
     const mountPageOverlay = ({
       source,
       pageNumber,
-    }: PageRenderEvent): void => {
+    }: PageRenderEvent & { source: PDFPageView }): void => {
       const pageIndex = pageNumber - 1;
       const hosts = {
         "under-text": resolveOverlayHost(source.div, pageIndex, "under-text"),
@@ -533,15 +534,21 @@ export const MozillaPdfViewer = forwardRef<
     };
 
     const handlePageRender = (event: PageRenderEvent): void => {
+      if (!active || !isCurrentPdfPageEvent<PDFPageView>(pdfViewer, event))
+        return;
       detachTextLayer(event.pageNumber - 1);
       mountPageOverlay(event);
     };
 
     const handlePageRendered = (event: PageRenderEvent): void => {
+      if (!active || !isCurrentPdfPageEvent<PDFPageView>(pdfViewer, event))
+        return;
       if (event.error == null) mountPageOverlay(event);
     };
 
     const handleTextLayerRendered = (event: PageRenderEvent): void => {
+      if (!active || !isCurrentPdfPageEvent<PDFPageView>(pdfViewer, event))
+        return;
       const pageIndex = event.pageNumber - 1;
       const element = event.source.textLayer?.div;
       if (!(element instanceof HTMLDivElement)) return;
