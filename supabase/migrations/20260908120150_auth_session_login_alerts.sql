@@ -1,6 +1,7 @@
 -- Capture decisions at authentication time, never in browser callback order.
 -- This migration intentionally leaves delivery disabled. See docs/sign-in-alerts.md.
 -- Serialize installation with session insertion so the baseline has no gap.
+begin;
 lock table auth.sessions in share row exclusive mode;
 
 create table public.login_alert_rollout (
@@ -117,3 +118,5 @@ end;
 $$;
 revoke all on function public.enrich_login_session_event(uuid, uuid, text, text) from public, anon, authenticated;
 grant execute on function public.enrich_login_session_event(uuid, uuid, text, text) to service_role;
+
+commit;
