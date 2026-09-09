@@ -37,10 +37,11 @@ grant execute on function
   public.is_workspace_member(uuid)
 to anon, authenticated, service_role;
 
+-- Quote the identifier so the pinned CLI does not parse its suffix as BEGIN ATOMIC.
 grant execute on function
   public.record_internal_audit_event(uuid, text, text, uuid, uuid, uuid, jsonb),
   public.replace_link_allowlist_rules(uuid, uuid, text[], text[], uuid[], uuid[]),
-  public.update_workspace_user_group_atomic(uuid, uuid, text, text[]),
+  public."update_workspace_user_group_atomic"(uuid, uuid, text, text[]),
   public.replace_link_preset_rules(uuid, uuid, text[], text[], uuid[], uuid[]),
   public.upsert_link_preset(uuid, text, jsonb, text[], text[], uuid[], uuid[]),
   public.replace_link_alc_rules(uuid, uuid, jsonb),
