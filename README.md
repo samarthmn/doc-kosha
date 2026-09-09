@@ -13,7 +13,7 @@ Read the [trademark guidance](./TRADEMARKS.md) before redistributing a fork.
 DocKosha has one public source edition. DocKosha Cloud is the managed service
 operated by Sublime Innovation Technologies Limited. The source is published
 for reading, review, and contribution; it is not currently a runnable
-self-hosting distribution because its mandatory DocYantra `0.0.25`
+self-hosting distribution because its mandatory DocYantra `0.0.26`
 dependency is private and unavailable to external users.
 
 ## Maintainer-only development prerequisites

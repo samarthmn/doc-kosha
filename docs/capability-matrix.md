@@ -5,7 +5,7 @@ licensed under the **GNU Affero General Public License, version 3
 (AGPL-3.0-or-later)**. Enterprise licensing is available only through a separate
 signed agreement; see [Commercial Licensing](../COMMERCIAL-LICENSING.md).
 DocKosha Cloud is the available managed product. External self-hosting is not
-currently available because DocYantra is a private mandatory direct `0.0.25`
+currently available because DocYantra is a private mandatory direct `0.0.26`
 dependency. No DocYantra package, SDK, API, standalone product, or license is
 offered externally.
 

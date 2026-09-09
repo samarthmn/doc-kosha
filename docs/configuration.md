@@ -76,7 +76,7 @@ secret must be at least 32 characters; otherwise the operation returns a typed
 
 ## Document processing
 
-DocYantra is a mandatory direct `0.0.25` dependency. Its package and capability
+DocYantra is a mandatory direct `0.0.26` dependency. Its package and capability
 contract are validated at startup and per operation; invalid or out-of-envelope
 work fails closed. There is no provider-selection or engine-version environment
 variable and no fallback converter.

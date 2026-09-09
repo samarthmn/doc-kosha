@@ -18,7 +18,7 @@ import { FileX, LinkSimple, Stack } from "@phosphor-icons/react/ssr";
 export const metadata: Metadata = {
   title: "Secure PDF Redaction",
   description:
-    "DocYantra 0.0.25 permanently removes sensitive information from PDFs and converted deal documents within its validated envelope while keeping links and version history intact.",
+    "DocYantra 0.0.26 permanently removes sensitive information from PDFs and converted deal documents within its validated envelope while keeping links and version history intact.",
   keywords: [
     "PDF redaction",
     "secure redaction",
@@ -30,14 +30,14 @@ export const metadata: Metadata = {
     type: "website",
     title: "Secure PDF Redaction",
     description:
-      "DocYantra 0.0.25 permanently removes sensitive information from PDFs and converted documents within its validated envelope while keeping links and version history intact.",
+      "DocYantra 0.0.26 permanently removes sensitive information from PDFs and converted documents within its validated envelope while keeping links and version history intact.",
     url: "/features/redaction",
   },
   twitter: {
     card: "summary_large_image",
     title: "Secure PDF Redaction",
     description:
-      "DocYantra 0.0.25 permanently removes sensitive information from PDFs and converted documents within its validated envelope while keeping links and version history intact.",
+      "DocYantra 0.0.26 permanently removes sensitive information from PDFs and converted documents within its validated envelope while keeping links and version history intact.",
   },
 };
 
@@ -47,7 +47,7 @@ const RedactionFeaturePage: React.FC = () => {
       <MarketingHero
         badge="Feature"
         title="Secure PDF redaction for deal materials"
-        subtitle="DocYantra 0.0.25 permanently removes sensitive information from PDFs and converted documents within its validated envelope before they move outside your firm."
+        subtitle="DocYantra 0.0.26 permanently removes sensitive information from PDFs and converted documents within its validated envelope before they move outside your firm."
       >
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
           <Button asChild size="lg" className="h-12 px-8 text-base">

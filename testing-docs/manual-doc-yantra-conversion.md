@@ -1,6 +1,6 @@
 # Manual test guide: package-only conversion and PDF processing
 
-DocKosha performs document conversion, PDF merge/watermark, page counting, and redaction in the application process. A lockstep DocYantra release owns `@samarthmn/dockosha-provider-docyantra`, `@samarthmn/doc-yantra` (`pdf-core`), `@samarthmn/doc-yantra-office` (`office-core`), and `@samarthmn/doc-yantra-fonts`. There is no HTTP conversion-processing tier or alternate provider: DocYantra is the mandatory direct `0.0.25` dependency and its validated envelope is authoritative.
+DocKosha performs document conversion, PDF merge/watermark, page counting, and redaction in the application process. A lockstep DocYantra release owns `@samarthmn/dockosha-provider-docyantra`, `@samarthmn/doc-yantra` (`pdf-core`), `@samarthmn/doc-yantra-office` (`office-core`), and `@samarthmn/doc-yantra-fonts`. There is no HTTP conversion-processing tier or alternate provider: DocYantra is the mandatory direct `0.0.26` dependency and its validated envelope is authoritative.
 
 > **Authorized-maintainer reference only:** The DocKosha source is public for
 > reading and contribution, but there is no public runnable installation. This
@@ -36,6 +36,17 @@ Install the matching fonts tarball in every scenario. Run `pnpm test:engine` and
 The engine runner fails closed when the provider package is absent or cannot be resolved. Missing worker/WASM/font assets, mixed package versions, incomplete Next traces, and undocumented skips are release blockers. The optional fonts path must not be silently treated as equivalent to the font-installed path.
 
 ## What to inspect
+
+For `0.0.26`, verify plain legacy Excel Notes with visible/hidden and printable/
+non-printable variants, including Unicode text and ordinary cell content. Only
+visible, printable Notes with `cellComments="asDisplayed"` render. Unsupported
+relationships, rich Notes, embedded objects, and controls must fail closed.
+Use private provider fixtures to verify embedded static TrueType CID redaction
+with Identity-H and an explicit Identity CIDToGIDMap: selected secrets must be
+absent from saved bytes while neighboring glyphs retain their positions. Other
+supported font mappings remain conservative. Verify warning confirmation and
+cancellation; synthetic fixtures do not establish that a customer incident is
+resolved.
 
 1. **First-use logs.** Ordinary startup stays lazy. After the explicit probe or first real operation, both `[pdf-core-wasm] worker loaded` and `[office-core-wasm] worker loaded` must appear. A probe error is a release blocker.
 2. **Database telemetry.** Successful new conversions write only `pdf-core-wasm` or `office-core-wasm` to `conversion_engine`. Historical rows may retain retired engine strings and must remain readable.

@@ -3,7 +3,7 @@
 Self-hosting is not currently available to external users. The DocKosha source
 is public under AGPL-3.0-or-later for reading, review, and contribution, but this
 repository is not presently a runnable self-hosting distribution: the
-mandatory direct DocYantra `0.0.25` dependency is private and unavailable
+mandatory direct DocYantra `0.0.26` dependency is private and unavailable
 externally.
 
 There is no external DocYantra package access, token, SDK, API, standalone
@@ -15,7 +15,7 @@ A future self-hosting path may document an independently configured provider
 such as Gotenberg, but no alternative provider is supported or promised today.
 
 Read [the conversion envelope](../docs-site/content/docs/how-it-works/conversion-envelope.mdx) before
-investing time in document conversion. The mandatory direct DocYantra `0.0.25`
+investing time in document conversion. The mandatory direct DocYantra `0.0.26`
 dependency supports the documented PDF, Office, CSV/Markdown, watermark,
 page-counting, and redaction paths; work outside that envelope returns a typed
 `unsupported_feature` failure.
@@ -61,7 +61,7 @@ present. No implicit DNS target is used.
 
 ## Document processing (Cloud and authorized maintainer environments)
 
-Install the exact DocYantra `0.0.25` dependency declared by the application.
+Install the exact DocYantra `0.0.26` dependency declared by the application.
 Its validated conversion envelope is authoritative; unsupported work fails
 closed and there is no provider-selection variable or fallback converter.
 

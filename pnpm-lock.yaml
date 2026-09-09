@@ -73,11 +73,11 @@ importers:
         specifier: ^1.1.7
         version: 1.1.18(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@samarthmn/doc-yantra-fonts':
-        specifier: 0.0.25
-        version: 0.0.25
+        specifier: 0.0.26
+        version: 0.0.26
       '@samarthmn/dockosha-provider-docyantra':
-        specifier: 0.0.25
-        version: 0.0.25(@samarthmn/doc-yantra-fonts@0.0.25)
+        specifier: 0.0.26
+        version: 0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)
       '@sentry/nextjs':
         specifier: ^10
         version: 10.66.0(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.9.0(@opentelemetry/api@1.9.1))(next@16.3.0(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@20.19.43)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@8.1.1)(webpack@5.108.4(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.26))
@@ -1795,23 +1795,23 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@samarthmn/doc-yantra-fonts@0.0.25':
-    resolution: {integrity: sha512-NiwFbIw6XlAppSc0fsrwuJL3828C3y5lRZdrbGDclfXLrL/bhkZ0611C8GLzsF2yjRhw+qnrFh9ZsALZ5tFbng==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-fonts/0.0.25/023641c469fa87ca1bce2ee3f5e35abca91afd5e}
+  '@samarthmn/doc-yantra-fonts@0.0.26':
+    resolution: {integrity: sha512-GviKzZwYCwXCZHdZN3rNuzjFj/4TmPy1R1mOLUTBD9BCL4W4NExN3QgKx5YC/A1l+c9xm7VL2Khh2U4DgA0Gmg==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-fonts/0.0.26/fa5daaa803c142bbbc4f77fdffb9597b8b12ca7d}
 
-  '@samarthmn/doc-yantra-office@0.0.25':
-    resolution: {integrity: sha512-SkrUi5VEFuIkrqd1U3PMUuLtqPxGa0g23J8qdX1aqa9Jm3ISDnFgpduczNgpxcoMH9+Dv2vYJzqJ7IkMdlGAsA==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-office/0.0.25/707d83c7248fdc248eba3a646d7ae5524f96806a}
+  '@samarthmn/doc-yantra-office@0.0.26':
+    resolution: {integrity: sha512-zcvwhDDPjrqA0iTg9t1BpqJfWnmTAxzSe/+vvKtCV8HlVLjH6nrNwNnaj1GLh2y2cAmgKU50IzwNqYQZ6gt+Og==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-office/0.0.26/4b684fc7ea0f81a2858a1175ecf97401eeb20e8c}
     peerDependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.25
+      '@samarthmn/doc-yantra-fonts': 0.0.26
 
-  '@samarthmn/doc-yantra@0.0.25':
-    resolution: {integrity: sha512-ogZgTMfKnEXwwZtyDn2P88RfTx8nWt7MF4jbZhfghfOmHeIq1ZLv3WmlLmPFyZQvjxvPoN4woRC8lqHjp51ifg==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra/0.0.25/e03659dbbc5eaa8b9aca8db0a9e7042c0b47d79e}
+  '@samarthmn/doc-yantra@0.0.26':
+    resolution: {integrity: sha512-qC0jwOHrx1p1+H78eFUku91EPpfqzlSIUH33s3y3riqUT6pK0BrQY9TZEFFbs0Vrj3vbHGxgB6aeRzIwbUkMMQ==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra/0.0.26/6420869dcbd403075bbe219d7bc887293d352f51}
     peerDependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.25
+      '@samarthmn/doc-yantra-fonts': 0.0.26
 
-  '@samarthmn/dockosha-provider-docyantra@0.0.25':
-    resolution: {integrity: sha512-BeE3LJcjlnFc1fdpbtlhJpQC/+NHCqamBVZjWO8Y9ENXerc4XhA9Z/wpu3N+pWOWTmTV16aqOj79dI2ZgUHxkw==, tarball: https://npm.pkg.github.com/download/@samarthmn/dockosha-provider-docyantra/0.0.25/928487aab3c4d0150a74255fda00d887dcdedd3c}
+  '@samarthmn/dockosha-provider-docyantra@0.0.26':
+    resolution: {integrity: sha512-Fq+8HGJGDIQcPYJdktefVdRJLsru1v9GiI6l2zOfyKn3FGtXKKLzXB32jvXcPLfB5l4SCdtvvKcph9WZVVfCwg==, tarball: https://npm.pkg.github.com/download/@samarthmn/dockosha-provider-docyantra/0.0.26/97ed0cbe848ca8f7329cbe594d2fc806b4334d57}
     peerDependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.25
+      '@samarthmn/doc-yantra-fonts': 0.0.26
 
   '@sentry/babel-plugin-component-annotate@5.3.0':
     resolution: {integrity: sha512-p4q8gn8wcFqZGP/s2MnJCAAd8fTikaU6A0mM97RDHQgStcrYiaS0Sc5zUNfb1V+UOLPuvdEdL6MwyxfzjYJQTA==}
@@ -5822,21 +5822,21 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@samarthmn/doc-yantra-fonts@0.0.25': {}
+  '@samarthmn/doc-yantra-fonts@0.0.26': {}
 
-  '@samarthmn/doc-yantra-office@0.0.25(@samarthmn/doc-yantra-fonts@0.0.25)':
+  '@samarthmn/doc-yantra-office@0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)':
     dependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.25
+      '@samarthmn/doc-yantra-fonts': 0.0.26
 
-  '@samarthmn/doc-yantra@0.0.25(@samarthmn/doc-yantra-fonts@0.0.25)':
+  '@samarthmn/doc-yantra@0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)':
     dependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.25
+      '@samarthmn/doc-yantra-fonts': 0.0.26
 
-  '@samarthmn/dockosha-provider-docyantra@0.0.25(@samarthmn/doc-yantra-fonts@0.0.25)':
+  '@samarthmn/dockosha-provider-docyantra@0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)':
     dependencies:
-      '@samarthmn/doc-yantra': 0.0.25(@samarthmn/doc-yantra-fonts@0.0.25)
-      '@samarthmn/doc-yantra-fonts': 0.0.25
-      '@samarthmn/doc-yantra-office': 0.0.25(@samarthmn/doc-yantra-fonts@0.0.25)
+      '@samarthmn/doc-yantra': 0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)
+      '@samarthmn/doc-yantra-fonts': 0.0.26
+      '@samarthmn/doc-yantra-office': 0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)
       zod: 4.4.3
 
   '@sentry/babel-plugin-component-annotate@5.3.0': {}

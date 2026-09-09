@@ -58,7 +58,7 @@ const categories: FeatureCategory[] = [
       },
       {
         name: "Secure PDF redaction",
-        description: "Permanent removal through DocYantra 0.0.25",
+        description: "Permanent removal through DocYantra 0.0.26",
       },
     ],
   },
