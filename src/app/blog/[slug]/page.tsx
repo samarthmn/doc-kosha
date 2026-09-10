@@ -284,7 +284,7 @@ const articleJsonLd = (post: BlogPost) => {
     headline: post.title,
     description: post.description,
     author: {
-      "@type": "Organization",
+      "@type": post.authorType,
       name: post.author ?? "DocKosha Editorial",
       url: siteUrl,
     },
@@ -331,7 +331,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImage = absoluteUrl(post.heroImage ?? "/opengraph-image");
 
   return {
-    title: post.title,
+    title: post.seoTitle ? { absolute: post.seoTitle } : post.title,
     description: post.description,
     alternates: { canonical },
     keywords: post.keywords,
@@ -339,18 +339,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       type: "article",
       url,
-      title: post.title,
-      description: post.description,
+      title: post.socialTitle ?? post.title,
+      description: post.socialDescription ?? post.description,
       publishedTime: post.dateISO,
       modifiedTime: post.updatedISO ?? post.dateISO,
       tags: post.tags,
-      images: ogImage ? [ogImage] : undefined,
+      images: ogImage
+        ? [{ url: ogImage, alt: post.heroImageAlt ?? post.title }]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: post.description,
-      images: ogImage ? [ogImage] : undefined,
+      title: post.socialTitle ?? post.title,
+      description: post.socialDescription ?? post.description,
+      images: ogImage
+        ? [{ url: ogImage, alt: post.heroImageAlt ?? post.title }]
+        : undefined,
     },
   };
 }
@@ -489,6 +493,18 @@ const BlogPostPage: React.FC<Props> = async ({ params }) => {
 
             {/* Main Content */}
             <div className="min-w-0">
+              {post.heroImage ? (
+                <figure className="mb-10 overflow-hidden rounded-lg border border-border">
+                  <img
+                    src={post.heroImage}
+                    alt={post.heroImageAlt ?? post.title}
+                    width={post.heroImageWidth}
+                    height={post.heroImageHeight}
+                    className="h-auto w-full"
+                    decoding="async"
+                  />
+                </figure>
+              ) : null}
               <div className="prose prose-lg dark:prose-invert prose-headings:scroll-mt-24 prose-primary max-w-none">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
@@ -497,6 +513,12 @@ const BlogPostPage: React.FC<Props> = async ({ params }) => {
                   {post.content}
                 </ReactMarkdown>
               </div>
+
+              {post.authorBio ? (
+                <p className="mt-12 border-t border-border pt-6 text-sm leading-6 text-muted-foreground">
+                  {post.authorBio}
+                </p>
+              ) : null}
 
               <hr className="my-16 border-border" />
 

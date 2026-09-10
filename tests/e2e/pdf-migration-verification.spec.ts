@@ -1,5 +1,7 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import {
+  insertDataRoom,
+  insertDocumentFixture,
   insertLink,
   insertWatermark,
   waitForDocumentByTitle,
@@ -12,6 +14,7 @@ import {
   type PdfMigrationFixtures,
 } from "./helpers/pdf-fixtures";
 import { provisionCoreWorkspace } from "./helpers/provision";
+import { getNewestMailpitMessageId, waitForOtpCode } from "./helpers/mailpit";
 import { uniqueEmail, uniqueName } from "./helpers/random";
 
 type Point = { x: number; y: number };
@@ -31,8 +34,16 @@ const expectPdfReady = async (page: Page): Promise<void> => {
 const targetWordDragPoints = async (
   page: Page,
   pageIndex: number,
-): Promise<{ start: Point; end: Point }> => {
+): Promise<{
+  start: Point;
+  end: Point;
+}> => {
   const textLayer = page.locator(`[data-dk-text-layer="${pageIndex}"]`);
+  // Scrolling the page first lets pdf.js repaint a hidden/offscreen text layer
+  // after a zoom or a comment panel's initial navigation.
+  await page
+    .locator(`.pdfViewer [data-page-number="${pageIndex + 1}"]`)
+    .scrollIntoViewIfNeeded();
   await expect(textLayer).toBeVisible({ timeout: 30_000 });
   await textLayer.scrollIntoViewIfNeeded();
   return textLayer.evaluate((layer) => {
@@ -46,6 +57,10 @@ const targetWordDragPoints = async (
       throw new Error(`PDF text layer does not contain ${target}`);
     }
 
+    textNode.parentElement?.scrollIntoView({
+      block: "center",
+      inline: "center",
+    });
     const startOffset = textNode.textContent.toUpperCase().indexOf(target);
     const startRange = document.createRange();
     startRange.setStart(textNode, startOffset);
@@ -55,7 +70,6 @@ const targetWordDragPoints = async (
     endRange.setEnd(textNode, startOffset + target.length);
     const startRect = startRange.getBoundingClientRect();
     const endRect = endRange.getBoundingClientRect();
-
     return {
       start: {
         x: startRect.left + startRect.width / 2,
@@ -74,14 +88,15 @@ const dragTargetWord = async (page: Page, pageIndex: number): Promise<void> => {
   const dx = points.end.x - points.start.x;
   const dy = points.end.y - points.start.y;
   const magnitude = Math.hypot(dx, dy) || 1;
-  const edgeInset = 3;
+  const startInset = 3;
+  const endInset = 3;
   const start = {
-    x: points.start.x - (dx / magnitude) * edgeInset,
-    y: points.start.y - (dy / magnitude) * edgeInset,
+    x: points.start.x - (dx / magnitude) * startInset,
+    y: points.start.y - (dy / magnitude) * startInset,
   };
   const end = {
-    x: points.end.x + (dx / magnitude) * edgeInset,
-    y: points.end.y + (dy / magnitude) * edgeInset,
+    x: points.end.x + (dx / magnitude) * endInset,
+    y: points.end.y + (dy / magnitude) * endInset,
   };
 
   await page.mouse.move(start.x, start.y);
@@ -91,6 +106,43 @@ const dragTargetWord = async (page: Page, pageIndex: number): Promise<void> => {
   await expect
     .poll(() => page.evaluate(() => window.getSelection()?.toString() ?? ""))
     .toContain("TARGETWORD");
+};
+
+// Use browser Range geometry for the high-DPR regression: transformed PDF text
+// can quantize drag endpoints to the adjacent glyph. Dispatching mouse release
+// on the actual layer exercises the listener a detail pagerender must preserve.
+const selectTargetWordRange = async (
+  page: Page,
+  pageIndex: number,
+): Promise<void> => {
+  await targetWordDragPoints(page, pageIndex);
+  await page
+    .locator(`[data-dk-text-layer="${pageIndex}"]`)
+    .dispatchEvent("mousedown");
+  await page
+    .locator(`[data-dk-text-layer="${pageIndex}"]`)
+    .evaluate((layer) => {
+      const walker = document.createTreeWalker(layer, NodeFilter.SHOW_TEXT);
+      let node: Node | null;
+      while ((node = walker.nextNode())) {
+        const offset = node.textContent?.indexOf("TARGETWORD") ?? -1;
+        if (offset < 0) continue;
+        const range = document.createRange();
+        range.setStart(node, offset);
+        range.setEnd(node, offset + "TARGETWORD".length);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        return;
+      }
+      throw new Error("Missing target text");
+    });
+  await page
+    .locator(`[data-dk-text-layer="${pageIndex}"]`)
+    .dispatchEvent("mouseup");
+  await expect
+    .poll(() => page.evaluate(() => window.getSelection()?.toString()))
+    .toBe("TARGETWORD");
 };
 
 const expectCommentHighlightOnTarget = async (
@@ -131,6 +183,11 @@ test.describe.serial("PDF migration verification @engine", () => {
   let rotatedDocument: DocumentRow;
   let rotatedLinkId: string;
   let rotatedThreadId: string;
+  let roomId: string;
+  let roomLinkId: string;
+  let roomDocument: DocumentRow;
+  let detailDocument: DocumentRow;
+  let detailLinkId: string;
   let fixtures: PdfMigrationFixtures | null = null;
 
   test.beforeAll(async ({ browser }) => {
@@ -179,6 +236,47 @@ test.describe.serial("PDF migration verification @engine", () => {
       curated_qas: [],
     });
     rotatedLinkId = rotatedLink.id;
+    const room = await insertDataRoom({
+      workspaceId,
+      userId: rotatedDocument.created_by,
+      name: uniqueName("PDF detail room"),
+    });
+    roomId = room.id;
+    await uploadDocumentsViaModal(page, [fixtures.rotatedPath], {
+      destinationUrl: `/data-rooms/${roomId}/documents`,
+      uploadButtonGuide: "data-room-upload-button",
+    });
+    roomDocument = await waitForDocumentByTitle({
+      workspaceId,
+      title: "rotated.pdf",
+      dataRoomId: roomId,
+    });
+    const roomLink = await insertLink({
+      workspace_id: workspaceId,
+      data_room_id: roomId,
+      created_by: rotatedDocument.created_by,
+      comments_enabled: true,
+      apply_watermark: true,
+      watermark_id: watermarkId,
+      name: uniqueName("PDF detail room link"),
+    });
+    roomLinkId = roomLink.id;
+    detailDocument = await insertDocumentFixture({
+      workspaceId,
+      createdBy: rotatedDocument.created_by,
+      title: "Detail-render PDF",
+      storagePath: rotatedDocument.storage_path,
+    });
+    const detailLink = await insertLink({
+      workspace_id: workspaceId,
+      document_id: detailDocument.id,
+      created_by: rotatedDocument.created_by,
+      comments_enabled: true,
+      apply_watermark: true,
+      watermark_id: watermarkId,
+      name: uniqueName("Detail-render link"),
+    });
+    detailLinkId = detailLink.id;
   });
 
   test.afterAll(async () => {
@@ -395,5 +493,182 @@ test.describe.serial("PDF migration verification @engine", () => {
       .locator(`[data-dk-comment-thread-id="${rotatedThreadId}"]`)
       .click();
     await expect(page.getByText("Rotated anchor verification")).toBeVisible();
+  });
+
+  test("preserves selection and overlays through real detail redraws in internal, /d and /r viewers", async ({
+    browser,
+  }) => {
+    // At 200% and DPR 4, a Letter page exceeds pdf.js's 2^25 pixel
+    // canvas budget. This exercises its real detail renderer without hooks.
+    const detailContext = await browser.newContext({
+      storageState: await context.storageState(),
+      viewport: { width: 1440, height: 1000 },
+      deviceScaleFactor: 4,
+    });
+    const errors: string[] = [];
+    try {
+      const detailPage = await detailContext.newPage();
+      detailPage.on("pageerror", (error) => errors.push(error.message));
+      detailPage.on("console", (message) => {
+        if (
+          message.type() === "error" &&
+          /viewport|rotation|pagerender/i.test(message.text())
+        )
+          errors.push(message.text());
+      });
+      await verifyPublicDocumentEmail({
+        request: detailContext.request,
+        linkId: detailLinkId,
+        documentId: detailDocument.id,
+        email: uniqueEmail("detail-document"),
+      });
+      const email = uniqueEmail("detail-room");
+      const baselineMessageId = await getNewestMailpitMessageId({
+        to: email,
+        subjectIncludes: "Verification Code",
+      });
+      const sinceMs = Date.now();
+      const send = await detailContext.request.post("/api/public/links/otp", {
+        data: { action: "send", linkId: roomLinkId, dataRoomId: roomId, email },
+      });
+      expect(send.status()).toBe(200);
+      const code = await waitForOtpCode({
+        to: email,
+        sinceMs,
+        subjectIncludes: "Verification Code",
+        baselineMessageId,
+      });
+      const verify = await detailContext.request.post("/api/public/links/otp", {
+        data: {
+          action: "verify",
+          linkId: roomLinkId,
+          dataRoomId: roomId,
+          email,
+          code,
+        },
+      });
+      expect(verify.status()).toBe(200);
+
+      for (const { route, pageIndex } of [
+        {
+          route: `/documents/view/${rotatedDocument.id}/comments`,
+          pageIndex: 0,
+        },
+        { route: `/d/${detailDocument.id}/${detailLinkId}`, pageIndex: 0 },
+        {
+          route: `/r/${roomId}/${roomLinkId}/${roomDocument.id}`,
+          pageIndex: 1,
+        },
+      ]) {
+        await detailPage.goto(route, { waitUntil: "domcontentloaded" });
+        await expectPdfReady(detailPage);
+        const comments = detailPage.getByRole("switch", {
+          name: "Show comments",
+        });
+        if (await comments.isVisible()) await comments.check();
+        await detailPage.getByLabel("Current page").fill(String(pageIndex + 1));
+        await detailPage.getByLabel("Current page").press("Enter");
+        await detailPage.getByRole("button", { name: "Zoom level" }).click();
+        await detailPage
+          .getByRole("menuitem", { name: "200%", exact: true })
+          .click();
+        await targetWordDragPoints(detailPage, pageIndex);
+        const detailCanvas = detailPage.locator(
+          `[data-page-number="${pageIndex + 1}"] .canvasWrapper canvas[aria-hidden="true"]`,
+        );
+        await expect(detailCanvas).toBeVisible({ timeout: 30_000 });
+        await expect
+          .poll(() =>
+            detailCanvas.evaluate(
+              (canvas) => (canvas as HTMLCanvasElement).width,
+            ),
+          )
+          .toBeGreaterThan(0);
+        // Scroll far enough to replace the visible detail crop, then return to
+        // the target. Detail redraws do not emit textlayerrendered.
+        const originalDetail = await detailCanvas.elementHandle();
+        if (!originalDetail) throw new Error("Missing detail canvas");
+        await detailPage.locator(".dk-pdf-scroll").evaluate((scroller) => {
+          const maximum = scroller.scrollWidth - scroller.clientWidth;
+          scroller.scrollLeft = scroller.scrollLeft < maximum / 2 ? maximum : 0;
+        });
+        await expect
+          .poll(() => originalDetail.evaluate((canvas) => canvas.isConnected))
+          .toBe(false);
+        await originalDetail.dispose();
+        await targetWordDragPoints(detailPage, pageIndex);
+        await expect(detailCanvas).toBeVisible();
+        await selectTargetWordRange(detailPage, pageIndex);
+        await expect(
+          detailPage.getByRole("button", { name: "Add comment" }),
+        ).toBeVisible();
+        const previousThreadIds = await detailPage
+          .locator("[data-dk-comment-thread-id]")
+          .evaluateAll((elements) =>
+            elements.map((element) =>
+              element.getAttribute("data-dk-comment-thread-id"),
+            ),
+          );
+        await detailPage
+          .getByRole("button", { name: "Add comment" })
+          .press("Enter");
+        await detailPage
+          .getByRole("textbox", {
+            name: route.startsWith("/documents/")
+              ? "Write a comment…"
+              : "Add a comment…",
+          })
+          .fill("Detail redraw anchor verification");
+        if (route.startsWith("/r/")) {
+          // Existing room-comment persistence returns LINK_NOT_FOUND because
+          // the comments service requires a document link. This viewer test
+          // covers the real detail redraw and retained selection/composer;
+          // internal and /d cases below verify persisted anchor alignment.
+          await expect(
+            detailPage.locator(
+              `[data-page-number="${pageIndex + 1}"] [data-dk-pdf-overlay-host="over-text:${pageIndex}"]`,
+            ),
+          ).toHaveAttribute("data-dk-page-rotation", "0");
+          await expect(
+            detailPage.locator(`[data-dk-text-layer="${pageIndex}"]`),
+          ).toContainText("ROTATED VERIFY");
+          continue;
+        }
+        await detailPage
+          .getByRole("button", { name: "Comment", exact: true })
+          .click();
+        let threadId: string | null | undefined;
+        await expect
+          .poll(async () => {
+            const threadIds = await detailPage
+              .locator("[data-dk-comment-thread-id]")
+              .evaluateAll((elements) =>
+                elements.map((element) =>
+                  element.getAttribute("data-dk-comment-thread-id"),
+                ),
+              );
+            threadId = threadIds.find(
+              (id) => id && !previousThreadIds.includes(id),
+            );
+            return threadId;
+          })
+          .toBeTruthy();
+        if (!threadId)
+          throw new Error("Detail-render comment has no thread id");
+        await expectCommentHighlightOnTarget(detailPage, threadId, pageIndex);
+        await expect(
+          detailPage.locator(
+            `[data-page-number="${pageIndex + 1}"] [data-dk-pdf-overlay-host="over-text:${pageIndex}"]`,
+          ),
+        ).toHaveAttribute("data-dk-page-rotation", "0");
+        if (!route.startsWith("/documents/"))
+          await expect(
+            detailPage.locator(`[data-dk-text-layer="${pageIndex}"]`),
+          ).toContainText("ROTATED VERIFY");
+      }
+      expect(errors).toEqual([]);
+    } finally {
+      await detailContext.close();
+    }
   });
 });

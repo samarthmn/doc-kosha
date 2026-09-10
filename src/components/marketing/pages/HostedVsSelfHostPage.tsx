@@ -31,9 +31,9 @@ const CLOUD_CTA_HREF =
   "https://dockosha.com/auth/sign-in?redirect=%2Fonboarding&utm_source=product&utm_medium=marketing&utm_campaign=product-docs";
 
 export const metadata: Metadata = {
-  title: "Hosted vs Self-Hosted | DocKosha",
+  title: "Open Source, Cloud & Self-Hosting | DocKosha",
   description:
-    "An honest comparison of DocKosha's public source and managed DocKosha Cloud: what is available today, what the source license permits, and what Cloud operates for customers.",
+    "An honest comparison of DocKosha's open-source application and managed DocKosha Cloud: what is available today, what the source license permits, and what Cloud operates for customers.",
   alternates: { canonical: "/hosted-vs-self-hosted" },
   keywords: [
     "self-hosted virtual data room",
@@ -44,14 +44,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "website",
-    title: "DocKosha: hosted or self-hosted",
+    title: "DocKosha: open source, Cloud, and self-hosting",
     description:
       "What DocKosha source publication means today, what DocKosha Cloud operates, and what is not currently available externally.",
     url: "/hosted-vs-self-hosted",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DocKosha: hosted or self-hosted",
+    title: "DocKosha: open source, Cloud, and self-hosting",
     description:
       "What DocKosha source publication means today, what DocKosha Cloud operates, and what is not currently available externally.",
   },
@@ -211,14 +211,14 @@ const HostedVsSelfHostPage: React.FC = () => {
   return (
     <MarketingShell>
       <MarketingHero
-        badge="Hosted vs self-hosted"
+        badge="Open source and Cloud"
         title={
           <>
             Read the source, or
             <span className="text-primary"> use Cloud</span>
           </>
         }
-        subtitle="DocKosha source is public under AGPL-3.0-or-later for reading and contribution. External self-hosting is not currently available because the mandatory DocYantra dependency is private; DocKosha Cloud is the available hosted product."
+        subtitle="DocKosha’s application is open source under AGPL-3.0-or-later for inspection and contribution. External self-hosting is not currently available because the mandatory DocYantra dependency is private; DocKosha Cloud is the available hosted product."
       >
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
           <Button asChild size="lg" className="h-12 px-8 text-base">
@@ -230,7 +230,7 @@ const HostedVsSelfHostPage: React.FC = () => {
             variant="outline"
             className="h-12 bg-background/50 px-8 text-base backdrop-blur-sm"
           >
-            <a href="#what-self-hosting-costs">What self-hosting costs</a>
+            <Link href="/blog/dockosha-open-source">Read the announcement</Link>
           </Button>
         </div>
       </MarketingHero>
@@ -459,7 +459,7 @@ const HostedVsSelfHostPage: React.FC = () => {
                 them as roadmap rather than as something you are buying.
               </p>
               <p>
-                DocYantra is the private mandatory direct `0.0.25` dependency
+                DocYantra is the private mandatory direct `0.0.26` dependency
                 for the validated Office and PDF path. Enterprise terms require
                 a separate signed agreement and do not imply engine access; see{" "}
                 <Link href="/pricing" className="text-primary underline">
@@ -547,7 +547,7 @@ const HostedVsSelfHostPage: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-3 p-0 text-sm leading-relaxed text-muted-foreground">
                 <p>
-                  DocKosha Cloud is a hosted service we operate, so the it runs
+                  DocKosha Cloud is a hosted service we operate, so it runs
                   viewer and product analytics under consent:
                 </p>
                 <ul className="space-y-2">

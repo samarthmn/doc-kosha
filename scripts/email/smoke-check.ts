@@ -4,7 +4,7 @@ import {
   buildDataRequestEmail,
   buildDocumentViewedEmail,
   buildLinkInviteEmail,
-  buildLoginNewDeviceEmail,
+  buildLoginSessionEmail,
   buildLinkOtpEmail,
   buildNdaSignedOwnerEmail,
   buildNdaSignedViewerEmail,
@@ -149,14 +149,18 @@ assertIncludes(
   "Subscription activated text",
 );
 
-const loginNewDevice = buildLoginNewDeviceEmail({
+const loginSession = buildLoginSessionEmail({
   occurredAt: new Date().toISOString(),
   deviceLabel: "Chrome on macOS",
   countryCode: "US",
   settingsUrl: "https://dockosha.com/settings?tab=profile",
 });
-assertIncludes(loginNewDevice.html, "new device", "Login alert html");
-assertIncludes(loginNewDevice.text, "Country: US", "Login alert text");
+assertIncludes(
+  loginSession.html,
+  "sign-in to your DocKosha account",
+  "Login alert html",
+);
+assertIncludes(loginSession.text, "Country: US", "Login alert text");
 
 const workspaceAccessChanged = buildWorkspaceAccessChangedEmail({
   workspaceName: "Acme Capital",

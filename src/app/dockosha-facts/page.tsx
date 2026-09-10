@@ -27,7 +27,7 @@ import { getFreePlanMarketingFacts } from "@/modules/billing/marketingFacts";
 const pageTitle =
   "DocKosha Facts | M&A, Founder Data Rooms, and Secure Sharing";
 const pageDescription =
-  "Fact-based page for DocKosha: M&A and founder data rooms, free virtual data room limits, secure document sharing, and privacy rules for analytics.";
+  "DocKosha facts: open-source document sharing under AGPL-3.0-or-later, managed Cloud plans, data rooms, self-hosting availability, and privacy rules.";
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -102,6 +102,16 @@ const claimBoundaries = [
 ];
 
 const faqItems: SeoFaqItem[] = [
+  {
+    question: "Is DocKosha open source?",
+    answer:
+      "Yes. DocKosha has one public application source edition under AGPL-3.0-or-later, available for inspection and contribution. Hosted Cloud subscriptions have their own capacity and feature limits.",
+  },
+  {
+    question: "Can I self-host DocKosha?",
+    answer:
+      "Independent self-hosting is not currently available. The application requires DocYantra, a private document-processing dependency. DocKosha Cloud is the managed service available today.",
+  },
   {
     question: "What is the primary use case for DocKosha?",
     answer:

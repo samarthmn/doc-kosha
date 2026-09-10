@@ -4,6 +4,7 @@ import { PropsWithChildren, useEffect, useMemo, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browserClient";
 import { useGlobalStore } from "@/providers/globalStoreProvider";
 import { initialFetch } from "@/server/initialFetch";
+import { createLoginActivityObserver } from "@/lib/loginActivityObserver";
 
 const InitializeStore: React.FC<PropsWithChildren> = ({ children }) => {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -23,6 +24,18 @@ const InitializeStore: React.FC<PropsWithChildren> = ({ children }) => {
     setCheckoutPending,
   } = useGlobalStore((s) => s);
 
+  const observeLoginActivity = useMemo(
+    () =>
+      createLoginActivityObserver(async (accessToken) => {
+        const response = await fetch("/api/auth/login-activity", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          keepalive: true,
+        });
+        if (!response.ok) throw new Error("Login activity request failed");
+      }),
+    [],
+  );
   const hasHydratedOnceRef = useRef(false);
   const isAuthenticatedRef = useRef(isAuthenticated);
   const authUserRef = useRef(authUser);
@@ -96,17 +109,15 @@ const InitializeStore: React.FC<PropsWithChildren> = ({ children }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      void observeLoginActivity(event, session?.access_token ?? null).catch(
+        () => {
+          console.warn("[initialize-store] login activity hook failed");
+        },
+      );
       if (event === "SIGNED_IN") {
         const wasAuthenticated = isAuthenticatedRef.current;
         setIsAuthenticated(true);
         setAuthUser(session?.user ?? null);
-        void fetch("/api/auth/login-activity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ occurredAt: new Date().toISOString() }),
-        }).catch((error: unknown) => {
-          console.warn("[initialize-store] login activity hook failed", error);
-        });
         // Ensure we (re)hydrate profile/workspaces/subscription after auth settles,
         // especially for OAuth + magic-link redirects where the first fetch can run too early.
         if (!wasAuthenticated) {
@@ -161,6 +172,7 @@ const InitializeStore: React.FC<PropsWithChildren> = ({ children }) => {
     setCurrentWorkspaceSubscription,
     setCheckoutPending,
     setShouldFetchInitialData,
+    observeLoginActivity,
   ]);
   return children;
 };

@@ -8,7 +8,7 @@
       "items": [
         {
           "q": "What is DocKosha?",
-          "a": "DocKosha is a secure document sharing and virtual data room platform built for high-fidelity viewing, access controls, watermarking, and privacy-first analytics."
+          "a": "DocKosha is an open-source secure document sharing and virtual data room platform built for high-fidelity viewing, access controls, watermarking, and privacy-first analytics."
         },
         {
           "q": "What’s the difference between a secure link and a data room?",
@@ -25,6 +25,23 @@
         {
           "q": "Do you offer a trial?",
           "a": "Yes. Essential includes a 14-day trial with no credit card required so you can validate the workflow before committing."
+        }
+      ]
+    },
+    {
+      "title": "Open source and self-hosting",
+      "items": [
+        {
+          "q": "Is DocKosha open source?",
+          "a": "Yes. The application source is public under AGPL-3.0-or-later at github.com/samarthmn/doc-kosha. You can inspect the code and contribute improvements. DocKosha has one public application source edition; Enterprise licensing requires a separate signed agreement."
+        },
+        {
+          "q": "Can I self-host DocKosha today?",
+          "a": "Not yet. DocKosha requires DocYantra, a private document-processing dependency. The public repository supports inspection and contribution but is not currently a runnable self-hosting distribution. DocKosha Cloud is the managed service available now."
+        },
+        {
+          "q": "Does open source mean every Cloud feature is free?",
+          "a": "No. The application source license and hosted subscriptions are separate. Cloud plans have their own capacity and feature limits; the pricing page lists the current Free and paid plan details."
         }
       ]
     },

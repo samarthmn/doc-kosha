@@ -43,7 +43,7 @@ const questionnaireGroups: readonly QuestionnaireGroup[] = [
       {
         question: "What is DocKosha?",
         answer:
-          "DocKosha is a document-sharing and virtual data-room product with one normal feature edition under AGPL-3.0-or-later. DocYantra is the mandatory direct 0.0.25 dependency; managed DocKosha Cloud provides hosting. Enterprise licensing is available only through a separate signed agreement.",
+          "DocKosha is a document-sharing and virtual data-room product with one normal feature edition under AGPL-3.0-or-later. DocYantra is the mandatory direct 0.0.26 dependency; managed DocKosha Cloud provides hosting. Enterprise licensing is available only through a separate signed agreement.",
       },
       {
         question: "Do you hold SOC 2 or ISO 27001 certifications?",
@@ -67,7 +67,7 @@ const questionnaireGroups: readonly QuestionnaireGroup[] = [
           <>
             The DocKosha source is licensed under AGPL-3.0-or-later. There is
             one normal feature edition, and DocYantra is the mandatory direct
-            0.0.25 dependency. Enterprise licensing is available only through a
+            0.0.26 dependency. Enterprise licensing is available only through a
             separate signed agreement.
           </>
         ),
@@ -224,7 +224,7 @@ const questionnaireGroups: readonly QuestionnaireGroup[] = [
       {
         question: "Is document conversion sent to a remote conversion service?",
         answer:
-          "DocYantra 0.0.25 handles PDF, Office, Markdown, and redaction work within its validated limits. The dependency fails closed outside its envelope; there is no provider-selection variable or fallback provider.",
+          "DocYantra 0.0.26 handles PDF, Office, Markdown, and redaction work within its validated limits. The dependency fails closed outside its envelope; there is no provider-selection variable or fallback provider.",
       },
     ],
   },

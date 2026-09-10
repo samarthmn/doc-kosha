@@ -267,8 +267,8 @@ test("runtime diagnostics report the fixed DocYantra release safely", () => {
       : null,
     {
       providerId: "docyantra",
-      adapterVersion: "0.0.25",
-      engineVersion: "0.0.25",
+      adapterVersion: "0.0.26",
+      engineVersion: "0.0.26",
     },
   );
   assert.match(

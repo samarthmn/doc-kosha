@@ -21,8 +21,8 @@
     ]
   },
   "engineKeys": {
-    "title": "Source access and Cloud availability",
-    "subtitle": "DocKosha source is published under AGPL-3.0-or-later for reading and contribution. DocKosha Cloud is the available hosted product; external self-hosting and DocYantra access are not currently available.",
+    "title": "Open-source application. Managed Cloud.",
+    "subtitle": "DocKosha’s application is open source under AGPL-3.0-or-later. Inspect the code, contribute improvements, or use the managed Cloud service. Independent self-hosting is not yet available because DocYantra remains private.",
     "items": [
       {
         "title": "What powers DocKosha Cloud",
@@ -30,7 +30,7 @@
       },
       {
         "title": "Private processing dependency",
-        "body": "DocYantra is the mandatory private direct 0.0.25 dependency for this application. It is not offered as a package, SDK, API, standalone product, or engine license to external users."
+        "body": "DocYantra is the mandatory private direct 0.0.26 dependency for this application. It is not offered as a package, SDK, API, standalone product, or engine license to external users."
       },
       {
         "title": "Enterprise is a separate agreement",
@@ -38,9 +38,9 @@
       }
     ],
     "cta": {
-      "label": "Explore DocKosha Cloud",
-      "href": "/features",
-      "note": "DocKosha Cloud is available for hosted use. Enterprise terms require a separate signed agreement; contact us for commercial terms without implying engine access."
+      "label": "Read the open-source announcement",
+      "href": "/blog/dockosha-open-source",
+      "note": "Learn why we opened the application source and what comes next for DocYantra and self-hosting."
     }
   },
   "faq": {

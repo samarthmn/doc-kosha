@@ -91,9 +91,14 @@ const FeaturedPostCard: React.FC<FeaturedPostCardProps> = ({
           {/* Right side - Abstract visual or image placeholder */}
           <div className="relative hidden min-h-[300px] overflow-hidden rounded-lg border border-border bg-muted lg:block">
             <img
-              src="/assets/blog-placeholder.png"
-              alt="Featured blog post visual"
-              className="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.02]"
+              src={post.heroImage ?? "/assets/blog-placeholder.png"}
+              alt={post.heroImageAlt ?? post.title}
+              width={post.heroImageWidth}
+              height={post.heroImageHeight}
+              className={cn(
+                "absolute inset-0 h-full w-full motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.02]",
+                post.heroImage ? "object-contain" : "object-cover",
+              )}
             />
           </div>
         </div>

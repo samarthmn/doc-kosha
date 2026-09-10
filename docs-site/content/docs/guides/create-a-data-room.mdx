@@ -38,7 +38,7 @@ The room opens with five areas:
 
 A few things happen during upload:
 
-- Non-PDF document formats (`pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md`) are accepted uploads. The mandatory direct DocYantra `0.0.25` dependency converts them within its validated envelope. Page-level analytics and burned-in watermarks depend on a completed PDF.
+- Non-PDF document formats (`pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md`) are accepted uploads. The mandatory direct DocYantra `0.0.26` dependency converts them within its validated envelope. Page-level analytics and burned-in watermarks depend on a completed PDF.
 - Conversion **fails closed**. If a document falls outside the validated conversion envelope, the conversion attempt fails rather than producing a degraded file, and DocKosha serves the original upload instead. You never receive a silently mangled document. See [The conversion envelope](/docs/how-it-works/conversion-envelope).
 - Images, audio, and video are stored and served as originals — they are not converted to PDF and cannot carry a burned-in PDF watermark.
 - Uploading a file whose name already exists in the same folder triggers the duplicate review flow, which creates a new version instead of a second file. See [Document versioning and restore](/docs/guides/document-versioning-and-restore).

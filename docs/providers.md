@@ -35,11 +35,18 @@ retryability, and structured detail. The code inventory includes
 
 ## DocYantra provider
 
-DocYantra is the mandatory private direct `0.0.25` dependency. It implements the
+DocYantra is the mandatory private direct `0.0.26` dependency. It implements the
 document-processing contract for PDF and Office conversion, merge, watermark,
 page count, and redaction. Its validated size, format, and fidelity envelope is
 authoritative: unsupported work returns a typed failure and never falls back to
 another provider or a degraded converter.
+
+The `0.0.26` release adds bounded legacy Excel Notes and validated glyph bounds
+for embedded static TrueType CID fonts using Identity-H with an explicit
+Identity CIDToGIDMap. Plain rectangular Notes follow visibility and print
+settings; unsupported drawings, controls, embedded objects, and relationships
+still fail closed. Other supported PDF font mappings retain conservative bounds,
+and redaction can still require removal beyond a selection with confirmation.
 
 ## Fail-closed behavior
 

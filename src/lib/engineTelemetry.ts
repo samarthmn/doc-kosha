@@ -11,6 +11,7 @@
  */
 import * as Sentry from "@sentry/nextjs";
 import type { EngineFailure } from "@/server/engineErrors";
+import type { RedactionWarningKindCounts } from "@/lib/redactionWarnings";
 
 type PdfEngineOp = "merge" | "watermark" | "csv" | "markdown" | "redaction";
 
@@ -73,12 +74,14 @@ export const reportEngineOperationWarning = (
   count: number,
   codes: string[] = [],
   otherCount = 0,
+  kindCounts: RedactionWarningKindCounts = {},
 ): void => {
   const uniqueCodes = [...new Set(codes)];
   const warningDimensions = {
     engineWarningCount: count,
     engineWarningCodes: uniqueCodes,
     engineWarningOtherCount: otherCount,
+    engineWarningKindCounts: kindCounts,
   };
   Sentry.addBreadcrumb({
     category: "pdf-engine",

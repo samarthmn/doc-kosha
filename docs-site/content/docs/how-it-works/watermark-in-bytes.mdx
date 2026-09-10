@@ -26,7 +26,7 @@ This is true of on-screen viewing too, not only downloads. The public viewer del
 | Downloading a data room as a ZIP          | `src/app/api/public/links/download-zip/route.ts`    | `applyWatermarkToPdf` per eligible document        |
 
 All four go through `src/server/watermarkService.ts`, which calls the selected
-document-processing engine. DocYantra is the mandatory direct `0.0.25`
+document-processing engine. DocYantra is the mandatory direct `0.0.26`
 dependency; engine failures fail closed and there is no fallback converter.
 
 ## Static templates and dynamic values

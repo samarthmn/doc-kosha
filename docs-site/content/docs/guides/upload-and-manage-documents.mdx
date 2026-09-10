@@ -60,14 +60,14 @@ The server removes the stored objects before it finalises the database rows. If 
 
 | Category             | Extensions                                         | Handling                                                                          |
 | -------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Documents and slides | `pdf`, `pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md` | PDF is served directly; mandatory DocYantra `0.0.25` handles validated conversion |
+| Documents and slides | `pdf`, `pptx`, `docx`, `xlsx`, `xlsm`, `csv`, `md` | PDF is served directly; mandatory DocYantra `0.0.26` handles validated conversion |
 | Images               | `jpg`, `jpeg`, `png`, `webp`                       | Rendered inline                                                                   |
 | Video                | `mp4`, `mov`, `avi`, `mkv`, `webm`                 | Inline playback where the browser supports the codec, otherwise download-only     |
 | Audio                | `mp3`, `wav`, `ogg`, `aac`                         | Inline playback where the browser supports it, otherwise download-only            |
 
 Legacy `doc`, `ppt`, and `xls` files cannot be uploaded.
 
-Conversion runs inside a validated envelope with a 50 MiB input cap for the non-PDF document formats. Mandatory DocYantra `0.0.25` handles PDF and Office conversion, merge, watermarking, page counting, CSV conversion, and redaction within that envelope. Outside the supported envelope — or on an error or timeout — the document is marked `Failed` and **the original file is served instead**. DocKosha does not substitute a partial or degraded rendering. Watermarking depends on a PDF, so a link that requires a watermark cannot serve a document whose conversion failed. See [Conversion envelope](/docs/how-it-works/conversion-envelope).
+Conversion runs inside a validated envelope with a 50 MiB input cap for the non-PDF document formats. Mandatory DocYantra `0.0.26` handles PDF and Office conversion, merge, watermarking, page counting, CSV conversion, and redaction within that envelope. Outside the supported envelope — or on an error or timeout — the document is marked `Failed` and **the original file is served instead**. DocKosha does not substitute a partial or degraded rendering. Watermarking depends on a PDF, so a link that requires a watermark cannot serve a document whose conversion failed. See [Conversion envelope](/docs/how-it-works/conversion-envelope).
 
 ## Plan limits
 

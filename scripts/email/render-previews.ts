@@ -5,7 +5,7 @@ import {
   buildDataRequestEmail,
   buildDocumentViewedEmail,
   buildLinkInviteEmail,
-  buildLoginNewDeviceEmail,
+  buildLoginSessionEmail,
   buildLinkOtpEmail,
   buildNdaSignedOwnerEmail,
   buildNdaSignedViewerEmail,
@@ -135,7 +135,7 @@ const previews = [
   },
   {
     file: "login-new-device.html",
-    html: buildLoginNewDeviceEmail({
+    html: buildLoginSessionEmail({
       occurredAt: new Date().toISOString(),
       deviceLabel: "Chrome on macOS",
       countryCode: "US",

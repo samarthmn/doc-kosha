@@ -3,7 +3,7 @@ title: "Conversion and supported formats"
 description: "Which document-processing operations the mandatory DocYantra dependency supports, how its envelope fails closed, and how typed failures reach delivery."
 ---
 
-DocKosha sends document-processing work through its provider contract. The mandatory direct DocYantra `0.0.25` dependency declares the supported operations and refuses work outside its validated envelope.
+DocKosha sends document-processing work through its provider contract. The mandatory direct DocYantra `0.0.26` dependency declares the supported operations and refuses work outside its validated envelope.
 
 ## Accepted formats and DocYantra capabilities
 
@@ -19,6 +19,18 @@ DocKosha sends document-processing work through its provider contract. The manda
 Uploads outside the accepted set are rejected before processing. Plan limits
 can narrow the accepted set; the Free plan accepts PDF files only. See [Plans
 and limits](/docs/how-it-works/plans-and-limits).
+
+## Excel Notes
+
+Plain rectangular legacy Notes are supported within the validated layout and
+styling limits. Visible, printable Notes appear when the workbook prints comments
+as displayed. Hidden Notes, Notes marked not to print, and the default setting
+that omits comments remain absent from the PDF.
+
+Printing comments at the end, rich comment formatting, unsupported shapes,
+overflowing or page-crossing Notes, broken or external relationships, embedded
+objects, controls, and threaded comments remain unsupported. Conversion rejects
+these cases rather than silently dropping their content.
 
 ## Processing bounds
 
@@ -59,6 +71,6 @@ original-file delivery records views and downloads but not per-page results.
 ## Related
 
 - [Upload and manage documents](/docs/guides/upload-and-manage-documents) — the upload path and accepted formats
-- [DocYantra integration](/docs/self-hosting/providers) — the private mandatory `0.0.25` dependency and public contract reference
+- [DocYantra integration](/docs/self-hosting/providers) — the private mandatory `0.0.26` dependency and public contract reference
 - [Troubleshooting](/docs/reference/troubleshooting) — what to do when processing fails
 - [Redaction](/docs/guides/redaction) — the separate PDF operation and its typed refusals

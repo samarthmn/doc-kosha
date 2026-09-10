@@ -7,24 +7,24 @@ import {
 import { renderBaseEmail } from "../layout";
 import type { EmailContent } from "../types";
 
-type LoginNewDeviceEmailProps = {
+type LoginSessionEmailProps = {
   occurredAt: string;
   deviceLabel: string;
   countryCode?: string | null;
   settingsUrl: string;
 };
 
-export const buildLoginNewDeviceEmail = ({
+export const buildLoginSessionEmail = ({
   occurredAt,
   deviceLabel,
   countryCode,
   settingsUrl,
-}: LoginNewDeviceEmailProps): EmailContent => {
+}: LoginSessionEmailProps): EmailContent => {
   const title = "New sign-in detected";
-  const preheader = "A new device signed in to your DocKosha account.";
+  const preheader = "A sign-in was detected on your DocKosha account.";
 
   const bodyHtml = [
-    renderParagraph("We detected a sign-in from a new device."),
+    renderParagraph("We detected a sign-in to your DocKosha account."),
     renderKeyValueTable([
       { label: "Time (UTC)", value: occurredAt },
       { label: "Device", value: deviceLabel },
@@ -46,7 +46,7 @@ export const buildLoginNewDeviceEmail = ({
   });
 
   const text = [
-    "We detected a sign-in from a new device.",
+    "We detected a sign-in to your DocKosha account.",
     `Time (UTC): ${occurredAt}`,
     `Device: ${deviceLabel}`,
     `Country: ${countryCode && countryCode.length > 0 ? countryCode : "Unknown"}`,

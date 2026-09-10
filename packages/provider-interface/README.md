@@ -13,7 +13,7 @@ provider declares its supported operations through `capabilities`, and callers
 must handle the typed `unsupported_feature` failure for operations outside the
 declared envelope.
 
-DocYantra is the mandatory direct `0.0.25` implementation for the application.
+DocYantra is the mandatory direct `0.0.26` implementation for the application.
 It supports the documented PDF and Office operations and returns typed failures
 outside its validated envelope; there is no provider-selection environment
 variable or fallback provider.
