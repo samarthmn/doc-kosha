@@ -15,15 +15,26 @@ const isoDateSchema = z
 
 const blogFrontmatterSchema = z.object({
   title: z.string().min(1),
+  seoTitle: z.string().min(1).optional(),
+  socialTitle: z.string().min(1).optional(),
+  socialDescription: z.string().min(1).optional(),
   description: z.string().min(1),
   date: isoDateSchema,
   updated: isoDateSchema.optional(),
   author: z.string().optional(),
+  authorType: z
+    .enum(["Person", "Organization"])
+    .optional()
+    .default("Organization"),
+  authorBio: z.string().optional(),
   tags: z.array(z.string()).optional().default([]),
   keywords: z.array(z.string()).optional().default([]),
   slug: z.string().optional(),
   canonical: z.string().url().optional(),
   heroImage: z.string().optional(),
+  heroImageAlt: z.string().optional(),
+  heroImageWidth: z.number().int().positive().optional(),
+  heroImageHeight: z.number().int().positive().optional(),
   featured: z.boolean().optional().default(false),
 });
 

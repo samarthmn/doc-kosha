@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   applicationName: "DocKosha",
   description:
-    "DocKosha is an M&A data room and secure document sharing platform with high-fidelity viewing, watermarking, and privacy-first analytics.",
+    "DocKosha is an open-source document sharing and virtual data room application with access controls, watermarking, and privacy-first analytics. Use the managed Cloud service today.",
   keywords: [
     "M&A data room",
     "virtual data room for M&A",
@@ -47,15 +47,15 @@ export const metadata: Metadata = {
     type: "website",
     url: appUrl,
     siteName: "DocKosha",
-    title: "DocKosha — M&A Data Rooms & Secure Document Sharing",
+    title: "DocKosha — Open-Source Document Sharing & Data Rooms",
     description:
-      "M&A data rooms and secure document sharing with privacy-first analytics, watermarking, and high-fidelity rendering.",
+      "Open-source document sharing and virtual data rooms with access controls, watermarking, and privacy-first analytics. Available on DocKosha Cloud.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DocKosha — M&A Data Rooms & Secure Document Sharing",
+    title: "DocKosha — Open-Source Document Sharing & Data Rooms",
     description:
-      "M&A data rooms and secure document sharing with privacy-first analytics, watermarking, and high-fidelity rendering.",
+      "Open-source document sharing and virtual data rooms with access controls, watermarking, and privacy-first analytics. Available on DocKosha Cloud.",
   },
   other: {
     "facebook-domain-verification": "7cgc1ftqamr9oqoufnfatbdo544nib",

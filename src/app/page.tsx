@@ -7,7 +7,7 @@ import testimonialsCopy from "@/content/testimonials.json";
 import { getFreePlanMarketingFacts } from "@/modules/billing/marketingFacts";
 
 export const metadata: Metadata = {
-  title: "M&A and Founder Virtual Data Room Software | DocKosha",
+  title: "Open-Source Document Sharing & Virtual Data Rooms | DocKosha",
   description: landingCopy.hero.subtext,
   keywords: [
     "M&A data room",
@@ -30,13 +30,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "DocKosha — Virtual Data Rooms for M&A Teams and Founders",
+    title: "DocKosha — Open-Source Document Sharing & Data Rooms",
     description: landingCopy.hero.subtext,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DocKosha — Virtual Data Rooms for M&A Teams and Founders",
+    title: "DocKosha — Open-Source Document Sharing & Data Rooms",
     description: landingCopy.hero.subtext,
   },
 };
@@ -69,9 +69,10 @@ const Home: React.FC<PageProps<"/">> = () => {
     name: "DocKosha",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
+    license: "https://github.com/samarthmn/doc-kosha/blob/HEAD/LICENSE",
     url: siteUrl,
     description:
-      "M&A teams and founders use DocKosha for deal-ready and investor-ready data rooms with watermarking, access controls, and privacy-first analytics. Lawyers and fundraising teams can start with secure PDF sharing before a full room workflow.",
+      "M&A teams and founders use DocKosha’s open-source application for deal-ready and investor-ready data rooms with watermarking, access controls, and privacy-first analytics. Lawyers and fundraising teams can start with secure PDF sharing before a full room workflow.",
     offers: {
       "@type": "Offer",
       name: "Free",
@@ -103,6 +104,7 @@ const Home: React.FC<PageProps<"/">> = () => {
         name: "DocKosha",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
+        license: "https://github.com/samarthmn/doc-kosha/blob/HEAD/LICENSE",
       },
     })),
   } as const;

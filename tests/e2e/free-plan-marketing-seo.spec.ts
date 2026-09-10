@@ -111,13 +111,13 @@ test.describe("free-plan marketing SEO @cloud", () => {
     await blockExternalRequests(page);
   });
 
-  test("homepage SEO leads with M&A and founders while preserving secondary sharing discovery", async ({
+  test("homepage SEO introduces open source while preserving M&A and founder sharing discovery", async ({
     page,
   }) => {
     await page.goto("/");
 
     await expect(page).toHaveTitle(
-      /M&A and Founder Virtual Data Room Software/,
+      /Open-Source Document Sharing & Virtual Data Rooms/,
     );
     await expect(
       page.getByRole("heading", {

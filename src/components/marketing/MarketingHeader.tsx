@@ -14,7 +14,7 @@ const MarketingHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "/", label: "Home" },
+    { href: "/blog/dockosha-open-source", label: "Open source" },
     { href: "/free-virtual-data-room", label: "Free VDR" },
     { href: "/pricing", label: "Pricing" },
     { href: "/features", label: "Features" },
@@ -25,6 +25,8 @@ const MarketingHeader: React.FC = () => {
   ];
 
   const isActive = (href: string) => {
+    if (href === "/blog" && pathname === "/blog/dockosha-open-source")
+      return false;
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(href + "/");
   };

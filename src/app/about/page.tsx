@@ -121,7 +121,9 @@ const AboutPage: React.FC<PageProps<"/about">> = () => {
               variant="outline"
               className="h-12 bg-background/50 px-8 text-base backdrop-blur-sm"
             >
-              <Link href="/features">Explore features</Link>
+              <Link href="/blog/dockosha-open-source">
+                Why we went open source
+              </Link>
             </Button>
           </div>
         </MarketingContainer>

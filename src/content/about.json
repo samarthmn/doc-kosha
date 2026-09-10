@@ -1,17 +1,19 @@
 {
   "badge": "Our Mission",
   "title": "About DocKosha",
-  "subtitle": "DocKosha is a secure document sharing platform with VDR-grade controls, modern UX, and privacy-first analytics.",
+  "subtitle": "DocKosha is an open-source document sharing and virtual data room application, with access controls, watermarking, and privacy-first analytics.",
   "whatWeDo": {
     "title": "Secure Document Management for Professionals",
     "paragraphs": [
       "DocKosha is built for M&A teams and founders running deal, investor, and diligence rooms. It also supports lawyers and fundraising teams sharing confidential packets with tighter controls than generic file links.",
-      "We focus on high-fidelity viewing and practical controls: watermarking, link permissions, and privacy-first analytics designed to minimize unnecessary data collection."
+      "We focus on high-fidelity viewing and practical controls: watermarking, link permissions, and privacy-first analytics designed to minimize unnecessary data collection.",
+      "Our application source is public under AGPL-3.0-or-later for inspection and contribution. DocKosha Cloud is available today. Independent self-hosting is not yet available because DocYantra, our document-processing engine, remains a private dependency."
     ]
   },
   "differentiators": {
     "title": "Why Choose Our Secure File Sharing Platform?",
     "items": [
+      "One open-source application edition, with code you can inspect and contribute to",
       "A fast, high-fidelity viewer across devices, backed by a Rust-powered document engine",
       "Privacy‑first analytics for views and engagement",
       "Link controls: expirations, verification, NDA gates, and download rules",

@@ -46,8 +46,7 @@ import {
 } from "@/lib/analytics/landingAttribution";
 
 const LANDING_HERO_HEADLINE = "Virtual data rooms for M&A teams and founders";
-const LANDING_HERO_SUBHEAD =
-  "Run M&A diligence rooms and founder investor data rooms with gated links, dynamic watermarking, download controls, and privacy-first analytics. Start free for PDF sharing, then upgrade as deal or fundraising volume grows.";
+const LANDING_HERO_SUBHEAD = landingCopy.hero.subtext;
 const landingAttribution = { source: LANDING_PAGE_SOURCE } as const;
 
 const LandingPageContent: React.FC = () => {
@@ -133,6 +132,17 @@ const LandingPageContent: React.FC = () => {
                 Free forever plan now available.
               </p>
             ) : null}
+
+            <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+              Our application is open source under AGPL-3.0-or-later. Cloud is
+              available now; independent self-hosting is not yet available.{" "}
+              <Link
+                href="/blog/dockosha-open-source"
+                className="rounded-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                Read the open-source announcement
+              </Link>
+            </p>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm text-muted-foreground">
