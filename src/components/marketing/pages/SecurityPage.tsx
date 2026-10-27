@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Security Controls | DocKosha",
+  title: { absolute: "Security Controls | DocKosha" },
   description:
     "Learn how DocKosha protects sensitive documents with Supabase-managed TLS and AES-256 at rest, role-based access controls, watermarking, and consent-aware analytics.",
   alternates: { canonical: "/security" },

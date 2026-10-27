@@ -13,8 +13,8 @@ The intended grant lets the project distribute contributions under the
 AGPL-3.0-or-later license and separately grant commercial licenses under a signed
 agreement. It does not itself create an Enterprise agreement.
 
-The drafts apply to contributions to DocKosha. They do not offer contributors
-access to the private DocYantra repository, packages, SDKs, or APIs.
+The drafts apply to contributions to DocKosha. DocYantra is a separate
+AGPL-3.0-or-later project, and contributions to it are outside these drafts.
 
 ## Activation requirements
 

@@ -178,3 +178,25 @@ test("fails loudly for missing operator documents when requireAll is enabled", a
     await rm(fixtureRoot, { force: true, recursive: true });
   }
 });
+
+test("documentation origins default correctly and reject non-HTTP or path-based URLs", async () => {
+  const { getDocsSiteUrl } = await import("../lib/site-url.ts");
+  assert.equal(getDocsSiteUrl("").origin, "https://docs.dockosha.com");
+  assert.equal(
+    getDocsSiteUrl("http://localhost:3010/").origin,
+    "http://localhost:3010",
+  );
+  assert.equal(
+    getDocsSiteUrl(" https://guides.example.com/ ").href,
+    "https://guides.example.com/",
+  );
+  for (const invalid of [
+    "javascript:alert(1)",
+    "https://example.com/docs",
+    "https://example.com/?key=value",
+    "https://user:password@example.com",
+    "invalid",
+  ]) {
+    assert.throws(() => getDocsSiteUrl(invalid));
+  }
+});

@@ -134,8 +134,9 @@ const LandingPageContent: React.FC = () => {
             ) : null}
 
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Our application is open source under AGPL-3.0-or-later. Cloud is
-              available now; independent self-hosting is not yet available.{" "}
+              DocKosha and DocYantra, our document-processing engine, are open
+              source under AGPL-3.0-or-later. Start on Cloud or run the
+              application yourself.{" "}
               <Link
                 href="/blog/dockosha-open-source"
                 className="rounded-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -190,6 +191,45 @@ const LandingPageContent: React.FC = () => {
           </div>
         </div>
       </MarketingHero>
+
+      <MarketingSection aria-labelledby="open-source-transparency">
+        <MarketingContainer>
+          <div className="rounded-lg border bg-card p-6 sm:p-8">
+            <h2
+              id="open-source-transparency"
+              className="text-2xl font-medium tracking-[-0.025em] sm:text-3xl"
+            >
+              Open source, from application to engine
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground">
+              Review how document access, sharing, and processing work. DocKosha
+              and its Rust and WebAssembly engine, DocYantra, are both published
+              under AGPL-3.0-or-later. Use DocKosha Cloud for managed hosting,
+              or operate the same application on your own infrastructure.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+              <a
+                className="rounded-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2"
+                href="https://github.com/samarthmn/doc-kosha"
+              >
+                DocKosha on GitHub
+              </a>
+              <a
+                className="rounded-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2"
+                href="https://github.com/samarthmn/doc-yantra"
+              >
+                DocYantra on GitHub
+              </a>
+              <Link
+                className="rounded-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2"
+                href="/self-hosting"
+              >
+                Self-hosting guide
+              </Link>
+            </div>
+          </div>
+        </MarketingContainer>
+      </MarketingSection>
 
       <MarketingSection>
         <MarketingContainer>
@@ -451,7 +491,7 @@ const LandingPageContent: React.FC = () => {
                 {[
                   {
                     title: "Before sharing",
-                    body: "Prepare documents, redact sensitive PDF content through DocYantra 0.0.26, and keep folder access organized.",
+                    body: "Prepare documents, redact sensitive PDF content through DocYantra 0.0.28, and keep folder access organized.",
                   },
                   {
                     title: "At launch",

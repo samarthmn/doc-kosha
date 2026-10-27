@@ -73,11 +73,11 @@ importers:
         specifier: ^1.1.7
         version: 1.1.18(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@samarthmn/doc-yantra-fonts':
-        specifier: 0.0.26
-        version: 0.0.26
+        specifier: 0.0.28
+        version: 0.0.28
       '@samarthmn/dockosha-provider-docyantra':
-        specifier: 0.0.26
-        version: 0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)
+        specifier: 0.0.28
+        version: 0.0.28(@samarthmn/doc-yantra-fonts@0.0.28)
       '@sentry/nextjs':
         specifier: ^10
         version: 10.66.0(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.9.0(@opentelemetry/api@1.9.1))(next@16.3.0(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(@types/node@20.19.43)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(supports-color@8.1.1)(webpack@5.108.4(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.26))
@@ -1049,6 +1049,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.9.0':
     resolution: {integrity: sha512-cp9zmTl62R8PJrpvFcmc8N2JQU/xfa0S+61q511Nji+QxCfZ8Ifvg7H27G8cANe4crg4RTrWsVvanHiXjSp6ag==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -1795,23 +1796,23 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@samarthmn/doc-yantra-fonts@0.0.26':
-    resolution: {integrity: sha512-GviKzZwYCwXCZHdZN3rNuzjFj/4TmPy1R1mOLUTBD9BCL4W4NExN3QgKx5YC/A1l+c9xm7VL2Khh2U4DgA0Gmg==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-fonts/0.0.26/fa5daaa803c142bbbc4f77fdffb9597b8b12ca7d}
+  '@samarthmn/doc-yantra-fonts@0.0.28':
+    resolution: {integrity: sha512-G7oAJ2qhK8VzKwAjMDo18sWizmnfyrNdlwQu5LfolfpV2goiMvWBxkiQyQ5n1dnTg8HPG2MrQXtrNzu23fdAbQ==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-fonts/0.0.28/834f35a4906541e5bfa1c068293afa645c6c520b}
 
-  '@samarthmn/doc-yantra-office@0.0.26':
-    resolution: {integrity: sha512-zcvwhDDPjrqA0iTg9t1BpqJfWnmTAxzSe/+vvKtCV8HlVLjH6nrNwNnaj1GLh2y2cAmgKU50IzwNqYQZ6gt+Og==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-office/0.0.26/4b684fc7ea0f81a2858a1175ecf97401eeb20e8c}
+  '@samarthmn/doc-yantra-office@0.0.28':
+    resolution: {integrity: sha512-nFgB2JJ66JthkeUPfx/xCLbNAVT4i11qEpUHk/FbZiQkit8EMv7wk2yMUqG97aO3jMvjipDMYaGfxUStyiIUXQ==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra-office/0.0.28/43576a600445d4b38cb6d426ec102eb4f7e02f47}
     peerDependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.26
+      '@samarthmn/doc-yantra-fonts': 0.0.28
 
-  '@samarthmn/doc-yantra@0.0.26':
-    resolution: {integrity: sha512-qC0jwOHrx1p1+H78eFUku91EPpfqzlSIUH33s3y3riqUT6pK0BrQY9TZEFFbs0Vrj3vbHGxgB6aeRzIwbUkMMQ==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra/0.0.26/6420869dcbd403075bbe219d7bc887293d352f51}
+  '@samarthmn/doc-yantra@0.0.28':
+    resolution: {integrity: sha512-BK4Cc2PEMbiQuWC5IRgeBthCXdO5HlpHhB0ETBucx9TYpU8XIFFR8trLToc+iks/70YjHZtlzEZIh/NA7zYMVw==, tarball: https://npm.pkg.github.com/download/@samarthmn/doc-yantra/0.0.28/7474b184f71d67136181c793f95f2a3d1e5bef40}
     peerDependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.26
+      '@samarthmn/doc-yantra-fonts': 0.0.28
 
-  '@samarthmn/dockosha-provider-docyantra@0.0.26':
-    resolution: {integrity: sha512-Fq+8HGJGDIQcPYJdktefVdRJLsru1v9GiI6l2zOfyKn3FGtXKKLzXB32jvXcPLfB5l4SCdtvvKcph9WZVVfCwg==, tarball: https://npm.pkg.github.com/download/@samarthmn/dockosha-provider-docyantra/0.0.26/97ed0cbe848ca8f7329cbe594d2fc806b4334d57}
+  '@samarthmn/dockosha-provider-docyantra@0.0.28':
+    resolution: {integrity: sha512-hDydKWqI0jrddFIjVor2TrKZzy1+OW3uVKUppgwtCzJ7nvkS6X/CSAZ6DCXHMApMRKjBz3PL352LlRo5dg1T9g==, tarball: https://npm.pkg.github.com/download/@samarthmn/dockosha-provider-docyantra/0.0.28/0e0e0b9f26be9ec8f62430901b43100135c04c85}
     peerDependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.26
+      '@samarthmn/doc-yantra-fonts': 0.0.28
 
   '@sentry/babel-plugin-component-annotate@5.3.0':
     resolution: {integrity: sha512-p4q8gn8wcFqZGP/s2MnJCAAd8fTikaU6A0mM97RDHQgStcrYiaS0Sc5zUNfb1V+UOLPuvdEdL6MwyxfzjYJQTA==}
@@ -5822,21 +5823,21 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@samarthmn/doc-yantra-fonts@0.0.26': {}
+  '@samarthmn/doc-yantra-fonts@0.0.28': {}
 
-  '@samarthmn/doc-yantra-office@0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)':
+  '@samarthmn/doc-yantra-office@0.0.28(@samarthmn/doc-yantra-fonts@0.0.28)':
     dependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.26
+      '@samarthmn/doc-yantra-fonts': 0.0.28
 
-  '@samarthmn/doc-yantra@0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)':
+  '@samarthmn/doc-yantra@0.0.28(@samarthmn/doc-yantra-fonts@0.0.28)':
     dependencies:
-      '@samarthmn/doc-yantra-fonts': 0.0.26
+      '@samarthmn/doc-yantra-fonts': 0.0.28
 
-  '@samarthmn/dockosha-provider-docyantra@0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)':
+  '@samarthmn/dockosha-provider-docyantra@0.0.28(@samarthmn/doc-yantra-fonts@0.0.28)':
     dependencies:
-      '@samarthmn/doc-yantra': 0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)
-      '@samarthmn/doc-yantra-fonts': 0.0.26
-      '@samarthmn/doc-yantra-office': 0.0.26(@samarthmn/doc-yantra-fonts@0.0.26)
+      '@samarthmn/doc-yantra': 0.0.28(@samarthmn/doc-yantra-fonts@0.0.28)
+      '@samarthmn/doc-yantra-fonts': 0.0.28
+      '@samarthmn/doc-yantra-office': 0.0.28(@samarthmn/doc-yantra-fonts@0.0.28)
       zod: 4.4.3
 
   '@sentry/babel-plugin-component-annotate@5.3.0': {}

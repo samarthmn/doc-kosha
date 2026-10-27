@@ -74,4 +74,3 @@ logs/
 /supabase/.temp/
 # Repository scratch space
 /tmp/
-/memories/

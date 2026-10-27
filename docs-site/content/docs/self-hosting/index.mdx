@@ -1,13 +1,38 @@
 ---
-title: "Self-hosting"
-description: "Current availability of DocKosha source publication and future self-hosting reference material."
+title: "Self-hosting DocKosha"
+description: "Run the open-source DocKosha application and DocYantra engine yourself: prerequisites, local setup, production configuration, and operator responsibilities."
 ---
 
-The DocKosha source is public under AGPL-3.0-or-later for reading and contribution.
-External self-hosting is not currently available because the mandatory DocYantra
-dependency is private. Gotenberg is a future-only provider path and is not an
-available fallback or supported self-hosting option today. The synced pages
-below are technical reference material for authorized maintainers, not an
-external installation guide.
+DocKosha and its DocYantra processing engine are both open source under
+AGPL-3.0-or-later. Use [DocKosha Cloud](https://www.dockosha.com) for managed
+hosting, or operate the application on your own infrastructure. Self-hosting is
+not officially supported; community help is best effort.
 
-> **Content status:** Content lands in a later work package.
+## Start with the setup guide
+
+The [complete self-hosting walkthrough](/docs/self-hosting/self-hosting) covers
+installation, local Supabase and MinIO, email sign-in, a first shared document,
+production deployment, backups, and upgrades. It is synchronized from the
+repository's canonical guide so fixes reach both readers.
+
+You need Node.js 24.x, pnpm 11.25.0, Supabase, S3-compatible storage, and SMTP.
+Local services use Docker. DocYantra `0.0.28` runs inside the application through
+its packages; there is no separate conversion service. Installing those public
+packages from GitHub Packages requires a classic GitHub token with
+`read:packages` access.
+
+## Inspect the application and engine
+
+- [DocKosha source](https://github.com/samarthmn/doc-kosha)
+- [DocYantra source and deployment guide](https://github.com/samarthmn/doc-yantra/blob/HEAD/SELF-HOSTING.md)
+- [Configuration reference](/docs/self-hosting/configuration)
+- [Architecture](/docs/self-hosting/architecture)
+- [Supported conversion envelope](/docs/how-it-works/conversion-envelope)
+
+## Choose what you operate
+
+Self-hosters manage database migrations, storage permissions, auth, email,
+secrets, HTTPS, backups, security updates, and monitoring. The repository's
+Compose file starts local object storage, not a complete production stack.
+[Compare Cloud and self-hosting](https://www.dockosha.com/hosted-vs-self-hosted)
+if you are deciding which responsibility fits your team.

@@ -18,10 +18,23 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Security Questionnaire | DocKosha",
+  title: { absolute: "Security Questionnaire | DocKosha" },
   description:
     "Review DocKosha's implementation-checked answers about compliance, data protection, access control, application security, infrastructure, and incident response.",
   alternates: { canonical: "/security/questionnaire" },
+  openGraph: {
+    type: "website",
+    title: "Security Questionnaire | DocKosha",
+    description:
+      "Review DocKosha's implementation-checked answers about compliance, data protection, access control, application security, infrastructure, and incident response.",
+    url: "/security/questionnaire",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Security Questionnaire | DocKosha",
+    description:
+      "Review DocKosha's implementation-checked answers about compliance, data protection, access control, application security, infrastructure, and incident response.",
+  },
 };
 
 interface QuestionnaireItem {
@@ -43,7 +56,7 @@ const questionnaireGroups: readonly QuestionnaireGroup[] = [
       {
         question: "What is DocKosha?",
         answer:
-          "DocKosha is a document-sharing and virtual data-room product with one normal feature edition under AGPL-3.0-or-later. DocYantra is the mandatory direct 0.0.26 dependency; managed DocKosha Cloud provides hosting. Enterprise licensing is available only through a separate signed agreement.",
+          "DocKosha is a document-sharing and virtual data-room product with one normal feature edition under AGPL-3.0-or-later. DocYantra is the mandatory direct 0.0.28 dependency; managed DocKosha Cloud provides hosting. Enterprise licensing is available only through a separate signed agreement.",
       },
       {
         question: "Do you hold SOC 2 or ISO 27001 certifications?",
@@ -66,9 +79,9 @@ const questionnaireGroups: readonly QuestionnaireGroup[] = [
         answer: (
           <>
             The DocKosha source is licensed under AGPL-3.0-or-later. There is
-            one normal feature edition, and DocYantra is the mandatory direct
-            0.0.26 dependency. Enterprise licensing is available only through a
-            separate signed agreement.
+            one normal feature edition, and the open-source DocYantra engine is
+            the mandatory direct 0.0.28 dependency. Enterprise licensing is
+            available only through a separate signed agreement.
           </>
         ),
       },
@@ -224,7 +237,7 @@ const questionnaireGroups: readonly QuestionnaireGroup[] = [
       {
         question: "Is document conversion sent to a remote conversion service?",
         answer:
-          "DocYantra 0.0.26 handles PDF, Office, Markdown, and redaction work within its validated limits. The dependency fails closed outside its envelope; there is no provider-selection variable or fallback provider.",
+          "DocYantra 0.0.28 handles PDF, Office, Markdown, and redaction work within its validated limits. The dependency fails closed outside its envelope; there is no provider-selection variable or fallback provider.",
       },
     ],
   },

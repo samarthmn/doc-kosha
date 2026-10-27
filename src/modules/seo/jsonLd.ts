@@ -68,6 +68,7 @@ export const buildSoftwareApplicationJsonLd = ({
     operatingSystem: "Web",
     url: appUrl,
     mainEntityOfPage: toAbsoluteUrl(pagePath),
+    license: "https://github.com/samarthmn/doc-kosha/blob/HEAD/LICENSE",
     description,
     offers: {
       "@type": "Offer",

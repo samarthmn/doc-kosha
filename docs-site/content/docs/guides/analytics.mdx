@@ -70,7 +70,7 @@ The country is derived server-side during the request: Vercel sends `x-vercel-ip
 
 Treat it as approximate. Edge headers can be wrong, and VPNs and corporate proxies move people around the map.
 
-Maintainer note: a future operator deployment without Vercel or the authenticated Cloudflare Worker would record analytics but leave country rollups empty. External self-hosting is not currently available.
+Self-hosting note: a deployment without Vercel or the authenticated Cloudflare Worker records analytics but leaves country rollups empty.
 
 ## Export viewer insights to CSV
 
@@ -100,7 +100,7 @@ Full detail, including cookies, retention and session-replay exclusions, lives i
 
 ## Retention
 
-Analytics are stored as daily rollups and pruned to the most recent **365 days** by a scheduled job. That is also why custom date ranges cannot reach further back than a year. Authorized maintainers can consult the [self-hosting reference](/docs/self-hosting) for future operator details.
+Analytics are stored as daily rollups and pruned to the most recent **365 days** by a scheduled job. That is also why custom date ranges cannot reach further back than a year. If you self-host, see the [self-hosting reference](/docs/self-hosting).
 
 ## Related
 

@@ -3,7 +3,7 @@ title: "Quickstart"
 description: "Get a DocKosha Cloud workspace you can sign in to in a few minutes."
 ---
 
-You need a DocKosha Cloud workspace with an active plan before you can upload anything. The public repository is available for source review and contribution; external self-hosting is not currently available.
+You need a DocKosha Cloud workspace with an active plan, or your own deployment, before you can upload anything. The public repository is available for source review and contribution, and you can self-host it at your own risk without official support.
 
 ## Route A — DocKosha Cloud
 
@@ -18,19 +18,15 @@ A workspace only becomes usable once it has an active plan record. Until then, d
 
 </Callout>
 
-## Source publication (not an external install)
+## Route B — Self-host (unsupported)
 
-The source repository is public under AGPL-3.0-or-later for reading and contribution. The maintainer development setup requires authorized access to private DocYantra packages and is not available to external users.
+The source repository is public under AGPL-3.0-or-later, and its mandatory
+DocYantra dependency is open source under AGPL-3.0-or-later. You can run DocKosha
+yourself at your own risk; self-hosting is not officially supported.
+DocYantra's packages install from GitHub Packages, which requires a GitHub
+token with the `read:packages` scope. See [Self-hosting](/docs/self-hosting).
 
-External users cannot run the repository as a self-hosted installation at this
-time because the mandatory DocYantra dependency is private.
-
-### Maintainer note
-
-Maintainers use the project’s internal development setup. It is not an
-external installation or package-access path.
-
-### Maintainer stack reference
+### Stack reference
 
 | Service                         | Why it is needed                                                                                                                         |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,8 +34,7 @@ external installation or package-access path.
 | MinIO (`docker-compose.r2.yml`) | S3-compatible object storage for uploaded files, converted PDFs, and branding assets                                                     |
 | SMTP                            | Email verification codes, invites, and view notifications. Without a working SMTP configuration, the email OTP gate cannot deliver codes |
 
-These service notes are informational for authorized maintainers; they are not
-an external installation guide.
+You operate each of these services yourself when you self-host.
 
 ## What can go wrong
 

@@ -91,7 +91,7 @@ the suite; a partially migrated database is not a valid test environment.
 
 ## Provider expectations
 
-DocYantra is the mandatory private direct `0.0.26` dependency and handles the
+DocYantra is the mandatory direct `0.0.28` dependency (open source, AGPL-3.0-or-later) and handles the
 document-processing operations within its validated envelope. Package and
 capability failures must produce typed failures and fail closed; there is no
 provider-selection variable or fallback provider.
@@ -107,7 +107,7 @@ Run the focused test for a changed area first, then the commands in the
 [README](../README.md). CI uses synthetic local configuration and does not access
 customer data or use engine package/source contents as fixtures or published
 test artifacts; use synthetic documents instead. Authorized internal CI uses a
-read-only token for the four private DocYantra packages on GitHub Packages only
+read-only token for the four DocYantra packages on GitHub Packages only
 for trusted maintainer checks; public source CI remains credential-free. The
 same public repository workflow supports a manual `run_maintainer_engine`
 opt-in, default false, protected by the `maintainer-engine-ci` environment and

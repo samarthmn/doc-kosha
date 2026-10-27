@@ -26,7 +26,7 @@ routes.
 
 ## Document processing
 
-DocYantra is the mandatory private direct `0.0.26` document-processing dependency.
+DocYantra is the mandatory direct `0.0.28` document-processing dependency, open source under AGPL-3.0-or-later.
 It provides the validated PDF and Office operations; package and contract failures
 must fail closed and must never silently fall back.
 

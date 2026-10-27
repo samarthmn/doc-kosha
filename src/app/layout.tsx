@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
     default: "DocKosha",
-    template: "DocKosha | %s",
+    template: "%s | DocKosha",
   },
   applicationName: "DocKosha",
   description:
-    "DocKosha is an open-source document sharing and virtual data room application with access controls, watermarking, and privacy-first analytics. Use the managed Cloud service today.",
+    "DocKosha is an open-source document sharing and virtual data room application with access controls, watermarking, and privacy-first analytics. Inspect both the application and DocYantra engine, self-host, or start free on DocKosha Cloud.",
   keywords: [
     "M&A data room",
     "virtual data room for M&A",

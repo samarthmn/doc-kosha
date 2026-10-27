@@ -6,13 +6,13 @@ application logic. There is no required separate backend service.
 
 ## Main components
 
-| Component                    | Responsibility                                                                                                                                                                         |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Next.js application          | Routes, UI composition, API adapters, authentication boundaries, and server logic                                                                                                      |
-| Supabase Postgres            | Workspaces, documents, links, gates, memberships, billing metadata, and audit records                                                                                                  |
-| S3-compatible storage        | Original uploads, converted PDFs, and branding assets                                                                                                                                  |
-| SMTP                         | One-time passcodes, invitations, NDA notifications, and lifecycle mail                                                                                                                 |
-| Document-processing provider | Private DocYantra dependency used by DocKosha Cloud and authorized maintainer builds for PDF/Office conversion, merge, watermark burn-in, page counting, CSV conversion, and redaction |
+| Component                    | Responsibility                                                                                                                                                                      |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Next.js application          | Routes, UI composition, API adapters, authentication boundaries, and server logic                                                                                                   |
+| Supabase Postgres            | Workspaces, documents, links, gates, memberships, billing metadata, and audit records                                                                                               |
+| S3-compatible storage        | Original uploads, converted PDFs, and branding assets                                                                                                                               |
+| SMTP                         | One-time passcodes, invitations, NDA notifications, and lifecycle mail                                                                                                              |
+| Document-processing provider | Open-source DocYantra dependency (AGPL-3.0-or-later) used by every DocKosha build for PDF/Office conversion, merge, watermark burn-in, page counting, CSV conversion, and redaction |
 
 The dependency direction is `src/app` → `src/modules` → `src/server`/`src/lib`.
 Route files compose components and modules; domain logic belongs in feature
@@ -46,11 +46,11 @@ fail closed when watermarking cannot complete.
 
 Document processing in DocKosha Cloud uses
 `packages/provider-interface/src/index.ts`. The DocYantra adapter is the
-application's mandatory private direct engine dependency for Cloud and authorized
-maintainer builds; provider-specific
+application's mandatory direct engine dependency for every build;
+provider-specific
 implementation details remain isolated behind that contract.
 
-DocYantra is the private mandatory direct `0.0.26` dependency for document processing.
+DocYantra is the mandatory direct `0.0.28` dependency for document processing and is open source under AGPL-3.0-or-later.
 It provides the validated PDF and Office conversion, merge, watermark, page
 count, and redaction operations. Work outside its documented envelope returns a
 typed failure and never falls back to a lower-fidelity converter.

@@ -1,7 +1,7 @@
 {
   "seo": {
-    "title": "DocYantra | Document processing inside DocKosha Cloud",
-    "description": "DocYantra is the private document-processing engine that powers DocKosha Cloud’s validated Office and PDF workflows.",
+    "title": "DocYantra: Open-Source Rust PDF and Office Engine",
+    "description": "Inspect and run DocYantra, the AGPL-3.0-or-later Rust and WebAssembly engine for supported PDF and Office processing in DocKosha Cloud and self-hosted deployments.",
     "keywords": [
       "DocYantra",
       "Rust document engine",
@@ -14,22 +14,22 @@
     "canonical": "/docyantra"
   },
   "hero": {
-    "badge": "DocKosha Cloud document processing",
-    "title": "DocYantra powers DocKosha Cloud",
-    "subtitle": "A private, high-performance document processor for DocKosha Cloud’s supported Office and PDF workflows. Work outside its validated envelope fails closed.",
+    "badge": "Open-source document processing",
+    "title": "DocYantra: the engine behind DocKosha",
+    "subtitle": "Open-source Rust and WebAssembly packages for supported PDF and Office workflows, in Cloud or on your own infrastructure. Unsupported processing fails closed.",
     "primaryCta": {
-      "text": "Explore DocKosha Cloud",
-      "href": "/features"
+      "text": "Start free on DocKosha Cloud",
+      "href": "/auth/sign-in?redirect=%2Fonboarding"
     },
     "secondaryCta": {
-      "text": "Explore DocKosha",
-      "href": "/features"
+      "text": "DocYantra on GitHub",
+      "href": "https://github.com/samarthmn/doc-yantra"
     }
   },
   "highlights": [
     {
-      "title": "Rust performance for managed processing",
-      "description": "DocYantra provides a high-performance processing path for managed DocKosha Cloud workflows, with supported documents typically ready in seconds. DocKosha uses the mandatory direct DocYantra dependency.",
+      "title": "Rust processing inside your application",
+      "description": "DocYantra provides the same supported document-processing path in DocKosha Cloud and self-hosted builds. Its packages run inside the application; no separate conversion service is required.",
       "bullets": [
         "The DocYantra validated path does not use a headless office suite or browser in the path",
         "DocYantra uses isolated worker threads with finite deadlines and bounded queues",
@@ -93,15 +93,15 @@
     }
   ],
   "cta": {
-    "title": "Bring blazing-fast, high-fidelity processing to your next data room",
-    "subtitle": "DocYantra powers supported modern document formats and controlled, PDF-first delivery inside DocKosha Cloud. It is not a standalone product or externally available engine package.",
+    "title": "Open code. A managed way to use it.",
+    "subtitle": "Inspect the engine or embed its versioned packages yourself. Use DocKosha Cloud when you want document sharing and data rooms with hosting handled for you.",
     "primaryCta": {
-      "text": "Explore DocKosha Cloud",
-      "href": "/features"
+      "text": "Start free on DocKosha Cloud",
+      "href": "/auth/sign-in?redirect=%2Fonboarding"
     },
     "secondaryCta": {
-      "text": "See pricing",
-      "href": "/pricing"
+      "text": "Read the self-hosting guide",
+      "href": "/self-hosting"
     }
   }
 }

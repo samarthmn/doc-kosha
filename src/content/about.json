@@ -7,7 +7,7 @@
     "paragraphs": [
       "DocKosha is built for M&A teams and founders running deal, investor, and diligence rooms. It also supports lawyers and fundraising teams sharing confidential packets with tighter controls than generic file links.",
       "We focus on high-fidelity viewing and practical controls: watermarking, link permissions, and privacy-first analytics designed to minimize unnecessary data collection.",
-      "Our application source is public under AGPL-3.0-or-later for inspection and contribution. DocKosha Cloud is available today. Independent self-hosting is not yet available because DocYantra, our document-processing engine, remains a private dependency."
+      "Our application source and DocYantra, our document-processing engine, are open source under AGPL-3.0-or-later for inspection, contribution, and self-hosting. DocKosha Cloud is available today, and you can self-host at your own risk without official support."
     ]
   },
   "differentiators": {

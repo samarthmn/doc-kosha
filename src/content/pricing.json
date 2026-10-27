@@ -22,25 +22,25 @@
   },
   "engineKeys": {
     "title": "Open-source application. Managed Cloud.",
-    "subtitle": "DocKosha’s application is open source under AGPL-3.0-or-later. Inspect the code, contribute improvements, or use the managed Cloud service. Independent self-hosting is not yet available because DocYantra remains private.",
+    "subtitle": "DocKosha’s application is open source under AGPL-3.0-or-later. Inspect the code, contribute improvements, self-host at your own risk, or use the managed Cloud service.",
     "items": [
       {
         "title": "What powers DocKosha Cloud",
         "body": "DocYantra provides document conversion through the validated Office and PDF fidelity envelope inside DocKosha Cloud. Outside a validated format, size, and fidelity envelope, conversion fails closed with a typed reason and the viewer serves the original file unchanged."
       },
       {
-        "title": "Private processing dependency",
-        "body": "DocYantra is the mandatory private direct 0.0.26 dependency for this application. It is not offered as a package, SDK, API, standalone product, or engine license to external users."
+        "title": "Open-source processing engine",
+        "body": "DocYantra is the mandatory direct 0.0.28 dependency for this application and is open source under AGPL-3.0-or-later. Its packages install from GitHub Packages. Enterprise licensing for DocYantra requires a separate signed agreement."
       },
       {
         "title": "Enterprise is a separate agreement",
-        "body": "The AGPL-3.0-or-later DocKosha source and any Enterprise agreement are distinct. Enterprise terms require a separate signed agreement and do not imply access to the private DocYantra engine."
+        "body": "The AGPL-3.0-or-later DocKosha source and any Enterprise agreement are distinct. Enterprise terms require a separate signed agreement and are separate from the AGPL licenses of DocKosha and DocYantra."
       }
     ],
     "cta": {
       "label": "Read the open-source announcement",
       "href": "/blog/dockosha-open-source",
-      "note": "Learn why we opened the application source and what comes next for DocYantra and self-hosting."
+      "note": "Inspect both open-source repositories and learn how Cloud and self-hosting fit your team."
     }
   },
   "faq": {

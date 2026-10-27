@@ -9,10 +9,23 @@ import GlassCard from "@/components/marketing/GlassCard";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Data Processing Agreement (Draft) | DocKosha",
+  title: { absolute: "Data Processing Agreement (Draft) | DocKosha" },
   description:
     "Read DocKosha's draft Data Processing Agreement covering controller and processor roles, security, subprocessors, assistance, deletion, audits, and transfers.",
   alternates: { canonical: "/security/dpa" },
+  openGraph: {
+    type: "website",
+    title: "Data Processing Agreement (Draft) | DocKosha",
+    description:
+      "Read DocKosha's draft Data Processing Agreement covering controller and processor roles, security, subprocessors, assistance, deletion, audits, and transfers.",
+    url: "/security/dpa",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Data Processing Agreement (Draft) | DocKosha",
+    description:
+      "Read DocKosha's draft Data Processing Agreement covering controller and processor roles, security, subprocessors, assistance, deletion, audits, and transfers.",
+  },
 };
 
 const DpaPage: React.FC = () => {

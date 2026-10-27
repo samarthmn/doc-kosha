@@ -4,10 +4,10 @@ DocKosha has one public source edition. The repository is
 licensed under the **GNU Affero General Public License, version 3
 (AGPL-3.0-or-later)**. Enterprise licensing is available only through a separate
 signed agreement; see [Commercial Licensing](../COMMERCIAL-LICENSING.md).
-DocKosha Cloud is the available managed product. External self-hosting is not
-currently available because DocYantra is a private mandatory direct `0.0.26`
-dependency. No DocYantra package, SDK, API, standalone product, or license is
-offered externally.
+DocKosha Cloud is the supported managed product. Self-hosting is available at
+your own risk without official support. DocYantra, the mandatory direct `0.0.28`
+dependency, is open source under AGPL-3.0-or-later and installs from GitHub
+Packages.
 
 ## Application capabilities
 
@@ -30,8 +30,7 @@ does not move application capability into a separate source edition.
 
 ## Document-processing capability
 
-DocKosha Cloud and authorized maintainer builds use the mandatory private
-DocYantra dependency:
+Every DocKosha build uses the mandatory open-source DocYantra dependency:
 
 | Operation           | DocYantra status                                     |
 | ------------------- | ---------------------------------------------------- |

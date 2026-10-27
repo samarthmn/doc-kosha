@@ -6,6 +6,8 @@ not a pnpm workspace member.
 
 ## Run locally
 
+Use Node.js 24.x and pnpm 11.25.0.
+
 ```bash
 cd docs-site
 pnpm install
@@ -42,3 +44,12 @@ source files outside the root directory so the prebuild sync can read
 `../docs`. Point the documentation hostname at that project after a human
 review of the generated pages. The site does not require changes to the main
 product's host-routing middleware.
+
+## Search and canonical URLs
+
+`DOCS_SITE_URL` is an optional HTTP(S) origin, defaulting to
+`https://docs.dockosha.com`. Set it to your own documentation origin before
+building a deployment. Paths, query strings, and embedded credentials are
+rejected. Page canonicals, social URLs, `/robots.txt`, and `/sitemap.xml` share
+this setting. The sitemap lists published documentation pages, including the
+synchronized operator guides, without invented modification dates.

@@ -16,7 +16,7 @@ export const repoDocsManifest = {
       slug: "self-hosting/self-hosting",
       title: "Self-hosting",
       description:
-        "Authorized-maintainer reference for a possible future DocKosha deployment; external self-hosting is not currently available.",
+        "Run DocKosha yourself at your own risk: installing DocYantra, the services you operate, and upgrades. Self-hosting is not officially supported.",
     },
     {
       source: "docs/configuration.md",
@@ -24,7 +24,7 @@ export const repoDocsManifest = {
       slug: "self-hosting/configuration",
       title: "Configuration",
       description:
-        "Authorized-maintainer configuration reference; external self-hosting is not currently available.",
+        "Configuration reference for running DocKosha, including self-hosted deployments.",
     },
     {
       source: "docs/architecture.md",
@@ -39,7 +39,7 @@ export const repoDocsManifest = {
       slug: "self-hosting/providers",
       title: "Providers",
       description:
-        "Understand the mandatory private document-processing dependency and its supported operations.",
+        "Understand the mandatory open-source document-processing dependency and its supported operations.",
     },
     {
       source: "docs/capability-matrix.md",

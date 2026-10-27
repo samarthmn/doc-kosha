@@ -65,6 +65,30 @@ const FaqPage: React.FC = () => {
 
       <section className="pb-24">
         <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+          <p className="mx-auto mb-8 max-w-3xl px-4 text-base leading-7 text-muted-foreground">
+            Running it yourself? Read the{" "}
+            <Link
+              className="text-primary underline underline-offset-4"
+              href="/self-hosting"
+            >
+              self-hosting guide
+            </Link>{" "}
+            or inspect the{" "}
+            <a
+              className="text-primary underline underline-offset-4"
+              href="https://github.com/samarthmn/doc-kosha"
+            >
+              DocKosha
+            </a>{" "}
+            and{" "}
+            <a
+              className="text-primary underline underline-offset-4"
+              href="https://github.com/samarthmn/doc-yantra"
+            >
+              DocYantra
+            </a>{" "}
+            repositories.
+          </p>
           <FaqSections sections={faqCopy.sections} />
         </div>
       </section>

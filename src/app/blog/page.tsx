@@ -21,7 +21,7 @@ const baseDescription =
   "Answer-first guides on M&A data rooms, founder investor rooms, lawyer document sharing, fundraising workflows, privacy-first analytics, and practical upgrade paths.";
 
 const baseMetadata: Metadata = {
-  title: baseTitle,
+  title: { absolute: baseTitle },
   description: baseDescription,
   alternates: { canonical: "/blog" },
   keywords: [
@@ -77,7 +77,7 @@ export async function generateMetadata({
 
   return {
     ...baseMetadata,
-    title,
+    title: { absolute: title },
     description,
     alternates: { canonical: `/blog?page=${page}` },
     openGraph: {
@@ -85,6 +85,11 @@ export async function generateMetadata({
       title,
       description,
       url: `${siteUrl}/blog?page=${page}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
   };
 }

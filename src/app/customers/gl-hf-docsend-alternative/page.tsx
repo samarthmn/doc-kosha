@@ -17,7 +17,9 @@ const siteUrl = clientEnv.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
 const storyUrl = `${siteUrl}${glHfCustomerStory.href}`;
 
 export const metadata: Metadata = {
-  title: "GL HF chose DocKosha as a lower-cost DocSend alternative",
+  title: {
+    absolute: "GL HF chose DocKosha as a lower-cost DocSend alternative",
+  },
   description: glHfCustomerStory.description,
   alternates: { canonical: glHfCustomerStory.href },
   keywords: glHfCustomerStory.keywords,

@@ -118,29 +118,33 @@ snapshots:
 
 test("changed reviewed license expression reopens review", () => {
   const packages = parsePnpmLicenseReport({
-    "AGPL-3.0-only": [{ name: "@samarthmn/doc-yantra", versions: ["0.0.25"] }],
+    "AGPL-3.0-or-later": [
+      { name: "@samarthmn/doc-yantra", versions: ["0.0.25"] },
+    ],
   });
-  assert.equal(packages[0].license, "AGPL-3.0-only");
+  assert.equal(packages[0].license, "AGPL-3.0-or-later");
   assert.equal(
-    classifyLicense("AGPL-3.0-only AND OFL-1.1", "@samarthmn/doc-yantra")
+    classifyLicense("AGPL-3.0-or-later AND OFL-1.1", "@samarthmn/doc-yantra")
       .classification,
     "REVIEW",
   );
 });
 
-test("fonts package allows only the reviewed AGPL-3.0-only AND OFL-1.1 expression", () => {
+test("fonts package allows only the reviewed AGPL-3.0-or-later AND OFL-1.1 expression", () => {
   assert.equal(
-    classifyLicense("AGPL-3.0-only AND OFL-1.1", "@samarthmn/doc-yantra-fonts")
-      .classification,
+    classifyLicense(
+      "AGPL-3.0-or-later AND OFL-1.1",
+      "@samarthmn/doc-yantra-fonts",
+    ).classification,
     "ALLOWED",
   );
   assert.equal(
-    classifyLicense("AGPL-3.0-only", "@samarthmn/doc-yantra-fonts")
+    classifyLicense("AGPL-3.0-or-later", "@samarthmn/doc-yantra-fonts")
       .classification,
     "REVIEW",
   );
   assert.equal(
-    classifyLicense("AGPL-3.0-only AND MIT", "@samarthmn/doc-yantra-fonts")
+    classifyLicense("AGPL-3.0-or-later AND MIT", "@samarthmn/doc-yantra-fonts")
       .classification,
     "REVIEW",
   );

@@ -26,10 +26,10 @@ const TwitterImage = () => {
         DocKosha
       </div>
       <div style={{ marginTop: 20, fontSize: 40, fontWeight: 700 }}>
-        Secure document sharing & virtual data rooms
+        Open-source document sharing & data rooms
       </div>
       <div style={{ marginTop: 18, fontSize: 28, opacity: 0.9 }}>
-        Privacy‑first analytics, watermarking, and high‑fidelity viewing.
+        Open application. Open engine. Managed with DocKosha Cloud.
       </div>
     </div>,
     size,
