@@ -29,7 +29,7 @@ const pageDescription =
   "Secure document sharing with watermarking, link gates, and privacy-first analytics for M&A teams, founders, lawyers, and fundraising workflows.";
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: { absolute: pageTitle },
   description: pageDescription,
   keywords: [
     "secure document sharing",

@@ -169,13 +169,13 @@ const parseLicenseExpression = (license) => {
 // bumps do not.
 export const REVIEWED_LICENSE_DECISIONS = new Map([
   // DocYantra is DocKosha's first-party conversion engine. Core, Office, and
-  // adapter packages are consumed under AGPL-3.0-only. The fonts package is
+  // adapter packages are consumed under AGPL-3.0-or-later. The fonts package is
   // the exact reviewed dual expression: AGPL wrapper and OFL font binaries.
   // A different SPDX string reopens review; this is not a wildcard allow.
-  ["@samarthmn/doc-yantra", "AGPL-3.0-only"],
-  ["@samarthmn/doc-yantra-office", "AGPL-3.0-only"],
-  ["@samarthmn/doc-yantra-fonts", "AGPL-3.0-only AND OFL-1.1"],
-  ["@samarthmn/dockosha-provider-docyantra", "AGPL-3.0-only"],
+  ["@samarthmn/doc-yantra", "AGPL-3.0-or-later"],
+  ["@samarthmn/doc-yantra-office", "AGPL-3.0-or-later"],
+  ["@samarthmn/doc-yantra-fonts", "AGPL-3.0-or-later AND OFL-1.1"],
+  ["@samarthmn/dockosha-provider-docyantra", "AGPL-3.0-or-later"],
   // lightningcss ships unmodified as part of the Tailwind CSS toolchain; its
   // platform packages are reviewed together under the same MPL-2.0 expression.
   ["lightningcss", "MPL-2.0"],

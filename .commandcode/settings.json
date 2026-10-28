@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(sed:*)",
+      "Shell(find:*)",
+      "Shell(echo \"=== migrations ===\"; ls supabase/migrations | tail -8; ls supabase/migrations | wc -l; echo \"=== rls policies ===\"; grep -rl 'ROW LEVEL SECURITY' supabase/migrations | wc -l; echo \"=== workflows ===\"; ls .github/workflows 2>/dev/null; echo \"=== docs ===\"; ls docs; echo \"=== provider interface ===\"; find packages/provider-interface/src -type f)",
+      "Shell(test:*)",
+      "Shell(ls:*)",
+      "Shell(pnpm:*)",
+      "Shell(echo \"=== module sample sizes ===\"; for d in src/modules/*/; do printf \"%-45s %s\\n\" \"$d\" \"$(find \"$d\" -type f \\( -name '*.ts' -o -name '*.tsx' \\) -exec cat {} + | wc -l)\"; done | sort -k2 -rn; echo \"=== server/lib ===\"; find src/server src/lib -type f | sort)",
+      "Shell(echo:*)",
+      "Shell(grep:*)",
+      "Shell(awk:*)",
+      "Shell(echo \"=== function duplication signal: common long lines ===\"; comm -12 <(sort src/app/api/public/links/download/route.ts) <(sort src/app/api/public/links/download-zip/route.ts) | grep -v '^\\s*$' | wc -l; echo \"download lines:\"; wc -l src/app/api/public/links/download/route.ts src/app/api/public/links/download-zip/route.ts)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

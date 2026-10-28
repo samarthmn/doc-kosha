@@ -10,10 +10,23 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Subprocessors | DocKosha",
+  title: { absolute: "Subprocessors | DocKosha" },
   description:
     "Review the service providers DocKosha uses to operate authentication, storage, hosting, billing, email, analytics, and error monitoring.",
   alternates: { canonical: "/security/subprocessors" },
+  openGraph: {
+    type: "website",
+    title: "Subprocessors | DocKosha",
+    description:
+      "Review the service providers DocKosha uses to operate authentication, storage, hosting, billing, email, analytics, and error monitoring.",
+    url: "/security/subprocessors",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Subprocessors | DocKosha",
+    description:
+      "Review the service providers DocKosha uses to operate authentication, storage, hosting, billing, email, analytics, and error monitoring.",
+  },
 };
 
 const subprocessors = [

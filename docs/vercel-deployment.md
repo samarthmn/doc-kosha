@@ -1,7 +1,7 @@
 # Maintainer Vercel deployments
 
 This guide is for authorized DocKosha Cloud maintainers. Public source access
-does not grant access to the private DocYantra packages or production services.
+does not grant access to DocKosha Cloud's production services.
 
 ## Git integration
 
@@ -44,8 +44,8 @@ certify an application build.
 ## Build settings
 
 Use the Next.js framework preset and Node.js `24.x`. The repository pins pnpm
-`11.25.0` and DocYantra `0.0.26`. Its workspace configuration selects the
-private package registry and the hoisted dependency layout required by the
+`11.25.0` and DocYantra `0.0.28`. Its workspace configuration selects the
+GitHub Packages registry for DocYantra and the hoisted dependency layout required by the
 Vercel function packager.
 
 Configure this install command in the Vercel project:
@@ -61,12 +61,12 @@ pnpm build && node scripts/verify-engine-build-artifact.mjs
 ```
 
 The final verification requires the document engine, fonts, and runtime files
-to be present in the server bundle. A missing private package or incomplete
+to be present in the server bundle. A missing DocYantra package or incomplete
 bundle must fail the build.
 
 Store `GITHUB_PACKAGES_TOKEN` as a sensitive Vercel environment variable for
 authorized production and preview builds. It must have read access to the
-required private packages. Keep credentials out of source files, build logs,
+four DocYantra packages. Keep credentials out of source files, build logs,
 and public CI. Maintain and rotate this credential through the private
 maintainer process.
 

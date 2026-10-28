@@ -1,14 +1,15 @@
 ---
 title: "DocKosha is now open source: secure document sharing and data rooms"
 seoTitle: "DocKosha Is Open Source — Document Sharing & Data Rooms"
-description: "Explore DocKosha’s open-source document sharing and virtual data rooms under AGPL-3.0-or-later, current Cloud plans, and what comes next for self-hosting."
+description: "Explore DocKosha’s open-source document sharing and virtual data rooms under AGPL-3.0-or-later, current Cloud plans, and a practical self-hosting setup guide."
 socialTitle: "DocKosha is now open source"
-socialDescription: "Document sharing. Built in the open. Explore the application source, use DocKosha Cloud, and see what’s next for DocYantra."
+socialDescription: "Document sharing. Built in the open. Explore the application source, use DocKosha Cloud, or run DocKosha and DocYantra yourself."
 slug: "dockosha-open-source"
 author: "Samarth M N"
 authorType: "Person"
 authorBio: "Samarth M N is the founder of DocKosha, a platform for secure document sharing and virtual data rooms."
 date: "2026-09-10"
+updated: "2026-10-27"
 tags:
   - "Open source"
   - "Product"
@@ -26,11 +27,13 @@ heroImageAlt: "DocKosha is now open source. White and lilac document pages float
 featured: true
 ---
 
+**Update (October 27, 2026):** DocYantra is now open source under AGPL-3.0-or-later at [github.com/samarthmn/doc-yantra](https://github.com/samarthmn/doc-yantra), and you can self-host DocKosha at your own risk without official support. This post has been updated to reflect both public repositories and the current [self-hosting guide](/self-hosting).
+
 Almost a year ago, I got tired of checking which subscription unlocked the document controls I needed. That frustration became DocKosha, a platform for secure document sharing and virtual data rooms.
 
 Today, we're publishing the application source under **AGPL-3.0-or-later**. You can read the code, review how document access works, and contribute to the product. [DocKosha Cloud](/pricing) remains the managed service you can use today.
 
-This opens the application code for inspection and contribution. DocYantra, our document-processing engine, is planned for a future open-source release; independent self-hosting isn't available today.
+Both parts are now open: [DocKosha’s application](https://github.com/samarthmn/doc-kosha) and [DocYantra’s PDF and Office engine](https://github.com/samarthmn/doc-yantra). You can inspect, contribute to, or run the application yourself under the repository licenses.
 
 I'm proud to share this, and I want to explain the choices behind it.
 
@@ -68,11 +71,11 @@ DocKosha's public application source is licensed under [AGPL-3.0-or-later](https
 
 ## Can you self-host DocKosha today?
 
-**Not yet.** The application depends on DocYantra, our private document-processing engine for supported PDF and Office workflows.
+**Yes.** DocKosha and DocYantra are both open source under AGPL-3.0-or-later. DocYantra runs inside the application through its versioned Rust and WebAssembly packages; it does not require a separate conversion server.
 
-We plan to open-source DocYantra next, as a step toward making the complete platform independently runnable. The release is still on the roadmap. Until the dependency is available and the installation path is ready, the public repository supports inspection and contribution but isn't a runnable self-hosting distribution. Our [Cloud and self-hosting guide](/hosted-vs-self-hosted) explains what is available now and what future operators would need to maintain.
+The [self-hosting guide](/self-hosting) explains the prerequisites and links to the [complete repository walkthrough](https://github.com/samarthmn/doc-kosha/blob/HEAD/docs/self-hosting.md). Installation uses GitHub Packages, which requires a classic GitHub token with `read:packages` access even for public packages. The [DocYantra deployment guide](https://github.com/samarthmn/doc-yantra/blob/HEAD/SELF-HOSTING.md) covers embedding the engine and offline fonts.
 
-When self-hosting becomes available, operating the platform will still mean maintaining its database, storage, email delivery, document processing, backups, security updates, and monitoring. Some teams want that responsibility and control.
+Self-hosting is not officially supported. You maintain the database, object storage, email delivery, backups, security updates, and monitoring. Community help is best effort, without an SLA. Some teams want that responsibility and control; others want the managed service. Our [Cloud and self-hosting comparison](/hosted-vs-self-hosted) describes the tradeoffs.
 
 DocKosha Cloud is the managed service available now. We handle the operational work so you can prepare your data room, share your documents, and get back to the work around them. My ambition is to make that experience good enough that people choose it because it saves them time.
 
@@ -84,4 +87,4 @@ If you use document-sharing tools, tell us where they get in your way. If you bu
 
 I started DocKosha with my own frustrations. I want the next chapter to include yours.
 
-[Try DocKosha Cloud](/auth/sign-in?redirect=%2Fonboarding) · [Explore the source](https://github.com/samarthmn/doc-kosha)
+[Try DocKosha Cloud](/auth/sign-in?redirect=%2Fonboarding) · [DocKosha source](https://github.com/samarthmn/doc-kosha) · [DocYantra source](https://github.com/samarthmn/doc-yantra) · [Self-hosting guide](/self-hosting)

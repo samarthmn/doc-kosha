@@ -11,38 +11,43 @@ through a separate signed agreement; see [Commercial Licensing](./COMMERCIAL-LIC
 Read the [trademark guidance](./TRADEMARKS.md) before redistributing a fork.
 
 DocKosha has one public source edition. DocKosha Cloud is the managed service
-operated by Sublime Innovation Technologies Limited. The source is published
-for reading, review, and contribution; it is not currently a runnable
-self-hosting distribution because its mandatory DocYantra `0.0.26`
-dependency is private and unavailable to external users.
+operated by Sublime Innovation Technologies Limited. Both the application and
+its document-processing engine are open source. Inspect the code, contribute,
+or self-host at your own risk without official support. Its mandatory
+DocYantra `0.0.28` dependency is open source under AGPL-3.0-or-later at
+[github.com/samarthmn/doc-yantra](https://github.com/samarthmn/doc-yantra).
 
-## Maintainer-only development prerequisites
+Source: [DocKosha](https://github.com/samarthmn/doc-kosha) ·
+[DocYantra](https://github.com/samarthmn/doc-yantra) ·
+[Public self-hosting overview](https://www.dockosha.com/self-hosting)
+
+## Development prerequisites
 
 - Node.js 24.x
 - pnpm 11.25.0
 - Docker, for the local Supabase and MinIO services
 - Supabase CLI, for the local database and migrations
 
-These prerequisites apply only to authorized project maintainers. They do not
-make the public source an externally runnable distribution.
+DocYantra's packages install from GitHub Packages, which requires a GitHub
+personal access token (classic) with the `read:packages` scope in your
+user-level npm configuration. See [Self-hosting](./docs/self-hosting.md).
+
+The local R2 simulator (`pnpm r2:up`) builds pinned MinIO server and client
+releases from upstream Go source because the community container images are no
+longer available. The first start needs network access to pull the Go/Alpine
+base images and download Go modules, and takes longer while compiling. Later
+starts reuse Docker's build cache. Existing MinIO data stays in the same volume.
 
 ## Quickstart
 
-The public repository does not currently provide an external installation or
-self-hosting quickstart. You can inspect the source and contribute under the
-AGPL-3.0-or-later terms. The application’s internal maintainer development install
-requires authorized access to private DocYantra packages; those packages,
-tokens, SDKs, APIs, and licenses are not offered to external users.
-
-See [DocKosha Cloud](https://dockosha.com) for the available hosted product.
-
-The maintainer-only development setup and provider configuration are documented
-for authorized project maintainers; they are not an access path for external
-installation.
+Self-hosting is available at your own risk and is not officially supported.
+[Self-hosting](./docs/self-hosting.md) covers installing DocYantra's packages,
+the services you operate, and upgrades. [DocKosha Cloud](https://dockosha.com)
+is the supported hosted product.
 
 ## Public source checks
 
-These checks do not require private packages or runtime credentials:
+These checks do not require DocYantra packages or runtime credentials:
 
 The public checks require Node.js 24.x. The Gitleaks check also requires the
 official pinned Gitleaks 8.30.1 binary used by the public workflow.
@@ -62,7 +67,7 @@ reading ignored credential buffers; `--source=committed` reads immutable HEAD
 tree/blob data. These checks use only Node's built-in modules (apart from the
 pinned Gitleaks executable), so the public CI job does not install packages.
 
-## Maintainer-only application checks
+## Application checks
 
 ```bash
 pnpm format
@@ -72,9 +77,8 @@ pnpm test:unit
 pnpm build
 ```
 
-The following full application checks require the authorized internal
-development environment and private DocYantra packages. For the full local
-browser suite, start the local services and run
+The full application checks require the DocYantra packages and the local
+services. For the full local browser suite, start the local services and run
 `pnpm e2e`. Database tests use `supabase test db --local`.
 
 ## Documentation and support
@@ -97,5 +101,5 @@ browser suite, start the local services and run
 - [Third-party notices](./THIRD_PARTY_NOTICES.md)
 
 Community support covers source review and contribution questions. Hosted
-DocKosha Cloud support follows the customer's service agreement. There is no
-self-hosting support or external DocYantra access at this time.
+DocKosha Cloud support follows the customer's service agreement. Self-hosting has no official support commitment. DocYantra is publicly
+available; its GitHub Packages distribution requires authentication.

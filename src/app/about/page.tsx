@@ -10,7 +10,7 @@ import MarketingSection from "@/components/marketing/layout/MarketingSection";
 import MarketingContainer from "@/components/marketing/layout/MarketingContainer";
 
 export const metadata: Metadata = {
-  title: "About DocKosha",
+  title: { absolute: "About DocKosha" },
   description: aboutCopy.subtitle,
   keywords: [
     "DocKosha",
@@ -43,6 +43,32 @@ const AboutPage: React.FC<PageProps<"/about">> = () => {
       />
 
       <MarketingSection className="pb-20">
+        <MarketingContainer>
+          <p className="mb-8 max-w-3xl text-base leading-7 text-muted-foreground">
+            Inspect the{" "}
+            <a
+              className="text-primary underline underline-offset-4"
+              href="https://github.com/samarthmn/doc-kosha"
+            >
+              DocKosha application
+            </a>{" "}
+            and{" "}
+            <a
+              className="text-primary underline underline-offset-4"
+              href="https://github.com/samarthmn/doc-yantra"
+            >
+              DocYantra engine
+            </a>{" "}
+            on GitHub, or follow the{" "}
+            <Link
+              className="text-primary underline underline-offset-4"
+              href="/self-hosting"
+            >
+              self-hosting guide
+            </Link>
+            .
+          </p>
+        </MarketingContainer>
         <MarketingContainer>
           <div className="grid gap-5 md:grid-cols-[1.15fr_0.85fr]">
             <GlassCard className="col-span-1 row-span-2 p-8 md:p-10">

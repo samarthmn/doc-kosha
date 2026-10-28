@@ -59,10 +59,10 @@ export const DocyantraPageClient: React.FC = () => {
               Built for speed, fidelity, and fail-closed governance
             </h2>
             <p className="max-w-[58ch] text-[0.9375rem] leading-7 text-muted-foreground">
-              DocYantra is the private processing engine inside DocKosha
-              Cloud&apos;s validated Office and PDF path. It is not a standalone
-              product or externally available package; work outside its
-              documented envelope fails closed instead of degrading quietly.
+              DocYantra is the open-source processing engine behind
+              DocKosha&apos;s validated Office and PDF path, licensed under
+              AGPL-3.0-or-later. Work outside its documented envelope fails
+              closed instead of degrading quietly.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">

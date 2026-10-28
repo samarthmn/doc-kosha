@@ -57,7 +57,7 @@ test("release reference audit flags a missing managed file", () => {
   ]);
 });
 
-test("availability audit accepts the actual corrected docs and catches former promises", async () => {
+test("availability audit accepts the current docs and catches retired or overstated claims", async () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const actual = new Map([
     [
@@ -81,14 +81,14 @@ test("availability audit accepts the actual corrected docs and catches former pr
   assert.deepEqual(findAvailabilityContradictions(actual), []);
   actual.set(
     "docs-site/content/docs/getting-started/what-is-dockosha.mdx",
-    `${actual.get("docs-site/content/docs/getting-started/what-is-dockosha.mdx")}\nRun the whole thing themselves.\n`,
+    `${actual.get("docs-site/content/docs/getting-started/what-is-dockosha.mdx")}\nExternal self-hosting is not currently available.\n`,
   );
   assert.deepEqual(findAvailabilityContradictions(actual), [
     "docs-site/content/docs/getting-started/what-is-dockosha.mdx",
   ]);
   actual.set(
     "docs-site/scripts/repo-docs-manifest.mjs",
-    `${actual.get("docs-site/scripts/repo-docs-manifest.mjs")}\nInstall and operate DocKosha on your own infrastructure.\n`,
+    `${actual.get("docs-site/scripts/repo-docs-manifest.mjs")}\nDocYantra is a private mandatory dependency.\n`,
   );
   assert.deepEqual(findAvailabilityContradictions(actual), [
     "docs-site/content/docs/getting-started/what-is-dockosha.mdx",
@@ -96,7 +96,7 @@ test("availability audit accepts the actual corrected docs and catches former pr
   ]);
   actual.set(
     "docs-site/content/docs/getting-started/what-is-dockosha.mdx",
-    `${actual.get("docs-site/content/docs/getting-started/what-is-dockosha.mdx")}\n| **Use DocYantra** | Current route |\n`,
+    `${actual.get("docs-site/content/docs/getting-started/what-is-dockosha.mdx")}\nSelf-hosting is officially supported.\n`,
   );
   assert.deepEqual(findAvailabilityContradictions(actual), [
     "docs-site/content/docs/getting-started/what-is-dockosha.mdx",

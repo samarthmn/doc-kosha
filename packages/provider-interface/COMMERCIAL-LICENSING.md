@@ -13,11 +13,13 @@ Enterprise arrangements are discussed case by case, with no preset service
 package. Services, scope, pricing, and any additional DocKosha licensing rights
 are agreed individually in a signed customer agreement.
 
-Enterprise inquiries concern DocKosha only. They do not grant access to
-DocYantra source, packages, SDKs, APIs, or standalone engine licensing.
-DocYantra is a private mandatory dependency, and an externally runnable
-DocKosha self-hosting distribution is not currently offered. This notice does
-not change any rights already granted under an applicable license.
+Enterprise inquiries concern DocKosha only. DocYantra, DocKosha's mandatory
+document-processing dependency, is separately licensed under the same GNU
+Affero General Public License, version 3 or any later version
+(AGPL-3.0-or-later), at https://github.com/samarthmn/doc-yantra; DocYantra Enterprise licensing requires
+its own signed agreement. Self-hosting DocKosha under the AGPL-3.0-or-later
+license is permitted but not officially supported. This notice does not change
+any rights already granted under an applicable license.
 
 For a DocKosha Enterprise License Inquiry, email
 [contact@dockosha.com](mailto:contact@dockosha.com?subject=Enterprise%20License%20Inquiry).

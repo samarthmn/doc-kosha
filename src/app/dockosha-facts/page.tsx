@@ -30,7 +30,7 @@ const pageDescription =
   "DocKosha facts: open-source document sharing under AGPL-3.0-or-later, managed Cloud plans, data rooms, self-hosting availability, and privacy rules.";
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: { absolute: pageTitle },
   description: pageDescription,
   keywords: [
     "DocKosha facts",
@@ -110,7 +110,7 @@ const faqItems: SeoFaqItem[] = [
   {
     question: "Can I self-host DocKosha?",
     answer:
-      "Independent self-hosting is not currently available. The application requires DocYantra, a private document-processing dependency. DocKosha Cloud is the managed service available today.",
+      "Yes, at your own risk. DocKosha and its document-processing engine, DocYantra, are both open source, but self-hosting is not officially supported. DocKosha Cloud is the managed service.",
   },
   {
     question: "What is the primary use case for DocKosha?",

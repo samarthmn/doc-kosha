@@ -21,7 +21,10 @@ test("rendered hosted Terms include the separately licensed software clause", as
     rendered,
     /https:\/\/github\.com\/samarthmn\/doc-kosha\/blob\/main\/LICENSE/u,
   );
-  assert.match(rendered, /does not grant access to private DocYantra/u);
+  assert.match(
+    rendered,
+    /DocYantra is separately licensed under AGPL-3\.0-or-later/u,
+  );
   assert.match(rendered, /authorize bypassing service access controls/u);
   assert.match(rendered, /activate any browser-runtime license/u);
 });

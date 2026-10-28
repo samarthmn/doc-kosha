@@ -62,7 +62,7 @@ Removing a **verified** domain disconnects it and **existing links on that domai
 ## Limits and operator notes
 
 - A workspace holds **one custom domain at a time**. Remove the current one before adding another; the add form only appears when no domain is configured.
-- Custom domains are provisioned through Cloudflare for SaaS. A future authorized operator deployment would need a Cloudflare API token, zone ID and fallback origin configured. External self-hosting is not currently available.
+- Custom domains are provisioned through Cloudflare for SaaS. A self-hosted deployment needs a Cloudflare API token, zone ID and fallback origin configured.
 - If the domain configuration cannot be loaded, the panel says so and leaves any existing setup untouched rather than reporting "not verified".
 - Watermark branding is configured separately — see [watermarking](/docs/guides/watermarking). Watermarks are burned into the delivered PDF bytes server-side, not drawn over the page in the browser.
 - Notification emails come from the operator's configured sender addresses;

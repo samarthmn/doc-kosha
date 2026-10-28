@@ -15,7 +15,7 @@ keywords:
   - "secure document sharing"
   - "data room pricing"
 date: "2025-12-16"
-updated: "2026-06-01"
+updated: "2026-10-27"
 brand: "DocKosha"
 canonical: "https://www.dockosha.com/blog/dockosha-vs-papermark"
 ---
@@ -31,7 +31,7 @@ Papermark and DocKosha can both cover secure sharing. The differences show up in
 ## Quick summary
 
 - Choose DocKosha if you want workspace-based pricing, privacy-first analytics, and a room workflow built for repeated external sharing. See [DocKosha Pricing](/pricing).
-- Choose Papermark if you value its published data room tier and the appeal of an open-source or self-hosting path. See [Papermark Pricing](https://www.papermark.com/pricing).
+- Both products offer an open-source path. DocKosha’s application and DocYantra engine use AGPL-3.0-or-later; see the [self-hosting guide](/self-hosting). Choose Papermark if its ecosystem and published data room tier fit your workflow. See [Papermark Pricing](https://www.papermark.com/pricing).
 
 ## Table of contents
 
@@ -155,18 +155,18 @@ The practical buying question is not “which number is lower today?” It is �
 
 ## 7) Best-fit guidance
 
-| You are...                                   | Lean DocKosha if...                                              | Lean Papermark if...                                                                        |
-| -------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| A founder who wants predictable cost         | You want workspace pricing and privacy-first analytics defaults. | You like Papermark’s public plan structure and feature packaging.                           |
-| Running a round with lots of outside viewers | You want external sharing without per-viewer surprises.          | Your expected usage fits comfortably inside Papermark’s plan boundaries.                    |
-| Managing more than one room or process       | You want room governance built into the main workflow.           | You prefer Papermark’s model and operating style.                                           |
-| A technical team evaluating self-hosting     | Self-hosting is not the main draw.                               | The GitHub path matters to you. See [Papermark Pricing](https://www.papermark.com/pricing). |
+| You are...                                   | Lean DocKosha if...                                                                                                            | Lean Papermark if...                                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| A founder who wants predictable cost         | You want workspace pricing and privacy-first analytics defaults.                                                               | You like Papermark’s public plan structure and feature packaging.                           |
+| Running a round with lots of outside viewers | You want external sharing without per-viewer surprises.                                                                        | Your expected usage fits comfortably inside Papermark’s plan boundaries.                    |
+| Managing more than one room or process       | You want room governance built into the main workflow.                                                                         | You prefer Papermark’s model and operating style.                                           |
+| A technical team evaluating self-hosting     | Application and engine are open source; self-hosting is operator-managed without official support. See [setup](/self-hosting). | The GitHub path matters to you. See [Papermark Pricing](https://www.papermark.com/pricing). |
 
 ## Final recommendation
 
 DocKosha is the better fit if you want a room-first product with predictable external sharing costs and a clearer privacy-first analytics position.
 
-Papermark is the better fit if you want its ecosystem, its published data room tier, or the possibility of self-hosting as part of the decision.
+Papermark may be the better fit if you prefer its ecosystem or published data room tier. For self-hosting, inspect both projects and compare their setup and operational requirements; [DocKosha’s guide](/self-hosting) covers its open-source application and DocYantra engine.
 
 The right way to choose is not to compare screenshots. Run one real workflow for a week: upload the deck, open the room, invite the actual stakeholders, and see which product feels calmer to operate.
 

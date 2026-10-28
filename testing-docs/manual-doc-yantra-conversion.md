@@ -1,12 +1,11 @@
 # Manual test guide: package-only conversion and PDF processing
 
-DocKosha performs document conversion, PDF merge/watermark, page counting, and redaction in the application process. A lockstep DocYantra release owns `@samarthmn/dockosha-provider-docyantra`, `@samarthmn/doc-yantra` (`pdf-core`), `@samarthmn/doc-yantra-office` (`office-core`), and `@samarthmn/doc-yantra-fonts`. There is no HTTP conversion-processing tier or alternate provider: DocYantra is the mandatory direct `0.0.26` dependency and its validated envelope is authoritative.
+DocKosha performs document conversion, PDF merge/watermark, page counting, and redaction in the application process. A lockstep DocYantra release owns `@samarthmn/dockosha-provider-docyantra`, `@samarthmn/doc-yantra` (`pdf-core`), `@samarthmn/doc-yantra-office` (`office-core`), and `@samarthmn/doc-yantra-fonts`. There is no HTTP conversion-processing tier or alternate provider: DocYantra is the mandatory direct `0.0.28` dependency and its validated envelope is authoritative.
 
-> **Authorized-maintainer reference only:** The DocKosha source is public for
-> reading and contribution, but there is no public runnable installation. This
-> guide documents trusted maintainer verification of the private DocYantra
-> dependency; it is not a package-access, credential-request, or public engine
-> release guide.
+> **Maintainer reference:** This guide documents how maintainers verify a
+> DocYantra release inside DocKosha. DocYantra is open source under
+> AGPL-3.0-or-later; self-hosters install its published packages as described in
+> [Self-hosting](../docs/self-hosting.md).
 
 Use this guide after changing either package, a server adapter, conversion routing, output tracing, watermarking, or redaction.
 
@@ -14,7 +13,7 @@ Use this guide after changing either package, a server adapter, conversion routi
 
 - Run the app with the normal local Supabase and R2/MinIO stack.
 - For authorized internal verification, pack the four DocYantra packages from the maintainer engine-development checkout and install those tarballs in a disposable DocKosha copy. Keep the packed core, office, fonts, and adapter versions identical; do not add them to this repository's tracked dependencies or lockfile, copy engine source into the public repository, or publish the artifacts.
-- For authorized maintainer CI, install the exact pinned private packages through the existing internal registry process. External users do not receive registry credentials or package access.
+- For authorized maintainer CI, install the exact pinned packages from GitHub Packages with the protected read-only registry token.
 - Use an entitled workspace for non-PDF conversion.
 - Keep the samples in the private companion’s `mock-files/` folder and use its
   private test runners. Do not copy the samples into this repository.
@@ -36,6 +35,17 @@ Install the matching fonts tarball in every scenario. Run `pnpm test:engine` and
 The engine runner fails closed when the provider package is absent or cannot be resolved. Missing worker/WASM/font assets, mixed package versions, incomplete Next traces, and undocumented skips are release blockers. The optional fonts path must not be silently treated as equivalent to the font-installed path.
 
 ## What to inspect
+
+For `0.0.28`, confirm all four installed DocYantra packages declare
+`AGPL-3.0-or-later` (the font package: `AGPL-3.0-or-later AND OFL-1.1`) and
+that `pnpm audit:licenses` passes. Conversion behavior is unchanged from
+`0.0.27`.
+
+For `0.0.27`, convert Word documents that mix Latin text with Chinese,
+Japanese, or Korean text and set a distinct `w:eastAsia` or theme East Asian
+font. East Asian text must use the authored East Asian font while Latin text
+keeps its Latin font, and page breaks and table positions should follow the
+Word export. Compare a Calibri-only document's page count with Word's.
 
 For `0.0.26`, verify plain legacy Excel Notes with visible/hidden and printable/
 non-printable variants, including Unicode text and ordinary cell content. Only

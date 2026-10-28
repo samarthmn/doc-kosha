@@ -12,7 +12,9 @@ import { clientEnv, serverEnv } from "@/lib/env";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Free-First Pricing for Secure Document Sharing | DocKosha",
+  title: {
+    absolute: "Free-First Pricing for Secure Document Sharing | DocKosha",
+  },
   description: pricingCopy.subtitle,
   keywords: [
     "free virtual data room pricing",

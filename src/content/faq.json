@@ -37,7 +37,7 @@
         },
         {
           "q": "Can I self-host DocKosha today?",
-          "a": "Not yet. DocKosha requires DocYantra, a private document-processing dependency. The public repository supports inspection and contribution but is not currently a runnable self-hosting distribution. DocKosha Cloud is the managed service available now."
+          "a": "Yes, at your own risk. DocKosha and its document-processing engine, DocYantra, are both open source, so you can run the application yourself. Self-hosting is not officially supported: you operate the database, storage, email delivery, backups, security updates, and monitoring, and DocYantra's packages install from GitHub Packages with a classic GitHub token granting read:packages access. The self-hosting guide covers local and production setup. DocKosha Cloud is the managed service."
         },
         {
           "q": "Does open source mean every Cloud feature is free?",

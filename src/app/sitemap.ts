@@ -7,7 +7,6 @@ const rawUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const appUrl = rawUrl.replace(/\/$/, "");
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
   const demoPages = [
     "/demos",
     ...getAllDemoWorkflows().map((workflow) => `/demos/${workflow.slug}`),
@@ -28,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/secure-document-sharing",
     "/dockosha-facts",
     "/hosted-vs-self-hosted",
+    "/self-hosting",
     "/security",
     "/security/subprocessors",
     "/security/questionnaire",
@@ -41,7 +41,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/cookie-policy",
     "/terms-and-conditions",
     "/blog",
-    "/blog/rss.xml",
   ];
 
   const posts = getAllBlogPosts();
@@ -49,7 +48,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const marketingEntries: MetadataRoute.Sitemap = marketingPages.map(
     (path) => ({
       url: `${appUrl}${path}`,
-      lastModified,
       changeFrequency: path === "/" ? "weekly" : "monthly",
       priority: path === "/" ? 1 : 0.6,
     }),

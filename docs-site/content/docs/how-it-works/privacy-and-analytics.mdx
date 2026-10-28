@@ -16,7 +16,7 @@ When someone opens a shared link, the workspace that shared it gets a record of 
 
 ### Raw IP addresses are never stored
 
-Country is derived server-side from Vercel's `x-vercel-ip-country` header for direct Vercel requests or from the authenticated Cloudflare Worker for custom domains. It is stored only as **aggregated counts** per document and per link. A future authorized operator deployment without either provider would record analytics without a country rollup. External self-hosting is not currently available. Raw IP addresses are never written to an analytics row.
+Country is derived server-side from Vercel's `x-vercel-ip-country` header for direct Vercel requests or from the authenticated Cloudflare Worker for custom domains. It is stored only as **aggregated counts** per document and per link. A self-hosted deployment without either provider records analytics without a country rollup. Raw IP addresses are never written to an analytics row.
 
 The abuse limiter is held to the same rule: `src/server/rateLimit.ts` keys on link ids and hashed email addresses and explicitly refuses to key on IP addresses, hashed or otherwise, because a hashed IP is trivially re-identifiable.
 

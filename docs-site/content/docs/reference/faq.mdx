@@ -37,7 +37,7 @@ Separately, your plan caps total workspace storage (250 MB on Free, up to
 
 ### Which files get converted to PDF?
 
-Mandatory DocYantra `0.0.26` converts supported CSV, Markdown, and Office files to PDF within its documented envelope. PDFs are already PDFs. Images, video, and audio
+Mandatory DocYantra `0.0.28` converts supported CSV, Markdown, and Office files to PDF within its documented envelope. PDFs are already PDFs. Images, video, and audio
 are delivered in their original form and are never converted.
 
 Conversion gives watermarking and per-page analytics a consistent target when
@@ -201,20 +201,23 @@ the privacy policy rather than gated behind the marketing consent banner. See
 
 ### What is the difference between self-hosting and Cloud?
 
-The source is public under AGPL-3.0-or-later for reading and contribution, but
-external self-hosting is not currently available. The mandatory direct
-DocYantra `0.0.26` dependency is private and unavailable to external users.
-DocKosha Cloud is the available hosted product.
+The source is public under AGPL-3.0-or-later, and the mandatory direct
+DocYantra `0.0.28` dependency is open source under AGPL-3.0-or-later. You can
+self-host at your own risk, but self-hosting is not officially supported:
+you operate the database, storage, email, backups, upgrades, and monitoring.
+DocKosha Cloud is the supported hosted product.
 
-### Can I install DocKosha or obtain DocYantra access?
+### Can I install DocKosha and DocYantra?
 
-Not currently. There is no external DocYantra package, token, SDK, API,
-standalone product, or engine-license offering. Use DocKosha Cloud for the
-available product.
+Yes. DocYantra's source is at
+[github.com/samarthmn/doc-yantra](https://github.com/samarthmn/doc-yantra),
+and its packages install from GitHub Packages with a GitHub token that has the
+`read:packages` scope. See [Self-hosting](/docs/self-hosting). Enterprise
+licensing requires a separate signed agreement.
 
 ### How does document processing work?
 
-DocYantra is the mandatory direct `0.0.26` dependency. Operations outside its
+DocYantra is the mandatory direct `0.0.28` dependency. Operations outside its
 validated conversion and redaction envelope return explicit typed errors; there
 is no provider-selection variable or fallback. DocKosha Cloud may operate the
 same engine for managed processing, but it is not a separate install

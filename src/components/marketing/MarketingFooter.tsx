@@ -14,8 +14,9 @@ const MarketingFooter: React.FC = () => {
               </span>
             </div>
             <p className="max-w-xs text-sm leading-6 text-muted-foreground">
-              Open-source document sharing and virtual data rooms.
-              AGPL-3.0-or-later application. Managed with DocKosha Cloud.
+              Open-source document sharing and virtual data rooms. Application
+              and DocYantra engine under AGPL-3.0-or-later. Managed with
+              DocKosha Cloud.
             </p>
           </div>
           <nav
@@ -27,6 +28,8 @@ const MarketingFooter: React.FC = () => {
               ["/free-virtual-data-room", "Free VDR"],
               ["/pricing", "Pricing"],
               ["/hosted-vs-self-hosted", "Cloud and self-hosting"],
+              ["/self-hosting", "Self-hosting guide"],
+              ["/docyantra", "DocYantra engine"],
               ["/blog/dockosha-open-source", "Open-source announcement"],
               ["/features", "Features"],
               ["https://docs.dockosha.com", "Docs"],
@@ -39,7 +42,11 @@ const MarketingFooter: React.FC = () => {
               ["/privacy-policy", "Privacy Policy"],
               ["/cookie-policy", "Cookie Policy"],
               ["/terms-and-conditions", "Terms and Conditions"],
-              ["https://github.com/samarthmn/doc-kosha", "Source on GitHub"],
+              ["https://github.com/samarthmn/doc-kosha", "DocKosha on GitHub"],
+              [
+                "https://github.com/samarthmn/doc-yantra",
+                "DocYantra on GitHub",
+              ],
               [
                 "https://github.com/samarthmn/doc-kosha/blob/HEAD/LICENSE",
                 "AGPL-3.0-or-later",

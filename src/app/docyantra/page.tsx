@@ -31,7 +31,14 @@ const DocyantraPage: React.FC = () => {
     headline: seo.title,
     description: seo.description,
     inLanguage: "en",
-    about: highlights.map((item) => item.title),
+    about: {
+      "@type": "SoftwareSourceCode",
+      name: "DocYantra",
+      codeRepository: "https://github.com/samarthmn/doc-yantra",
+      license: "https://github.com/samarthmn/doc-yantra/blob/HEAD/LICENSE",
+      programmingLanguage: ["Rust", "TypeScript"],
+    },
+    keywords: highlights.map((item) => item.title),
   } as const;
 
   return (

@@ -7,7 +7,9 @@ import testimonialsCopy from "@/content/testimonials.json";
 import { getFreePlanMarketingFacts } from "@/modules/billing/marketingFacts";
 
 export const metadata: Metadata = {
-  title: "Open-Source Document Sharing & Virtual Data Rooms | DocKosha",
+  title: {
+    absolute: "Open-Source Document Sharing & Virtual Data Rooms | DocKosha",
+  },
   description: landingCopy.hero.subtext,
   keywords: [
     "M&A data room",
@@ -57,11 +59,6 @@ const Home: React.FC<PageProps<"/">> = () => {
     "@type": "WebSite",
     url: siteUrl,
     name: "DocKosha",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${siteUrl}/?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   } as const;
   const softwareLd = {
     "@context": "https://schema.org",
@@ -81,6 +78,12 @@ const Home: React.FC<PageProps<"/">> = () => {
       availability: "https://schema.org/InStock",
       url: `${siteUrl}/pricing`,
       description: getFreePlanMarketingFacts().offerDescription,
+    },
+    hasPart: {
+      "@type": "SoftwareSourceCode",
+      name: "DocKosha source",
+      codeRepository: "https://github.com/samarthmn/doc-kosha",
+      license: "https://github.com/samarthmn/doc-kosha/blob/HEAD/LICENSE",
     },
     publisher: {
       "@type": "Organization",

@@ -165,6 +165,137 @@ test.describe("free-plan marketing SEO @cloud", () => {
     expect(softwareJsonLd.review?.[0]?.reviewBody).toContain("DocKosha");
   });
 
+  test("open-source transparency links both repositories and preserves the Cloud signup", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const transparency = page.getByRole("region", {
+      name: "Open source, from application to engine",
+    });
+    await expect(
+      transparency.getByRole("link", {
+        name: "DocKosha on GitHub",
+        exact: true,
+      }),
+    ).toHaveAttribute("href", "https://github.com/samarthmn/doc-kosha");
+    await expect(
+      transparency.getByRole("link", {
+        name: "DocYantra on GitHub",
+        exact: true,
+      }),
+    ).toHaveAttribute("href", "https://github.com/samarthmn/doc-yantra");
+    await expect(
+      transparency.getByRole("link", { name: "Self-hosting guide" }),
+    ).toHaveAttribute("href", "/self-hosting");
+    await expect(
+      page
+        .locator("footer")
+        .getByRole("link", { name: "DocYantra on GitHub", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.locator("main a[href^='/auth/sign-in']").first(),
+    ).toBeVisible();
+    expect((await page.title()).match(/DocKosha/g)).toHaveLength(1);
+    const website = await readJsonLdById<JsonLd>(page, "ld-website");
+    expect(website).not.toHaveProperty("potentialAction");
+  });
+
+  test("self-hosting is discoverable with accurate setup boundaries and canonical metadata", async ({
+    page,
+  }) => {
+    await page.goto("/self-hosting");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Self-host DocKosha with the source in your hands",
+    );
+    await expect(page.locator("main")).toContainText("0.0.28");
+    await expect(page.locator("main")).toContainText("read:packages");
+    await expect(page.locator("main")).toContainText(
+      "not officially supported",
+    );
+    await expect(
+      page.getByRole("link", { name: "Read the complete setup guide" }),
+    ).toHaveAttribute(
+      "href",
+      "https://github.com/samarthmn/doc-kosha/blob/HEAD/docs/self-hosting.md",
+    );
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      new URL("/self-hosting", process.env.PLAYWRIGHT_BASE_URL).toString(),
+    );
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+      "content",
+      new URL("/self-hosting", process.env.PLAYWRIGHT_BASE_URL).toString(),
+    );
+    await expect(
+      page.locator("main a[href^='/auth/sign-in']").first(),
+    ).toContainText("Start free");
+    await page.goto("/docyantra");
+    await expect(page.locator("main")).not.toContainText(
+      "not a standalone product or externally available",
+    );
+    await expect(
+      page
+        .locator("main")
+        .getByRole("link", { name: "DocYantra on GitHub", exact: true })
+        .first(),
+    ).toBeVisible();
+  });
+
+  test("core marketing pages have distinct titles and canonical social URLs", async ({
+    page,
+  }) => {
+    const paths = [
+      "/",
+      "/about",
+      "/pricing",
+      "/docyantra",
+      "/self-hosting",
+      "/hosted-vs-self-hosted",
+      "/features",
+      "/free-virtual-data-room",
+      "/secure-document-sharing",
+      "/faq",
+      "/dockosha-facts",
+      "/security",
+      "/security/questionnaire",
+      "/security/subprocessors",
+      "/security/dpa",
+    ];
+    const titles = new Set<string>();
+    const descriptions = new Set<string>();
+    for (const path of paths) {
+      const response = await page.goto(path);
+      expect(response?.ok(), path).toBeTruthy();
+      const title = await page.title();
+      expect(titles.has(title), path).toBeFalsy();
+      expect(title.match(/DocKosha/g), path).toHaveLength(1);
+      titles.add(title);
+      const description = await page
+        .locator('meta[name="description"]')
+        .getAttribute("content");
+      expect(description?.length, path).toBeGreaterThan(20);
+      expect(descriptions.has(description!), path).toBeFalsy();
+      descriptions.add(description!);
+      const canonical = new URL(path, process.env.PLAYWRIGHT_BASE_URL).href;
+      const canonicalHref = await page
+        .locator('link[rel="canonical"]')
+        .getAttribute("href");
+      const socialHref = await page
+        .locator('meta[property="og:url"]')
+        .getAttribute("content");
+      expect(new URL(canonicalHref!).href, path).toBe(canonical);
+      expect(new URL(socialHref!).href, path).toBe(canonical);
+      const socialDescription = await page
+        .locator('meta[property="og:description"]')
+        .getAttribute("content");
+      expect(socialDescription?.length, path).toBeGreaterThan(20);
+      await expect(
+        page.locator('meta[name="twitter:description"]'),
+        path,
+      ).toHaveAttribute("content", socialDescription!);
+    }
+  });
+
   test("free-plan blog post has one H1, no duplicate title heading, and complete BlogPosting JSON-LD", async ({
     page,
   }) => {
@@ -220,7 +351,11 @@ test.describe("free-plan marketing SEO @cloud", () => {
       const raw = fs.readFileSync(path.join(blogRoot, post.file), "utf8");
 
       expect(readFrontmatterField(post.file, "date")).toBe(post.date);
-      expect(readFrontmatterField(post.file, "updated")).toBe("2026-06-01");
+      expect(readFrontmatterField(post.file, "updated")).toBe(
+        post.file === "dockosha-vs-papermark-feature-comparison.md"
+          ? "2026-10-27"
+          : "2026-06-01",
+      );
       expect(raw).toContain("/free-virtual-data-room");
       expect(raw).toContain("/pricing");
       expect(raw).toContain("/security");
@@ -295,12 +430,19 @@ test.describe("free-plan marketing SEO @cloud", () => {
 
     const sitemapResponse = await page.goto("/sitemap.xml");
     expect(sitemapResponse?.ok()).toBeTruthy();
+    const sitemapXml = await sitemapResponse!.text();
+    const homepageEntry = sitemapXml.match(
+      /<url>\s*<loc>[^<]+\/<\/loc>[\s\S]*?<\/url>/,
+    )?.[0];
+    expect(homepageEntry).toBeTruthy();
+    expect(homepageEntry).not.toContain("<lastmod>");
 
     const sitemapBody = (await page.locator("body").textContent()) ?? "";
     expect(sitemapBody).toContain("/blog</loc>");
     expect(sitemapBody).toContain("/free-virtual-data-room</loc>");
     expect(sitemapBody).toContain("/secure-document-sharing</loc>");
     expect(sitemapBody).toContain("/dockosha-facts</loc>");
+    expect(sitemapBody).toContain("/self-hosting</loc>");
     expect(sitemapBody).toContain(`/blog/${freePlanSlug}</loc>`);
   });
 

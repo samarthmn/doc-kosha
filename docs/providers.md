@@ -1,9 +1,9 @@
 # Document-processing providers
 
-This page describes the public provider contract and the provider used by
-DocKosha Cloud. The DocYantra implementation is private and unavailable to
-external users; no standalone provider package, SDK, API, or self-hosting
-installation is offered.
+This page describes the public provider contract and DocYantra, the provider
+every DocKosha build uses. DocYantra is open source under AGPL-3.0-or-later at
+[github.com/samarthmn/doc-yantra](https://github.com/samarthmn/doc-yantra), and
+its packages install from GitHub Packages.
 
 DocKosha delegates document processing to a provider behind the
 `@dockosha/provider-interface` contract. A provider declares an `id`, a
@@ -35,7 +35,7 @@ retryability, and structured detail. The code inventory includes
 
 ## DocYantra provider
 
-DocYantra is the mandatory private direct `0.0.26` dependency. It implements the
+DocYantra is the mandatory direct `0.0.28` dependency. It implements the
 document-processing contract for PDF and Office conversion, merge, watermark,
 page count, and redaction. Its validated size, format, and fidelity envelope is
 authoritative: unsupported work returns a typed failure and never falls back to
@@ -47,6 +47,17 @@ Identity CIDToGIDMap. Plain rectangular Notes follow visibility and print
 settings; unsupported drawings, controls, embedded objects, and relationships
 still fail closed. Other supported PDF font mappings retain conservative bounds,
 and redaction can still require removal beyond a selection with confirmation.
+
+The `0.0.28` release relicenses DocYantra under AGPL-3.0-or-later, the same
+license as DocKosha. It has no functional changes from `0.0.27`.
+
+The `0.0.27` release follows Word's line metrics more closely. Calibri-family
+line heights no longer count the font's leading twice, and each character uses
+the font Word assigns to its script, so `w:eastAsia` and theme East Asian fonts
+apply to Chinese, Japanese, and Korean text while Latin text keeps its Latin
+font. MingLiU body text at 12 pt uses Word's measured line height. Converted
+documents keep Word's pagination more closely; the supported envelope is
+unchanged.
 
 ## Fail-closed behavior
 

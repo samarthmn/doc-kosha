@@ -68,12 +68,12 @@ test("DocYantra AGPL packages have explicit reviewed dependency decisions", asyn
   ]) {
     assert.equal(
       REVIEWED_LICENSE_DECISIONS.get(packageName),
-      "AGPL-3.0-only",
+      "AGPL-3.0-or-later",
       packageName,
     );
   }
   assert.equal(
     REVIEWED_LICENSE_DECISIONS.get("@samarthmn/doc-yantra-fonts"),
-    "AGPL-3.0-only AND OFL-1.1",
+    "AGPL-3.0-or-later AND OFL-1.1",
   );
 });

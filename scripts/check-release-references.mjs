@@ -19,16 +19,22 @@ export const MANAGED_COPY_FILES = [
 const AVAILABILITY_COPY_FILES = [
   "docs-site/content/docs/getting-started/what-is-dockosha.mdx",
   "docs-site/scripts/repo-docs-manifest.mjs",
+  "docs-site/content/docs/self-hosting/index.mdx",
+  "docs/self-hosting.md",
+  "src/content/faq.json",
 ];
 
 export const findAvailabilityContradictions = (files) => {
   const contradictions = [];
+  // DocYantra is open source and self-hosting is available but unsupported:
+  // flag copy that regresses to the retired private/unavailable claims or
+  // promises official self-hosting support.
   const patterns = [
-    /run the whole thing themselves/iu,
-    /\| \*\*Self-host\*\*/u,
-    /\| \*\*Use DocYantra\*\*\s*\|/u,
-    /Install and operate DocKosha on your own infrastructure/iu,
-    /Configure a self-hosted DocKosha deployment/iu,
+    /self-hosting is not (?:currently|yet) available/iu,
+    /self-hosting is (?:fully |officially )?supported/iu,
+    /private (?:mandatory )?(?:direct )?DocYantra/iu,
+    /DocYantra[^.]{0,80}\b(?:is|remains) (?:a )?private/iu,
+    /mandatory private/iu,
   ];
   for (const relativePath of AVAILABILITY_COPY_FILES) {
     const content = files.get(relativePath);
@@ -71,16 +77,18 @@ export const auditReleaseReferences = async (root = process.cwd()) => {
   }
   const files = new Map();
   await Promise.all(
-    MANAGED_COPY_FILES.map(async (relativePath) => {
-      try {
-        files.set(
-          relativePath,
-          await readFile(path.join(root, relativePath), "utf8"),
-        );
-      } catch (error) {
-        if (error?.code !== "ENOENT") throw error;
-      }
-    }),
+    [...new Set([...MANAGED_COPY_FILES, ...AVAILABILITY_COPY_FILES])].map(
+      async (relativePath) => {
+        try {
+          files.set(
+            relativePath,
+            await readFile(path.join(root, relativePath), "utf8"),
+          );
+        } catch (error) {
+          if (error?.code !== "ENOENT") throw error;
+        }
+      },
+    ),
   );
   return {
     currentVersion,

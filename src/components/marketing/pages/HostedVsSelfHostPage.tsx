@@ -31,7 +31,7 @@ const CLOUD_CTA_HREF =
   "https://dockosha.com/auth/sign-in?redirect=%2Fonboarding&utm_source=product&utm_medium=marketing&utm_campaign=product-docs";
 
 export const metadata: Metadata = {
-  title: "Open Source, Cloud & Self-Hosting | DocKosha",
+  title: { absolute: "Open Source, Cloud & Self-Hosting | DocKosha" },
   description:
     "An honest comparison of DocKosha's open-source application and managed DocKosha Cloud: what is available today, what the source license permits, and what Cloud operates for customers.",
   alternates: { canonical: "/hosted-vs-self-hosted" },
@@ -46,22 +46,22 @@ export const metadata: Metadata = {
     type: "website",
     title: "DocKosha: open source, Cloud, and self-hosting",
     description:
-      "What DocKosha source publication means today, what DocKosha Cloud operates, and what is not currently available externally.",
+      "What DocKosha's open-source release means today, what self-hosting involves, and what DocKosha Cloud operates for you.",
     url: "/hosted-vs-self-hosted",
   },
   twitter: {
     card: "summary_large_image",
     title: "DocKosha: open source, Cloud, and self-hosting",
     description:
-      "What DocKosha source publication means today, what DocKosha Cloud operates, and what is not currently available externally.",
+      "What DocKosha's open-source release means today, what self-hosting involves, and what DocKosha Cloud operates for you.",
   },
 };
 
 const selfHostFit = [
-  "You want to inspect the public DocKosha source under the AGPL-3.0-or-later license.",
+  "You want to inspect or modify the DocKosha source under the AGPL-3.0-or-later license.",
   "You want to review the architecture and contribute improvements.",
-  "You understand that external self-hosting is not currently available.",
-  "You do not need external access to the private DocYantra dependency.",
+  "You are comfortable running DocKosha yourself without official support.",
+  "You can operate Postgres, object storage, email, and DocYantra's packages from GitHub Packages.",
 ] as const;
 
 const cloudFit = [
@@ -95,7 +95,7 @@ const operatorDuties = [
   {
     title: "Custom-domain infrastructure",
     icon: Globe,
-    body: "Serving rooms on a customer's own domain needs wildcard DNS, automated certificate issuance, and a router in front of the app. DocKosha ships that router as a Cloudflare Worker; a future operator would need to account for that infrastructure.",
+    body: "Serving rooms on a customer's own domain needs wildcard DNS, automated certificate issuance, and a router in front of the app. DocKosha ships that router as a Cloudflare Worker; a self-hosted deployment needs to account for that infrastructure.",
   },
   {
     title: "Secrets and transport security",
@@ -105,74 +105,66 @@ const operatorDuties = [
   {
     title: "Availability and monitoring",
     icon: Gauge,
-    body: "Process supervision, log capture, alerting, and capacity planning would be future operator considerations. No external self-hosting support is currently available.",
+    body: "Process supervision, log capture, alerting, and capacity planning are yours. Self-hosting comes with no official support.",
   },
   {
     title: "Legal and regulatory duties",
     icon: Scales,
-    body: "Retention, data-subject requests, and regulatory obligations for the documents your users store would be future operator considerations if an external deployment becomes available.",
+    body: "Retention, data-subject requests, and regulatory obligations for the documents your users store are yours as the operator.",
   },
 ] as const;
 
 const responsibilitySplit = [
   {
     concern: "Upgrades and migrations",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours: apply each release and its migrations.",
     cloud: "Applied by DocKosha; nothing for you to schedule.",
   },
   {
     concern: "Database and backups",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours: run Postgres and rehearse restores.",
     cloud: "Managed and backed up as part of the service.",
   },
   {
     concern: "Object storage",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours: an S3-compatible bucket and its cost.",
     cloud: "Included in the plan's storage allowance.",
   },
   {
     concern: "Email deliverability",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours: SMTP, SPF, DKIM, and DMARC.",
     cloud: "Sent over DocKosha's sending domain, which we maintain.",
   },
   {
     concern: "Custom domains",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours: DNS, certificates, and the routing Worker.",
     cloud: "Configured in the app on paid plans.",
   },
   {
     concern: "TLS and secret rotation",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours.",
     cloud: "Managed by DocKosha.",
   },
   {
     concern: "Monitoring and on-call",
-    selfHosted:
-      "Future operator reference only; external runtime unavailable today.",
+    selfHosted: "Yours.",
     cloud: "DocKosha's.",
   },
   {
     concern: "Support",
-    selfHosted: "No external self-hosting support is currently available.",
+    selfHosted: "No official support; community issues and contributions only.",
     cloud:
       "Commercial support and service-level agreements are paid artifacts, available through Cloud or a separate agreement.",
   },
   {
     concern: "DocYantra engine",
     selfHosted:
-      "Unavailable to external users while the private DocYantra dependency remains internal.",
+      "Open source under AGPL-3.0-or-later; install its packages from GitHub Packages with a GitHub token.",
     cloud: "Already running; no separate key to buy.",
   },
   {
     concern: "What it costs",
-    selfHosted:
-      "Future operator reference only; no external runtime is available today.",
+    selfHosted: "Your infrastructure costs; no DocKosha subscription.",
     cloud: "A subscription; the plan tiers are on the pricing page.",
   },
 ] as const;
@@ -214,11 +206,11 @@ const HostedVsSelfHostPage: React.FC = () => {
         badge="Open source and Cloud"
         title={
           <>
-            Read the source, or
+            Run it yourself, or
             <span className="text-primary"> use Cloud</span>
           </>
         }
-        subtitle="DocKosha’s application is open source under AGPL-3.0-or-later for inspection and contribution. External self-hosting is not currently available because the mandatory DocYantra dependency is private; DocKosha Cloud is the available hosted product."
+        subtitle="DocKosha’s application and its DocYantra engine are open source under AGPL-3.0-or-later. You can self-host at your own risk without official support; DocKosha Cloud is the supported hosted product."
       >
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
           <Button asChild size="lg" className="h-12 px-8 text-base">
@@ -230,7 +222,7 @@ const HostedVsSelfHostPage: React.FC = () => {
             variant="outline"
             className="h-12 bg-background/50 px-8 text-base backdrop-blur-sm"
           >
-            <Link href="/blog/dockosha-open-source">Read the announcement</Link>
+            <Link href="/self-hosting">Read the self-hosting guide</Link>
           </Button>
         </div>
       </MarketingHero>
@@ -242,9 +234,8 @@ const HostedVsSelfHostPage: React.FC = () => {
               The short version
             </h2>
             <p className="max-w-[58ch] text-[0.9375rem] leading-7 text-muted-foreground">
-              The source is public for reading and contribution, but external
-              self-hosting is not currently available. DocKosha Cloud is the
-              supported way to use the product today.
+              The source is public, and you can self-host it at your own risk.
+              DocKosha Cloud is the supported way to use the product.
             </p>
           </div>
 
@@ -256,7 +247,7 @@ const HostedVsSelfHostPage: React.FC = () => {
                     <Terminal aria-hidden className="h-5 w-5 text-primary" />
                   </div>
                   <CardTitle className="text-xl">
-                    Read and contribute to the public source if
+                    Read, contribute, or self-host if
                   </CardTitle>
                 </div>
               </CardHeader>
@@ -302,11 +293,11 @@ const HostedVsSelfHostPage: React.FC = () => {
         <MarketingContainer>
           <div className="mb-12 grid gap-6 lg:grid-cols-[0.7fr_1fr] lg:items-end">
             <h2 className="text-3xl font-medium tracking-[-0.03em] md:text-4xl">
-              What a future self-hosting path would involve
+              What self-hosting involves
             </h2>
             <p className="max-w-[58ch] text-[0.9375rem] leading-7 text-muted-foreground">
-              These are maintainer reference notes for a possible future
-              self-hosting path, not instructions or an offer available today.
+              Self-hosting is available but not officially supported. These are
+              the duties you take on as the operator.
             </p>
           </div>
 
@@ -332,9 +323,9 @@ const HostedVsSelfHostPage: React.FC = () => {
           </MarketingCardGrid>
 
           <p className="mt-8 max-w-[70ch] text-sm leading-7 text-muted-foreground">
-            The repository ships public source and maintainer reference
-            material. It does not currently ship an externally runnable
-            deployment or DocYantra access.
+            The repository ships the application source and maintainer reference
+            material, and DocYantra&apos;s packages install from GitHub
+            Packages. There is no official self-hosting support.
           </p>
         </MarketingContainer>
       </MarketingSection>
@@ -346,9 +337,8 @@ const HostedVsSelfHostPage: React.FC = () => {
               What is available today
             </h2>
             <p className="max-w-[58ch] text-[0.9375rem] leading-7 text-muted-foreground">
-              There is one supported route today: DocKosha Cloud. The source is
-              public for review and contribution; a runnable external route is
-              not currently available.
+              DocKosha Cloud is the supported route. Self-hosting is available
+              at your own risk, without official support.
             </p>
           </div>
 
@@ -362,7 +352,7 @@ const HostedVsSelfHostPage: React.FC = () => {
                         Concern
                       </th>
                       <th scope="col" className="px-6 py-4 font-medium">
-                        Public source (runtime unavailable)
+                        Self-hosted (unsupported)
                       </th>
                       <th scope="col" className="px-6 py-4 font-medium">
                         DocKosha Cloud
@@ -459,9 +449,10 @@ const HostedVsSelfHostPage: React.FC = () => {
                 them as roadmap rather than as something you are buying.
               </p>
               <p>
-                DocYantra is the private mandatory direct `0.0.26` dependency
-                for the validated Office and PDF path. Enterprise terms require
-                a separate signed agreement and do not imply engine access; see{" "}
+                DocYantra is the mandatory direct `0.0.28` dependency for the
+                validated Office and PDF path and is open source under
+                AGPL-3.0-or-later. Enterprise terms require a separate signed
+                agreement; see{" "}
                 <Link href="/pricing" className="text-primary underline">
                   pricing
                 </Link>{" "}
@@ -477,11 +468,12 @@ const HostedVsSelfHostPage: React.FC = () => {
           <div className="space-y-6">
             <div className="space-y-3">
               <h2 className="text-3xl font-medium tracking-[-0.03em] md:text-4xl">
-                Source publication does not create a deployment
+                Self-hosting is unsupported
               </h2>
               <p className="text-lg leading-relaxed text-muted-foreground">
-                The public repository is available for review and contribution,
-                but it is not currently an externally runnable deployment.
+                You can run the public repository yourself, but it comes with no
+                official support, upgrade guarantee, or operator tooling beyond
+                what the repository ships.
               </p>
             </div>
 
@@ -492,7 +484,7 @@ const HostedVsSelfHostPage: React.FC = () => {
                     <Broadcast aria-hidden className="h-5 w-5 text-primary" />
                   </div>
                   <CardTitle className="text-xl">
-                    What source publication does and does not provide
+                    What self-hosting does and does not provide
                   </CardTitle>
                 </div>
               </CardHeader>
@@ -509,16 +501,15 @@ const HostedVsSelfHostPage: React.FC = () => {
                   <li className="flex gap-2">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                     <span>
-                      External users do not receive private DocYantra package
-                      access, tokens, SDKs, APIs, or engine licenses.
+                      DocYantra is open source under AGPL-3.0-or-later. Its
+                      packages install from GitHub Packages, which requires a
+                      GitHub token with read:packages.
                     </span>
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                     <span>
-                      The public repository is not an externally runnable
-                      distribution today; there is no external installation to
-                      count.
+                      Self-hosted deployments are not officially supported.
                     </span>
                   </li>
                   <li className="flex gap-2">
@@ -603,10 +594,9 @@ const HostedVsSelfHostPage: React.FC = () => {
                 Pick the path that fits your week
               </h2>
               <p className="max-w-2xl text-[0.9375rem] leading-7 text-muted-foreground">
-                Read and contribute to the repository under AGPL-3.0-or-later,
-                or use DocKosha Cloud for the available hosted product.
-                Enterprise terms require a separate signed agreement and do not
-                grant DocYantra engine access.
+                Self-host the repository under AGPL-3.0-or-later at your own
+                risk, or use DocKosha Cloud for the supported hosted product.
+                Enterprise terms require a separate signed agreement.
               </p>
               <div className="flex flex-col gap-4 pt-4 sm:flex-row">
                 <Button size="lg" asChild className="font-semibold">

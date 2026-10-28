@@ -122,7 +122,7 @@ export const runEngineUnitGate = async ({
     }
   } catch (error) {
     console.error(
-      "Private DocYantra access is required. Install the locked private packages in the DocKosha checkout and authenticate to GitHub Packages.",
+      "The DocYantra packages are required. Authenticate to GitHub Packages with a read:packages token and install the locked packages in the DocKosha checkout.",
     );
     console.error(
       error instanceof Error
